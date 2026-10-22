@@ -6,7 +6,7 @@ plugins {
 
 // Đưa thư mục build ra ngoài OneDrive để tránh OneDrive khóa file khi build
 // (lỗi "Unable to delete directory ... build\intermediates ...").
-val externalBuildRoot = file("${System.getProperty("user.home")}/.gradle-builds/app-lam-dep")
-allprojects {
-    layout.buildDirectory.set(File(externalBuildRoot, project.name))
-}
+// val externalBuildRoot = file("E:/.gradle-builds/app-lam-dep")
+// allprojects {
+//     layout.buildDirectory.set(File(externalBuildRoot, project.name))
+// }

@@ -40,375 +40,257 @@
         <!-- Top Brand Bar & 3-Role Mode Switcher -->
         <div class="top-mode-bar">
           <div class="brand-crest">
-            <i class="fa-solid fa-gem"></i>
-            <span>GLOW PRESTIGE</span>
+            <div class="brand-crest-box">
+              <i class="fa-solid fa-gem"></i>
+            </div>
+            <div class="brand-crest-text">
+              <span class="brand-title">GLOW PRESTIGE</span>
+              <span class="brand-sub" id="headerSubtitle">Haute Couture Beauty</span>
+            </div>
           </div>
           <div class="role-selector-pills">
             <button class="role-pill-btn active" id="pillCustomer" onclick="switchRole('customer')">
-              <i class="fa-solid fa-user"></i> Khách Hàng
+              Khách hàng
             </button>
             <button class="role-pill-btn" id="pillPartner" onclick="switchRole('partner')">
-              <i class="fa-solid fa-store"></i> Salon
+              Salon
             </button>
             <button class="role-pill-btn" id="pillAdmin" onclick="switchRole('admin')">
-              <i class="fa-solid fa-shield-halved"></i> Admin
+              Admin
             </button>
           </div>
         </div>
 
-        <!-- Search Bar Row (Customer Mode) -->
+        <!-- Search Bar Row (Customer Mode - Matching Image 1) -->
         <div class="header-main" id="customerHeaderSearch">
-          <button class="icon-btn qr-btn" id="qrScannerBtn" title="Quét mã QR Check-in Salon VIP" onclick="openQrCheckinModal()">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
-              <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
-              <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
-              <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
-              <line x1="7" y1="12" x2="17" y2="12"></line>
-            </svg>
-          </button>
-
-          <div class="search-box" id="searchTrigger">
+          <div class="search-box-lux" id="searchTrigger">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="searchInput" placeholder="Tìm theo tên tiệm, dịch vụ, quận..." oninput="handleSearchInput(this.value)" />
-            <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearchInput(event)" style="display:none;">&times;</button>
-          </div>
-
-          <div class="avatar-badge" id="profileBtn" onclick="showToast('Quý cô Khánh Linh • Diamond Club Member')">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Avatar" />
+            <input type="text" id="searchInput" placeholder="Tìm salon, dịch vụ, quận..." oninput="handleSearchInput(this.value)" />
+            <button class="search-filter-icon-btn" onclick="showToast('Bộ lọc tìm kiếm nâng cao', 'fa-sliders')"><i class="fa-solid fa-sliders"></i></button>
           </div>
         </div>
       </header>
 
-      <!-- ================= 2. CUSTOMER VIEW ================= -->
+      <!-- ================= 2. CUSTOMER VIEW (MATCHING IMAGE 1) ================= -->
       <div class="scroll-content" id="customerView">
 
-        <!-- 2A. 8 KEY ESSENTIAL BEAUTY SERVICES (1 TRANQUIL GRID, NO FLUFF) -->
-        <section class="category-section">
-          <div class="cat-grid">
-            <!-- 1. Làm Nail Art -->
-            <div class="cat-item" data-service="nail" onclick="openServiceDetail('nail')">
-              <div class="cat-icon-wrap">
-                <div class="icon-podium podium-rose">
-                  <svg class="luxury-svg" viewBox="0 0 48 48" fill="none">
-                    <path d="M19 21 C19 19.5 20 18 22 18 L26 18 C28 18 29 19.5 29 21 L31 38 C31 41 28 43 24 43 C20 43 17 41 17 38 Z" stroke="url(#goldStroke)" stroke-width="1.8" stroke-linejoin="round" fill="url(#goldSilk)"/>
-                    <rect x="21" y="9" width="6" height="9" rx="1.5" stroke="url(#goldStroke)" stroke-width="1.8" fill="url(#goldMetal)"/>
-                    <line x1="24" y1="22" x2="24" y2="39" stroke="url(#goldStroke)" stroke-width="1.2" opacity="0.6"/>
-                    <path d="M36 12 L37.5 16.5 L42 18 L37.5 19.5 L36 24 L34.5 19.5 L30 18 L34.5 16.5 Z" fill="url(#goldStroke)"/>
-                    <circle cx="11" cy="22" r="1.5" fill="url(#goldStroke)"/>
-                  </svg>
-                </div>
-                <span class="badge-noble">Hot</span>
-              </div>
-              <span class="cat-name">Làm Nail Art</span>
-            </div>
-
-            <!-- 2. Spa & Trị Liệu -->
-            <div class="cat-item" data-service="spa" onclick="openServiceDetail('spa')">
-              <div class="cat-icon-wrap">
-                <div class="icon-podium podium-emerald">
-                  <svg class="luxury-svg" viewBox="0 0 48 48" fill="none">
-                    <ellipse cx="24" cy="38" rx="14" ry="4" stroke="url(#goldStroke)" stroke-width="1.6" fill="url(#goldSilk)"/>
-                    <ellipse cx="24" cy="32" rx="10" ry="3" stroke="url(#goldStroke)" stroke-width="1.6" fill="url(#goldSilk)"/>
-                    <path d="M24 10 C21 17 21 23 24 27 C27 23 27 17 24 10 Z" stroke="url(#goldStroke)" stroke-width="1.6" fill="url(#goldMetal)"/>
-                    <path d="M24 15 C18 19 15 25 18 28 C21 27 23 22 24 18" stroke="url(#goldStroke)" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M24 15 C30 19 33 25 30 28 C27 27 25 22 24 18" stroke="url(#goldStroke)" stroke-width="1.6" stroke-linecap="round"/>
-                  </svg>
-                </div>
-              </div>
-              <span class="cat-name">Spa Trị Liệu</span>
-            </div>
-
-            <!-- 3. Chăm Sóc Da -->
-            <div class="cat-item" data-service="skincare" onclick="openServiceDetail('skincare')">
-              <div class="cat-icon-wrap">
-                <div class="icon-podium podium-cyan">
-                  <svg class="luxury-svg" viewBox="0 0 48 48" fill="none">
-                    <rect x="16" y="20" width="16" height="21" rx="4" stroke="url(#goldStroke)" stroke-width="1.8" fill="url(#goldSilk)"/>
-                    <rect x="19" y="14" width="10" height="6" rx="1" stroke="url(#goldStroke)" stroke-width="1.8" fill="url(#goldMetal)"/>
-                    <path d="M22 14 C22 9 26 9 26 14" stroke="url(#goldStroke)" stroke-width="1.6"/>
-                    <path d="M36 18 C36 15 38 12 38 12 C38 12 40 15 40 18 C40 20 38 21 38 21 C38 21 36 20 36 18 Z" stroke="url(#goldStroke)" stroke-width="1.4" fill="url(#goldMetal)"/>
-                  </svg>
-                </div>
-              </div>
-              <span class="cat-name">Chăm sóc da</span>
-            </div>
-
-            <!-- 4. Đặt Lịch VIP -->
-            <div class="cat-item" data-service="booking" onclick="openBookingModal('Đặt Lịch VIP Hạng Nhất')">
-              <div class="cat-icon-wrap">
-                <div class="icon-podium podium-gold">
-                  <svg class="luxury-svg" viewBox="0 0 48 48" fill="none">
-                    <rect x="11" y="15" width="26" height="26" rx="4" stroke="url(#goldStroke)" stroke-width="1.8" fill="url(#goldSilk)"/>
-                    <path d="M11 23 L37 23" stroke="url(#goldStroke)" stroke-width="1.6"/>
-                    <line x1="18" y1="11" x2="18" y2="16" stroke="url(#goldStroke)" stroke-width="2" stroke-linecap="round"/>
-                    <line x1="30" y1="11" x2="30" y2="16" stroke="url(#goldStroke)" stroke-width="2" stroke-linecap="round"/>
-                    <circle cx="24" cy="32" r="5" stroke="url(#goldStroke)" stroke-width="1.5" fill="url(#goldMetal)"/>
-                    <path d="M22 32 L23.5 33.5 L26.5 30.5" stroke="#081410" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-              </div>
-              <span class="cat-name">Đặt lịch VIP</span>
-            </div>
-
-            <!-- 5. Hair Salon -->
-            <div class="cat-item" data-service="hair" onclick="openServiceDetail('hair')">
-              <div class="cat-icon-wrap">
-                <div class="icon-podium podium-amber">
-                  <svg class="luxury-svg" viewBox="0 0 48 48" fill="none">
-                    <circle cx="16" cy="36" r="4.5" stroke="url(#goldStroke)" stroke-width="1.8" fill="url(#goldSilk)"/>
-                    <circle cx="32" cy="36" r="4.5" stroke="url(#goldStroke)" stroke-width="1.8" fill="url(#goldSilk)"/>
-                    <path d="M19 33 L35 12" stroke="url(#goldStroke)" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M29 33 L13 12" stroke="url(#goldStroke)" stroke-width="2" stroke-linecap="round"/>
-                    <circle cx="24" cy="23" r="2.5" fill="url(#goldMetal)"/>
-                  </svg>
-                </div>
-              </div>
-              <span class="cat-name">Hair Salon</span>
-            </div>
-
-            <!-- 6. Makeup Tiệc -->
-            <div class="cat-item" data-service="makeup" onclick="openServiceDetail('makeup')">
-              <div class="cat-icon-wrap">
-                <div class="icon-podium podium-violet">
-                  <svg class="luxury-svg" viewBox="0 0 48 48" fill="none">
-                    <rect x="25" y="24" width="10" height="17" rx="2" stroke="url(#goldStroke)" stroke-width="1.8" fill="url(#goldSilk)"/>
-                    <rect x="26.5" y="18" width="7" height="6" stroke="url(#goldStroke)" stroke-width="1.4" fill="url(#goldMetal)"/>
-                    <path d="M27 18 L27 12 C27 10 33 8 33 10 L33 18 Z" fill="url(#rubyGlow)" stroke="url(#goldStroke)" stroke-width="1.2"/>
-                    <line x1="12" y1="39" x2="20" y2="24" stroke="url(#goldStroke)" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
-                </div>
-              </div>
-              <span class="cat-name">Makeup Tiệc</span>
-            </div>
-
-            <!-- 7. Dưỡng Sinh Đông Y -->
-            <div class="cat-item" data-service="herbal" onclick="openServiceDetail('herbal')">
-              <div class="cat-icon-wrap">
-                <div class="icon-podium podium-emerald">
-                  <svg class="luxury-svg" viewBox="0 0 48 48" fill="none">
-                    <path d="M14 26 C14 36 19 40 24 40 C29 40 34 36 34 26 Z" stroke="url(#goldStroke)" stroke-width="1.8" fill="url(#goldSilk)"/>
-                    <ellipse cx="24" cy="26" rx="10" ry="3" stroke="url(#goldStroke)" stroke-width="1.5" fill="url(#goldMetal)"/>
-                  </svg>
-                </div>
-              </div>
-              <span class="cat-name">Dưỡng sinh</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Common Global Luxury SVG Gradients -->
-        <svg width="0" height="0" style="position:absolute">
-          <defs>
-            <linearGradient id="goldStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#f5d0c6" />
-              <stop offset="40%" stop-color="#b85368" />
-              <stop offset="100%" stop-color="#62202f" />
-            </linearGradient>
-            <linearGradient id="goldMetal" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#fdf3f0" />
-              <stop offset="40%" stop-color="#f5d0c6" />
-              <stop offset="100%" stop-color="#62202f" />
-            </linearGradient>
-            <linearGradient id="goldSilk" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#fbf7e8" stop-opacity="0.95" />
-              <stop offset="100%" stop-color="#f5d0c6" stop-opacity="0.4" />
-            </linearGradient>
-            <linearGradient id="rubyGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#f5d0c6" />
-              <stop offset="100%" stop-color="#62202f" />
-            </linearGradient>
-          </defs>
-        </svg>
-
-        <!-- 2B. DUAL QUICK ACTION HUB (VÍ & LỊCH HẸN) -->
-        <section class="quick-cards-section">
-          <div class="quick-card wallet-card" onclick="showToast('Số dư Ví: ' + userWalletBalance.toLocaleString('vi-VN') + 'đ • Hoàn 15% cho Diamond')">
-            <div class="quick-card-left">
-              <span class="card-label">Ví GlowPrivé</span>
-              <span class="card-main-text" id="walletBalanceDisplay">3.450.000 đ</span>
-            </div>
-            <div class="brand-logo-circle">
-              <i class="fa-solid fa-gem"></i>
-            </div>
-          </div>
-
-          <div class="quick-card schedule-card" onclick="openActivityTab()">
-            <div class="quick-card-left">
-              <div class="card-label-row">
-                <span class="card-label">Hôm nay</span>
-                <span class="live-dot"></span>
-              </div>
-              <span class="card-main-text" id="quickScheduleText">15:30 • L’Amour</span>
-            </div>
-            <div class="star-rating-box">
-              <i class="fa-solid fa-star"></i> 4.9
-            </div>
-          </div>
-        </section>
-
-        <!-- 2C. BỘ SƯU TẬP TRẢI NGHIỆM ĐỘC QUYỀN (HERO BANNERS) -->
-        <section class="banner-section">
-          <div class="section-header">
-            <h2 class="section-title">Trải nghiệm Thượng lưu</h2>
-            <a href="javascript:void(0)" class="view-all-link" onclick="showToast('Xem tất cả bộ sưu tập thượng lưu')">
+        <!-- 2A. KHÁM PHÁ DỊCH VỤ (8 SERVICES 4x2 GRID WITH SOFT ROSE MEDALLIONS) -->
+        <section class="category-section-lux">
+          <div class="section-header-lux">
+            <h2 class="section-title-lux">Khám phá dịch vụ</h2>
+            <a href="javascript:void(0)" class="view-all-lux" onclick="openAllCategoriesModal()">
               Tất cả <i class="fa-solid fa-chevron-right"></i>
             </a>
           </div>
 
-          <div class="banner-carousel" id="bannerCarousel">
-            <div class="banner-card hero-bg-1" onclick="openServiceDetail('nail')">
-              <div class="banner-content">
-                <span class="banner-badge-top">Haute Nail</span>
-                <h3 class="banner-title">Nail Art Mắt Mèo</h3>
-                <p class="banner-sub">Sơn gel ngọc trai & Dưỡng móng Pháp</p>
-                <button class="btn-banner-book">Đặt cọc giữ suất</button>
+          <div class="cat-grid-lux">
+            <!-- 1. Làm Nail Art -->
+            <div class="cat-item-lux" onclick="openServiceDetail('nail')">
+              <div class="cat-podium-circle">
+                <i class="fa-solid fa-hand-sparkles"></i>
               </div>
-              <div class="banner-thumb-wrap">
-                <img class="banner-thumb" src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=350&q=80" alt="Nail Art" />
-              </div>
+              <span class="cat-name-lux">Làm Nail Art</span>
             </div>
 
-            <div class="banner-card hero-bg-2" onclick="openServiceDetail('spa')">
-              <div class="banner-content">
-                <span class="banner-badge-top">Signature Spa</span>
-                <h3 class="banner-title">Nghỉ Dưỡng Đá Nóng</h3>
-                <p class="banner-sub">Xông tinh dầu hoa hồng & Thảo dược 90p</p>
-                <button class="btn-banner-book">Trải nghiệm</button>
+            <!-- 2. Spa Trị Liệu -->
+            <div class="cat-item-lux" onclick="openServiceDetail('spa')">
+              <div class="cat-podium-circle">
+                <i class="fa-solid fa-spa"></i>
               </div>
-              <div class="banner-thumb-wrap">
-                <img class="banner-thumb" src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=350&q=80" alt="Spa Massage" />
+              <span class="cat-name-lux">Spa Trị Liệu</span>
+            </div>
+
+            <!-- 3. Chăm sóc da -->
+            <div class="cat-item-lux" onclick="openServiceDetail('skincare')">
+              <div class="cat-podium-circle">
+                <i class="fa-solid fa-pump-soap"></i>
+              </div>
+              <span class="cat-name-lux">Chăm sóc da</span>
+            </div>
+
+            <!-- 4. Đặt lịch VIP -->
+            <div class="cat-item-lux" onclick="openBookingModal('Đặt Lịch VIP Hoàng Gia')">
+              <div class="cat-podium-circle">
+                <i class="fa-solid fa-crown"></i>
+              </div>
+              <span class="cat-name-lux">Đặt lịch VIP</span>
+            </div>
+
+            <!-- 5. Hair Salon -->
+            <div class="cat-item-lux" onclick="openServiceDetail('hair')">
+              <div class="cat-podium-circle">
+                <i class="fa-solid fa-scissors"></i>
+              </div>
+              <span class="cat-name-lux">Hair Salon</span>
+            </div>
+
+            <!-- 6. Makeup Tiệc -->
+            <div class="cat-item-lux" onclick="openServiceDetail('makeup')">
+              <div class="cat-podium-circle">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+              </div>
+              <span class="cat-name-lux">Makeup Tiệc</span>
+            </div>
+
+            <!-- 7. Dưỡng sinh -->
+            <div class="cat-item-lux" onclick="openServiceDetail('herbal')">
+              <div class="cat-podium-circle">
+                <i class="fa-solid fa-leaf"></i>
+              </div>
+              <span class="cat-name-lux">Dưỡng sinh</span>
+            </div>
+
+            <!-- 8. Khác -->
+            <div class="cat-item-lux" onclick="openAllCategoriesModal()">
+              <div class="cat-podium-circle">
+                <i class="fa-solid fa-ellipsis"></i>
+              </div>
+              <span class="cat-name-lux">Khác</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2B. DUAL QUICK ACTION HUB (VÍ GLOWPRIVE & HÔM NAY 15:30) -->
+        <section class="quick-cards-lux">
+          <!-- Card 1: Ví GlowPrivé -->
+          <div class="quick-card-lux wallet-lux" onclick="showToast('Số dư Ví: ' + userWalletBalance.toLocaleString('vi-VN') + 'đ • Hoàn 15% cho Diamond', 'fa-crown')">
+            <div class="quick-card-left">
+              <div class="crown-circle-sm">
+                <i class="fa-solid fa-crown"></i>
+              </div>
+              <div class="quick-text-col">
+                <div class="quick-lbl-row">
+                  <span>VÍ TÀI KHOẢN</span>
+                  <i class="fa-solid fa-chevron-right"></i>
+                </div>
+                <strong class="quick-val-white" id="walletBalanceDisplay">3.450.000 đ</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Hôm nay 15:30 · L'Amour -->
+          <div class="quick-card-lux schedule-lux" onclick="switchNavTab('activity')">
+            <div class="quick-card-left">
+              <div class="cal-square-sm">
+                <i class="fa-regular fa-calendar-days"></i>
+              </div>
+              <div class="quick-text-col">
+                <div class="cal-status-row">
+                  <span>Hôm nay</span>
+                  <span class="cal-dot-red"></span>
+                </div>
+                <strong class="quick-val-dark" id="quickScheduleText">15:30 · L’Amour</strong>
+                <div class="star-rating-pill">
+                  <i class="fa-solid fa-star"></i> 4.9 <i class="fa-solid fa-chevron-right"></i>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- 2D. SALON & SPA NỔI BẬT GẦN BẠN (MARKETPLACE FEED) -->
-        <section class="places-section">
-          <div class="section-header">
-            <div>
-              <h2 class="section-title">Không Gian Làm Đẹp Thượng Lưu</h2>
-              <p class="section-subtitle">Chuyên gia Master • Không gian riêng tư chuẩn 5 sao</p>
+        <!-- 2C. SHOP PLANS HERO BANNER (GÓI MỞ SÀN & VIP ĐỀ XUẤT) -->
+        <section class="vip-hero-banner-sec">
+          <div class="vip-banner-box">
+            <img class="vip-banner-bg" src="banner_glowprive_vip.jpg" alt="Gói mở sàn & tăng đề xuất Shop" />
+            <div class="vip-banner-overlay"></div>
+            <div class="vip-banner-content">
+              <span class="vip-badge-pill">GÓI ĐỐI TÁC CỬA HÀNG</span>
+              <h2 class="vip-banner-title">Mở Sàn Gian Hàng &<br>Đẩy Top Đề Xuất</h2>
+              <p class="vip-banner-desc">• Gói Thường: Phí thường niên mở sàn<br>• Gói VIP: Thường niên + Quảng cáo đề xuất<br>• Chia theo: 1, 3, 6, 12 tháng</p>
+              <button class="vip-banner-btn" onclick="showToast('Gói Thường (Phí thường niên) & Gói VIP (Thường niên + Quảng cáo) chia theo 1, 3, 6, 12 tháng', 'fa-crown')">
+                Xem các gói Shop <i class="fa-solid fa-arrow-right"></i>
+              </button>
             </div>
-            <button class="filter-btn" id="openFilterBtn" onclick="toggleFilterDrawer()">
-              <i class="fa-solid fa-sliders"></i> Bộ lọc
-            </button>
+            <!-- 3 Dots Indicator -->
+            <div class="vip-carousel-dots">
+              <span class="dot active"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2D. SALON NỔI BẬT (L'AMOUR LUXURY SPA & NAIL) -->
+        <section class="featured-salon-sec">
+          <div class="section-header-lux">
+            <h2 class="section-title-lux">Salon nổi bật</h2>
+            <a href="javascript:void(0)" class="view-all-lux" onclick="openSalonDetail(1)">
+              Xem tất cả <i class="fa-solid fa-chevron-right"></i>
+            </a>
           </div>
 
-          <div class="filter-pills">
-            <button class="pill-btn active" onclick="filterSalons('all', this)">Tất cả</button>
-            <button class="pill-btn" onclick="filterSalons('nail', this)">💅 Tiệm Nail</button>
-            <button class="pill-btn" onclick="filterSalons('spa', this)">🌿 Spa & Retreat</button>
-            <button class="pill-btn" onclick="filterSalons('hair', this)">💇 Hair Boutique</button>
-            <button class="pill-btn" onclick="filterSalons('skin', this)">✨ Derma Clinic</button>
+          <article class="featured-salon-card" onclick="openSalonDetail(1)">
+            <div class="featured-salon-top">
+              <img class="featured-salon-thumb" src="salon_luxury_interior.jpg" alt="L'Amour Luxury Spa & Nail" />
+              <div class="featured-salon-info">
+                <div class="salon-name-heart">
+                  <h3 class="salon-title-lux">L’Amour Luxury Spa & Nail</h3>
+                  <button class="fav-heart-btn" onclick="toggleFavorite(event, this)">
+                    <i class="fa-regular fa-heart"></i>
+                  </button>
+                </div>
+                <div class="salon-rating-line">
+                  <i class="fa-solid fa-star"></i>
+                  <span class="rate-bold">4.9</span>
+                  <span class="rate-reviews">(1.8k+ đánh giá)</span>
+                </div>
+                <div class="salon-loc-line">
+                  <i class="fa-solid fa-location-dot"></i>
+                  <span>Quận 1, TP. Hồ Chí Minh · 2.3 km</span>
+                </div>
+                <div class="salon-tags-row">
+                  <span class="tag-pill">Nail Art</span>
+                  <span class="tag-pill">Spa</span>
+                  <span class="tag-pill">Chăm sóc da</span>
+                </div>
+              </div>
+            </div>
+            <div class="salon-promo-discount-bar">
+              <i class="fa-solid fa-tag"></i>
+              <span>Giảm 20% cho dịch vụ nail art</span>
+            </div>
+          </article>
+        </section>
+
+        <!-- 2E. DỊCH VỤ YÊU THÍCH (CAROUSEL) -->
+        <section class="fav-services-sec">
+          <div class="section-header-lux">
+            <h2 class="section-title-lux">Dịch vụ yêu thích</h2>
+            <a href="javascript:void(0)" class="view-all-lux" onclick="showToast('Xem danh sách yêu thích')">
+              Xem tất cả <i class="fa-solid fa-chevron-right"></i>
+            </a>
           </div>
 
-          <div class="salon-list" id="salonContainer">
-            <!-- Salon 1 (Sponsored VIP) -->
-            <article class="salon-card sponsored-card" data-category="nail" onclick="openSalonDetail(1)">
-              <div class="salon-cover">
-                <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=600&q=80" alt="L’Amour Nail Lounge" />
-                <div class="salon-tag-top">
-                  <span class="tag-status open"><i class="fa-solid fa-circle"></i> Đang mở cửa</span>
-                  <span class="tag-sponsor"><i class="fa-solid fa-crown"></i> SPONSORED TOP</span>
-                </div>
-                <button class="fav-heart-btn" onclick="toggleFavorite(event, this)">
-                  <i class="fa-regular fa-heart"></i>
-                </button>
+          <div class="fav-services-carousel">
+            <!-- Item 1 -->
+            <div class="fav-service-card" onclick="openBookingModal('Sơn Gel Hữu Cơ Pháp + Dưỡng Móng', 180000, 45, true)">
+              <img src="nail_french_gel.jpg" alt="Sơn Gel Pháp" />
+              <div class="fav-card-body">
+                <h4 class="fav-card-title">Sơn Gel Hữu Cơ Pháp</h4>
+                <p class="fav-card-salon">L'Amour Luxury</p>
+                <strong class="fav-card-price">180.000 đ</strong>
               </div>
+            </div>
 
-              <div class="salon-body">
-                <div class="salon-main-info">
-                  <h3 class="salon-title">L’Amour Haute Nail & Lash Lounge</h3>
-                  <div class="salon-rating">
-                    <i class="fa-solid fa-star star-filled"></i>
-                    <span class="score">4.99</span>
-                    <span class="reviews">(1.8k+ đánh giá)</span>
-                  </div>
-                </div>
-
-                <p class="salon-services">Sơn gel hữu cơ • Thiết kế móng nghệ thuật Haute • Nối mi tơ lụa</p>
-
-                <div class="salon-meta-row">
-                  <div class="meta-item"><i class="fa-solid fa-location-dot"></i> 0.8 km • Đồng Khởi, Quận 1</div>
-                  <div class="meta-price">Đặt cọc 30%: <strong>chỉ từ 50.000đ</strong></div>
-                </div>
-
-                <div class="salon-badges-row">
-                  <span class="badge-mini"><i class="fa-solid fa-shield-check"></i> Đặt cọc an toàn</span>
-                  <span class="badge-mini highlight"><i class="fa-solid fa-rotate-left"></i> Hoàn cọc 100% trước 2h</span>
-                </div>
+            <!-- Item 2 -->
+            <div class="fav-service-card" onclick="openBookingModal('Nail Art Mắt Mèo Cực Quang VIP', 280000, 60, true)">
+              <img src="nail_cateye_aurora.jpg" alt="Nail Art Mắt Mèo" />
+              <div class="fav-card-body">
+                <h4 class="fav-card-title">Nail Art Mắt Mèo VIP</h4>
+                <p class="fav-card-salon">L'Amour Luxury</p>
+                <strong class="fav-card-price">280.000 đ</strong>
               </div>
-            </article>
+            </div>
 
-            <!-- Salon 2 -->
-            <article class="salon-card" data-category="spa" onclick="openSalonDetail(2)">
-              <div class="salon-cover">
-                <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" alt="An Yên Herbal Spa" />
-                <div class="salon-tag-top">
-                  <span class="tag-status open"><i class="fa-solid fa-circle"></i> Đang mở cửa</span>
-                  <span class="tag-promo"><i class="fa-solid fa-ticket"></i> Tặng 30p xông đá muối</span>
-                </div>
-                <button class="fav-heart-btn" onclick="toggleFavorite(event, this)">
-                  <i class="fa-solid fa-heart active"></i>
-                </button>
+            <!-- Item 3 -->
+            <div class="fav-service-card" onclick="openBookingModal('Massage Thảo Dược & Đá Nóng', 350000, 90, false)">
+              <img src="shop_hero_spa.jpg" alt="Massage Thảo Dược" />
+              <div class="fav-card-body">
+                <h4 class="fav-card-title">Massage Thảo Dược Đá Nóng</h4>
+                <p class="fav-card-salon">An Yên Retreat</p>
+                <strong class="fav-card-price">350.000 đ</strong>
               </div>
-
-              <div class="salon-body">
-                <div class="salon-main-info">
-                  <h3 class="salon-title">An Yên Thảo Dược & Luxury Retreat</h3>
-                  <div class="salon-rating">
-                    <i class="fa-solid fa-star star-filled"></i>
-                    <span class="score">4.97</span>
-                    <span class="reviews">(1.1k+ đánh giá)</span>
-                  </div>
-                </div>
-
-                <p class="salon-services">Gội đầu dưỡng sinh cung đình • Massage đá nóng Himalaya</p>
-
-                <div class="salon-meta-row">
-                  <div class="meta-item"><i class="fa-solid fa-location-dot"></i> 1.5 km • Tú Xương, Quận 3</div>
-                  <div class="meta-price">Đặt cọc 30%: <strong>chỉ từ 50.000đ</strong></div>
-                </div>
-
-                <div class="salon-badges-row">
-                  <span class="badge-mini"><i class="fa-solid fa-spa"></i> Trị liệu 5 sao</span>
-                  <span class="badge-mini highlight"><i class="fa-solid fa-leaf"></i> Thảo mộc 100% tự nhiên</span>
-                </div>
-              </div>
-            </article>
-
-            <!-- Salon 3 -->
-            <article class="salon-card" data-category="hair" onclick="openSalonDetail(3)">
-              <div class="salon-cover">
-                <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600&q=80" alt="The Muse Hair Studio" />
-                <div class="salon-tag-top">
-                  <span class="tag-status open"><i class="fa-solid fa-circle"></i> Đang mở cửa</span>
-                  <span class="tag-promo"><i class="fa-solid fa-gem"></i> Giảm 30% Master Cut</span>
-                </div>
-                <button class="fav-heart-btn" onclick="toggleFavorite(event, this)">
-                  <i class="fa-regular fa-heart"></i>
-                </button>
-              </div>
-
-              <div class="salon-body">
-                <div class="salon-main-info">
-                  <h3 class="salon-title">The Muse Haute Coiffure Boutique</h3>
-                  <div class="salon-rating">
-                    <i class="fa-solid fa-star star-filled"></i>
-                    <span class="score">4.92</span>
-                    <span class="reviews">(920 đánh giá)</span>
-                  </div>
-                </div>
-
-                <p class="salon-services">Tạo mẫu tóc thiết kế tỷ lệ vàng • Nhuộm Balayage Pháp</p>
-
-                <div class="salon-meta-row">
-                  <div class="meta-item"><i class="fa-solid fa-location-dot"></i> 2.1 km • Thảo Điền, TP. Thủ Đức</div>
-                  <div class="meta-price">Đặt cọc 30%: <strong>chỉ từ 50.000đ</strong></div>
-                </div>
-              </div>
-            </article>
+            </div>
           </div>
         </section>
 
@@ -419,27 +301,132 @@
       <!-- ================= 3. PARTNER / SALON MANAGER VIEW ================= -->
       <div class="scroll-content partner-view" id="partnerView" style="display:none;">
         
-        <section class="partner-profile-header">
-          <div class="partner-avatar-wrap">
-            <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=150&q=80" alt="Salon Avatar" />
-            <span class="partner-verified-badge" id="salonStatusBadge"><i class="fa-solid fa-circle-check"></i> Đã kích hoạt</span>
-          </div>
-          <div class="partner-info">
-            <h2 class="partner-name">L’Amour Haute Nail & Lash Lounge</h2>
-            <p class="partner-address"><i class="fa-solid fa-location-dot"></i> 45 Đồng Khởi, Phường Bến Nghé, Quận 1</p>
-            <div class="partner-meta-tags">
-              <span class="plan-tag vip"><i class="fa-solid fa-crown"></i> Gói VIP Sponsor (Còn 24 ngày)</span>
-              <span class="rating-tag"><i class="fa-solid fa-star"></i> 4.99 (1.8k reviews)</span>
+        <!-- 3A. HERO LUXURY SALON PROFILE CARD -->
+        <section class="partner-hero-card">
+          <div class="partner-hero-left">
+            <div class="partner-crown-medallion">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#BA8B55" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
+              </svg>
             </div>
+            <h1 class="partner-hero-title">L'Amour Luxury<br>Spa & Nail</h1>
+            <div class="partner-hero-meta">
+              <i class="fa-solid fa-location-dot"></i>
+              <span>Quận 1, TP. Hồ Chí Minh · Mở cửa: 09:00 - 21:00</span>
+            </div>
+            <button class="partner-status-btn" onclick="toggleSalonStatus()">
+              <i class="fa-solid fa-play"></i>
+              <span id="partnerStatusText">Đang hoạt động</span>
+            </button>
+          </div>
+          <div class="partner-hero-portal">
+            <img src="shop_hero_spa.jpg" alt="L'Amour Luxury Spa & Nail Portal" />
           </div>
         </section>
 
-        <!-- Partner Nav Tabs -->
-        <div class="partner-tabs">
-          <button class="partner-tab-btn active" onclick="switchPartnerTab('calendar', this)"><i class="fa-solid fa-calendar-days"></i> Lịch Tuần</button>
-          <button class="partner-tab-btn" onclick="switchPartnerTab('services', this)"><i class="fa-solid fa-list-check"></i> Menu Dịch Vụ</button>
-          <button class="partner-tab-btn" onclick="switchPartnerTab('plans', this)"><i class="fa-solid fa-rocket"></i> Gói Đối Tác</button>
+        <!-- 3B. METRICS CARD (BOOKING HÔM NAY & DOANH THU NGÀY) -->
+        <div class="partner-metrics-card">
+          <div class="metric-col">
+            <div class="metric-icon-box">
+              <i class="fa-regular fa-calendar-days"></i>
+            </div>
+            <div class="metric-text-box">
+              <span class="metric-label">Booking hôm nay</span>
+              <strong class="metric-value">12</strong>
+            </div>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric-col">
+            <div class="metric-icon-box">
+              <i class="fa-solid fa-coins"></i>
+            </div>
+            <div class="metric-text-box">
+              <span class="metric-label">Doanh thu ngày</span>
+              <strong class="metric-value">4.850.000 đ</strong>
+            </div>
+          </div>
         </div>
+
+        <!-- 3C. REVIEWS CARD (ĐÁNH GIÁ CỦA KHÁCH HÀNG) -->
+        <div class="partner-reviews-card" onclick="openReviewsModal()">
+          <div class="reviews-left">
+            <div class="reviews-icon-box">
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <div class="reviews-text-box">
+              <span class="reviews-label">Đánh giá của khách hàng</span>
+              <div class="reviews-rating-line">
+                <strong class="rating-num">4.9</strong>
+                <span class="rating-count">(1.8k+ reviews)</span>
+              </div>
+            </div>
+          </div>
+          <div class="reviews-link">
+            <span>Xem tất cả</span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+        </div>
+
+        <!-- 3D. SECTION HEADER (DANH MỤC DỊCH VỤ CỦA SHOP) -->
+        <div class="partner-section-header">
+          <div class="section-title-wrap">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <h2 class="section-title">Danh Mục Dịch Vụ Của Shop</h2>
+          </div>
+          <div class="section-decor-line">
+            <div class="decor-bar"></div>
+            <span class="decor-sparkle">✦</span>
+          </div>
+        </div>
+
+        <!-- 3E. SERVICE ITEMS LIST -->
+        <div class="partner-service-lux-list">
+          <!-- Item 1: French Gel Manicure -->
+          <div class="partner-service-lux-card" onclick="openBookingModal('Sơn Gel Hữu Cơ Pháp + Dưỡng Móng', 180000, 45, true)">
+            <img class="service-lux-img" src="nail_french_gel.jpg" alt="Sơn Gel Hữu Cơ Pháp + Dưỡng Móng" />
+            <div class="service-lux-content">
+              <h3 class="service-lux-title">Sơn Gel Hữu Cơ Pháp +<br>Dưỡng Móng</h3>
+              <div class="service-lux-meta">
+                <i class="fa-regular fa-clock"></i>
+                <span>45 phút · Cọc 50k</span>
+              </div>
+            </div>
+            <div class="service-lux-pricing">
+              <span class="service-lux-price">180.000 đ</span>
+              <i class="fa-solid fa-chevron-right"></i>
+            </div>
+          </div>
+
+          <!-- Item 2: Cat Eye Aurora Nails -->
+          <div class="partner-service-lux-card" onclick="openBookingModal('Nail Art Mắt Mèo Cực Quang VIP', 280000, 60, true)">
+            <img class="service-lux-img" src="nail_cateye_aurora.jpg" alt="Nail Art Mắt Mèo Cực Quang VIP" />
+            <div class="service-lux-content">
+              <h3 class="service-lux-title">Nail Art Mắt Mèo Cực<br>Quang VIP</h3>
+              <div class="service-lux-meta">
+                <i class="fa-regular fa-clock"></i>
+                <span>60 phút · Cọc 84k</span>
+              </div>
+            </div>
+            <div class="service-lux-pricing">
+              <span class="service-lux-price">280.000 đ</span>
+              <i class="fa-solid fa-chevron-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collapsible Salon Schedule & Management Utilities -->
+        <div class="partner-tools-drawer">
+          <div class="partner-tools-toggle" onclick="togglePartnerTools()">
+            <span><i class="fa-solid fa-sliders"></i> Quản lý Ma trận Lịch & Bảng giá</span>
+            <i class="fa-solid fa-chevron-down" id="toolsChevron"></i>
+          </div>
+          <div class="partner-tools-content" id="partnerToolsContent" style="display:none;">
+            <!-- Partner Nav Tabs -->
+            <div class="partner-tabs">
+              <button class="partner-tab-btn active" onclick="switchPartnerTab('calendar', this)"><i class="fa-solid fa-calendar-days"></i> Lịch Tuần</button>
+              <button class="partner-tab-btn" onclick="switchPartnerTab('services', this)"><i class="fa-solid fa-list-check"></i> Menu Dịch Vụ</button>
+              <button class="partner-tab-btn" onclick="switchPartnerTab('plans', this)"><i class="fa-solid fa-rocket"></i> Gói Đối Tác</button>
+            </div>
 
         <!-- 3A. TAB 1: LỊCH HOẠT ĐỘNG 7 NGÀY X KHUNG GIỜ -->
         <div class="partner-tab-pane active" id="paneCalendar">
@@ -543,143 +530,270 @@
           </div>
         </div>
 
-        <!-- 3C. TAB 3: GÓI ĐỐI TÁC & QUẢNG CÁO SPONSORED LISTINGS -->
+        <!-- 3C. TAB 3: GÓI ĐỐI TÁC & QUẢNG CÁO SPONSORED LISTINGS (3, 6, 12 THÁNG) -->
         <div class="partner-tab-pane" id="panePlans" style="display:none;">
           <div class="section-box">
-            <div class="pane-header">
+            <!-- Free First Month Promo Card -->
+            <div class="promo-free-month-card">
+              <div class="p-badge"><i class="fa-solid fa-sparkles"></i> ƯU ĐÃI ĐẶC QUYỀN MỞ GIAN HÀNG</div>
+              <h3>MIỄN PHÍ (FREE) THÁNG ĐẦU TIÊN</h3>
+              <p>Áp dụng cho mọi gói đăng ký 3, 6 hoặc 12 tháng. Trải nghiệm 30 ngày hoàn toàn 0đ trước khi bắt đầu tính cước chu kỳ!</p>
+            </div>
+
+            <div class="pane-header" style="margin-top:14px;">
               <div>
-                <h3 class="pane-title">Gói Dịch Vụ Đối Tác & Hiển Thị Nổi Bật</h3>
-                <p class="pane-sub">Gia tăng khách hàng tiềm năng với vị trí Sponsored Top</p>
+                <h3 class="pane-title">Gói Mở Sàn & Tăng Đề Xuất Shop</h3>
+                <p class="pane-sub">Chọn chu kỳ đóng phí để nhận ưu đãi chiết khấu:</p>
               </div>
+            </div>
+
+            <!-- Cycle Selector Tabs (3, 6, 12 Tháng) -->
+            <div class="cycle-pill-selector">
+              <button class="cycle-pill-btn" onclick="selectPlanCycle(3, this)">3 Tháng</button>
+              <button class="cycle-pill-btn active" onclick="selectPlanCycle(6, this)">6 Tháng (Tiết kiệm 10%)</button>
+              <button class="cycle-pill-btn" onclick="selectPlanCycle(12, this)">12 Tháng (Tiết kiệm 20% + Tặng 1 tháng)</button>
             </div>
 
             <div class="plans-grid">
+              <!-- GÓI 1: GÓI CỬA HÀNG THƯỜNG MỞ SÀN -->
               <div class="plan-card">
+                <div class="plan-badge-top outline">GÓI MỞ SÀN CƠ BẢN</div>
                 <div class="plan-head">
-                  <h4>Gói Cơ Bản (Starter)</h4>
-                  <div class="plan-price">Miễn Phí</div>
+                  <h4>Gói Thường Mở Sàn</h4>
+                  <div class="plan-price" id="planStandardPrice">1.090.000đ <span id="planStandardDuration">/ 6 tháng</span></div>
+                  <div class="free-month-tag"><i class="fa-solid fa-gift"></i> Free tháng đầu (30 ngày 0đ)</div>
+                </div>
+                <div class="fee-breakdown-sub">
+                  <span>Phí thường niên duy trì gian hàng kinh doanh</span>
                 </div>
                 <ul class="plan-perks">
-                  <li><i class="fa-solid fa-check"></i> Đăng tải 5 dịch vụ</li>
-                  <li><i class="fa-solid fa-check"></i> Quản lý Calendar cơ bản</li>
-                  <li><i class="fa-solid fa-xmark text-muted"></i> Không ưu tiên vị trí tìm kiếm</li>
+                  <li><i class="fa-solid fa-check"></i> Mở gian hàng chính thức trên sàn Glow</li>
+                  <li><i class="fa-solid fa-check"></i> Đăng tải tối đa 15 dịch vụ & bảng giá</li>
+                  <li><i class="fa-solid fa-check"></i> Quản lý lịch hẹn & ma trận 7 ngày</li>
+                  <li><i class="fa-solid fa-check"></i> Cài đặt nhận cọc: Tùy chọn Bật/Tắt cọc & Set 5 mệnh giá</li>
                 </ul>
-                <button class="btn-plan outline" onclick="showToast('Gói đang áp dụng')">Đang dùng</button>
+                <button class="btn-plan outline" onclick="subscribePlan('Gói Thường Mở Sàn')">Đăng Ký Gói Thường</button>
               </div>
 
-              <div class="plan-card featured-plan">
-                <div class="plan-badge-top">Được Chọn Nhiều Nhất</div>
-                <div class="plan-head">
-                  <h4>Gói Pro Partner</h4>
-                  <div class="plan-price">499.000đ <span>/tháng</span></div>
-                </div>
-                <ul class="plan-perks">
-                  <li><i class="fa-solid fa-check"></i> Đăng tải dịch vụ không giới hạn</li>
-                  <li><i class="fa-solid fa-check"></i> Thu cọc tự động qua MoMo/VietQR</li>
-                  <li><i class="fa-solid fa-check"></i> Nhắc hẹn Zalo/SMS tự động</li>
-                </ul>
-                <button class="btn-plan primary" onclick="showToast('Đã gửi yêu cầu nâng cấp Gói Pro')">Nâng Cấp Ngay</button>
-              </div>
-
+              <!-- GÓI 2: GÓI CỬA HÀNG VIP ĐỂ TĂNG ĐỀ XUẤT -->
               <div class="plan-card vip-plan">
-                <div class="plan-badge-top gold">Vị Trí Top 1 Marketplace</div>
+                <div class="plan-badge-top gold"><i class="fa-solid fa-crown"></i> TOP 1 ĐỀ XUẤT MARKETPLACE</div>
                 <div class="plan-head">
-                  <h4>VIP Sponsored Lounge</h4>
-                  <div class="plan-price">999.000đ <span>/tháng</span></div>
+                  <h4>Gói VIP Tăng Đề Xuất</h4>
+                  <div class="plan-price" id="planVipPrice">2.790.000đ <span id="planVipDuration">/ 6 tháng</span></div>
+                  <div class="free-month-tag gold"><i class="fa-solid fa-gift"></i> Tặng Free tháng đầu + Đẩy Top</div>
+                </div>
+                <div class="fee-breakdown-sub highlight">
+                  <div><strong>Bóc tách chi phí gói VIP:</strong></div>
+                  <div id="vipRegularPart">• Phí thường niên mở sàn: 1.090.000đ</div>
+                  <div id="vipAdPart">• Phí quảng cáo đẩy top đề xuất: 1.700.000đ</div>
                 </div>
                 <ul class="plan-perks">
-                  <li><i class="fa-solid fa-gem"></i> Huy hiệu SPONSORED TOP trên trang chủ</li>
-                  <li><i class="fa-solid fa-gem"></i> Ưu tiên Top 1 kết quả tìm kiếm quận</li>
-                  <li><i class="fa-solid fa-gem"></i> Quản lý Concierge VIP riêng</li>
+                  <li><i class="fa-solid fa-gem"></i> Huy hiệu Vàng <strong>SPONSORED TOP</strong> trang chủ</li>
+                  <li><i class="fa-solid fa-gem"></i> Ưu tiên Top 1 thuật toán tìm kiếm quận</li>
+                  <li><i class="fa-solid fa-gem"></i> Chatbox AI ưu tiên đề xuất cho khách xung quanh</li>
+                  <li><i class="fa-solid fa-gem"></i> Đăng tải không giới hạn dịch vụ & nhân viên</li>
+                  <li><i class="fa-solid fa-gem"></i> Chuyên viên Concierge VIP tư vấn doanh thu 1:1</li>
                 </ul>
-                <button class="btn-plan gold" onclick="showToast('Đã gia hạn Gói VIP Sponsored thành công!')">Gia Hạn Gói VIP</button>
+                <button class="btn-plan gold" onclick="subscribePlan('Gói VIP Tăng Đề Xuất')">Đăng Ký Gói VIP (Free Tháng Đầu)</button>
               </div>
             </div>
           </div>
         </div>
 
+          </div> <!-- /.partner-tools-content -->
+        </div> <!-- /.partner-tools-drawer -->
+
         <div class="bottom-spacer"></div>
       </div>
 
 
-      <!-- ================= 4. TAB LỊCH HẸN & NHẮC LỊCH (ACTIVITY & REMINDER HUB) ================= -->
+      <!-- ================= 4. TAB TIN NHẮN & HOẠT ĐỘNG (MATCHING IMAGE 2) ================= -->
       <div class="scroll-content activity-view" id="activityView" style="display:none;">
-        <div class="activity-header">
-          <h2 class="activity-title">Lịch Hẹn Của Quý Cô</h2>
-          <p class="activity-sub">Quản lý vé booking, mã QR check-in, nhắc hẹn và đánh giá</p>
+        <!-- 4A. Top Toggle Tabs: Hoạt động | Tin nhắn + Compose Icon -->
+        <div class="msg-top-tabs-bar">
+          <div class="msg-tabs-left">
+            <button class="msg-tab-btn" id="tabActivityToggle" onclick="switchMsgPane('activity')">Hoạt động</button>
+            <button class="msg-tab-btn active" id="tabMessagesToggle" onclick="switchMsgPane('messages')">Tin nhắn</button>
+          </div>
+          <button class="msg-compose-btn" onclick="openChatModal('L’Amour Luxury Spa & Nail')">
+            <i class="fa-regular fa-pen-to-square"></i>
+          </button>
         </div>
 
-        <!-- Smart Reminder Banner -->
-        <div class="smart-reminder-alert" onclick="showToast('Lịch hẹn sắp diễn ra trong 45 phút')">
-          <div class="alert-icon"><i class="fa-solid fa-bell"></i></div>
-          <div class="alert-body">
-            <strong>Nhắc hẹn tự động: Còn 45 phút</strong>
-            <span>Lịch hẹn tại L’Amour Lounge bắt đầu lúc 15:30. Nghệ nhân đã sẵn sàng.</span>
+        <!-- PANE 1: TIN NHẮN (MATCHING IMAGE 2) -->
+        <div id="paneMsgMessages">
+          <!-- Search box -->
+          <div class="msg-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="msgSearchInput" placeholder="Tìm kiếm tin nhắn..." oninput="handleMsgSearch(this.value)" />
+          </div>
+
+          <!-- Filter Pills: Tất cả, Khách hàng, Salon, Hệ thống -->
+          <div class="msg-filter-pills">
+            <button class="msg-pill active" onclick="filterMsgCategory('all', this)">Tất cả</button>
+            <button class="msg-pill" onclick="filterMsgCategory('Khách hàng', this)">Khách hàng</button>
+            <button class="msg-pill" onclick="filterMsgCategory('Salon', this)">Salon</button>
+            <button class="msg-pill" onclick="filterMsgCategory('Hệ thống', this)">Hệ thống</button>
+          </div>
+
+          <!-- Conversations List (Image 2 exact items) -->
+          <div class="msg-conv-list" id="msgConversationList">
+            <!-- Item 1: Nguyễn Thị Mai -->
+            <div class="msg-conv-item" data-tag="Khách hàng" onclick="openChatModal('Nguyễn Thị Mai')">
+              <div class="conv-unread-dot"></div>
+              <div class="conv-avatar-box">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div class="conv-content">
+                <h4 class="conv-name">Nguyễn Thị Mai</h4>
+                <p class="conv-snippet">Em muốn đặt lịch gội đầu và massage cổ vai gáy vào cuối tuần này ạ.</p>
+                <span class="conv-tag-pill">Khách hàng</span>
+              </div>
+              <div class="conv-meta">
+                <span class="conv-time">10:24</span>
+                <span class="conv-badge">2</span>
+              </div>
+            </div>
+
+            <!-- Item 2: L'Amour Luxury Spa & Nail -->
+            <div class="msg-conv-item" data-tag="Salon" onclick="openChatModal('L’Amour Luxury Spa & Nail')">
+              <div class="conv-unread-dot hide"></div>
+              <div class="conv-avatar-box">
+                <i class="fa-solid fa-store"></i>
+                <span class="online-indicator-dot"></span>
+              </div>
+              <div class="conv-content">
+                <h4 class="conv-name">L’Amour Luxury Spa & Nail</h4>
+                <p class="conv-snippet">Dạ bên em đã xác nhận lịch hẹn cho chị vào 15h ngày mai ạ. Cảm ơn chị!</p>
+                <span class="conv-tag-pill">Salon</span>
+              </div>
+              <div class="conv-meta">
+                <span class="conv-time">09:47</span>
+              </div>
+            </div>
+
+            <!-- Item 3: Trần Thảo Anh -->
+            <div class="msg-conv-item" data-tag="Khách hàng" onclick="openChatModal('Trần Thảo Anh')">
+              <div class="conv-unread-dot"></div>
+              <div class="conv-avatar-box">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div class="conv-content">
+                <h4 class="conv-name">Trần Thảo Anh</h4>
+                <p class="conv-snippet">Dạ shop ơi, em muốn đổi lịch hẹn từ 14h sang 16h được không ạ?</p>
+                <span class="conv-tag-pill">Khách hàng</span>
+              </div>
+              <div class="conv-meta">
+                <span class="conv-time">Hôm qua</span>
+                <span class="conv-badge">1</span>
+              </div>
+            </div>
+
+            <!-- Item 4: An Yên Thảo Dược Retreat -->
+            <div class="msg-conv-item" data-tag="Salon" onclick="openChatModal('An Yên Thảo Dược Retreat')">
+              <div class="conv-unread-dot hide"></div>
+              <div class="conv-avatar-box">
+                <i class="fa-solid fa-store"></i>
+                <span class="online-indicator-dot"></span>
+              </div>
+              <div class="conv-content">
+                <h4 class="conv-name">An Yên Thảo Dược Retreat</h4>
+                <p class="conv-snippet">Bạn có thể gửi giúp mình bảng giá dịch vụ spa hiện tại được không ạ?</p>
+                <span class="conv-tag-pill">Salon</span>
+              </div>
+              <div class="conv-meta">
+                <span class="conv-time">Hôm qua</span>
+              </div>
+            </div>
+
+            <!-- Item 5: Lê Minh Trang -->
+            <div class="msg-conv-item" data-tag="Khách hàng" onclick="openChatModal('Lê Minh Trang')">
+              <div class="conv-unread-dot hide"></div>
+              <div class="conv-avatar-box">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div class="conv-content">
+                <h4 class="conv-name">Lê Minh Trang</h4>
+                <p class="conv-snippet">Cảm ơn shop nhiều ạ! Dịch vụ rất tốt, em sẽ quay lại.</p>
+                <span class="conv-tag-pill">Khách hàng</span>
+              </div>
+              <div class="conv-meta">
+                <span class="conv-time">Thứ 6</span>
+              </div>
+            </div>
+
+            <!-- Item 6: Thông báo hệ thống -->
+            <div class="msg-conv-item" data-tag="Hệ thống" onclick="openChatModal('Thông báo hệ thống')">
+              <div class="conv-unread-dot hide"></div>
+              <div class="conv-avatar-box">
+                <i class="fa-solid fa-bell"></i>
+              </div>
+              <div class="conv-content">
+                <h4 class="conv-name">Thông báo hệ thống</h4>
+                <p class="conv-snippet">Lịch hẹn của bạn đã được xác nhận thành công. Vui lòng kiểm tra chi tiết trong mục Đặt lịch.</p>
+                <span class="conv-tag-pill">Hệ thống</span>
+              </div>
+              <div class="conv-meta">
+                <span class="conv-time">Thứ 5</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Active Booking Ticket Card -->
-        <div class="booking-ticket-card" id="userBookingTicket">
-          <div class="ticket-top">
-            <div class="ticket-status-pill" id="ticketStatusPill"><i class="fa-solid fa-circle-check"></i> ĐÃ XÁC NHẬN & ĐẶT CỌC</div>
-            <span class="booking-id">#GLOW-8921</span>
-          </div>
-
-          <div class="ticket-body">
-            <h3 class="ticket-salon-name">L’Amour Haute Nail & Lash Lounge</h3>
-            <p class="ticket-service-name" id="ticketServiceName">Sơn Gel Hữu Cơ Pháp + Dưỡng Móng (45p)</p>
-
-            <div class="ticket-time-box">
-              <div class="time-item">
-                <span class="lbl">Thời gian</span>
-                <strong id="ticketTimeText">15:30 - Hôm nay</strong>
-              </div>
-              <div class="time-item">
-                <span class="lbl">Chuyên viên</span>
-                <strong>Master Linh (VIP)</strong>
-              </div>
-            </div>
-
-            <div class="ticket-qr-area" onclick="showToast('Mã QR Check-in hợp lệ. Salon sẽ quét khi bạn đến!')">
-              <div class="qr-mockup"><i class="fa-solid fa-qrcode"></i></div>
-              <span class="qr-hint">Đưa mã QR này cho lễ tân để nhận phòng VIP ngay</span>
-            </div>
-
-            <div class="ticket-payment-summary">
-              <div class="pay-row">
-                <span>Tổng giá trị dịch vụ:</span>
-                <span id="ticketTotalPrice">180.000đ</span>
-              </div>
-              <div class="pay-row highlight">
-                <span>Tiền cọc 30% đã thanh toán (MoMo Sandbox):</span>
-                <strong id="ticketDepositPaid">-50.000đ</strong>
-              </div>
-              <div class="pay-row total">
-                <span>Thanh toán còn lại tại Salon:</span>
-                <strong id="ticketRemainPrice">130.000đ</strong>
-              </div>
-            </div>
-
-            <div class="ticket-actions-row" id="ticketActionsRow">
-              <button class="ticket-btn outline" onclick="openCancellationModal()"><i class="fa-solid fa-rotate-left"></i> Hủy & Hoàn cọc</button>
-              <button class="ticket-btn secondary" onclick="openBookingModal('L’Amour Lounge - Đổi giờ')"><i class="fa-solid fa-calendar-days"></i> Đổi giờ</button>
+        <!-- PANE 2: HOẠT ĐỘNG (BOOKING TICKETS & REMINDERS) -->
+        <div id="paneMsgActivity" style="display:none; padding:16px;">
+          <!-- Smart Reminder Banner -->
+          <div class="smart-reminder-alert" onclick="showToast('Lịch hẹn sắp diễn ra trong 45 phút', 'fa-bell')">
+            <div class="alert-icon"><i class="fa-solid fa-bell"></i></div>
+            <div class="alert-body">
+              <strong>Nhắc hẹn tự động: Còn 45 phút</strong>
+              <span>Lịch hẹn tại L’Amour Luxury bắt đầu lúc 15:30. Nghệ nhân đã sẵn sàng.</span>
             </div>
           </div>
-        </div>
 
-        <!-- Completed Booking (For Post-Service Review) -->
-        <div class="completed-ticket-card">
-          <div class="completed-header">
-            <div>
-              <span class="completed-tag">ĐÃ HOÀN TẤT</span>
-              <h4>An Yên Thảo Dược & Luxury Retreat</h4>
-              <p>Gội đầu dưỡng sinh cung đình 75p • Ngày 05/10/2026</p>
+          <!-- Active Booking Ticket Card -->
+          <div class="booking-ticket-card" id="userBookingTicket" style="margin-top:14px;">
+            <div class="ticket-top">
+              <div class="ticket-status-pill" id="ticketStatusPill"><i class="fa-solid fa-circle-check"></i> ĐÃ XÁC NHẬN & ĐẶT CỌC</div>
+              <span class="booking-id">#GLOW-8921</span>
             </div>
-          </div>
-          <div class="completed-action-box">
-            <button class="btn-review-trigger" onclick="openReviewModal('An Yên Thảo Dược & Luxury Retreat')">
-              <i class="fa-solid fa-star"></i> Đánh giá 5 sao & Nhận xét (+100 xu)
-            </button>
+
+            <div class="ticket-body">
+              <h3 class="ticket-salon-name">L’Amour Luxury Spa & Nail</h3>
+              <p class="ticket-service-name" id="ticketServiceName">Sơn Gel Hữu Cơ Pháp + Dưỡng Móng (45p)</p>
+
+              <div class="ticket-time-box">
+                <div class="time-item">
+                  <span class="lbl">Thời gian</span>
+                  <strong id="ticketTimeText">15:30 - Hôm nay</strong>
+                </div>
+                <div class="time-item">
+                  <span class="lbl">Chuyên viên</span>
+                  <strong>Master Linh (VIP)</strong>
+                </div>
+              </div>
+
+              <div class="ticket-qr-area" onclick="showToast('Mã QR Check-in hợp lệ. Salon sẽ quét khi bạn đến!', 'fa-qrcode')">
+                <div class="qr-mockup"><i class="fa-solid fa-qrcode"></i></div>
+                <span class="qr-hint">Đưa mã QR này cho lễ tân để nhận phòng VIP ngay</span>
+              </div>
+
+              <div class="ticket-payment-summary">
+                <div class="pay-row">
+                  <span>Tổng giá trị dịch vụ:</span>
+                  <span id="ticketTotalPrice">180.000đ</span>
+                </div>
+                <div class="pay-row highlight">
+                  <span>Tiền cọc 30% đã thanh toán:</span>
+                  <strong id="ticketDepositPaid">-50.000đ</strong>
+                </div>
+                <div class="pay-row total">
+                  <span>Thanh toán còn lại tại Salon:</span>
+                  <strong id="ticketRemainPrice">130.000đ</strong>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -687,122 +801,371 @@
       </div>
 
 
-      <!-- ================= 5. ADMIN / QUẢN TRỊ MARKETPLACE VIEW ================= -->
+      <!-- ================= 5. ADMIN / QUẢN TRỊ MARKETPLACE VIEW (MATCHING IMAGE 3 & SPEC A-G) ================= -->
       <div class="scroll-content admin-view" id="adminView" style="display:none;">
-        <div class="admin-header-card">
-          <div class="admin-shield"><i class="fa-solid fa-shield-halved"></i></div>
-          <div>
-            <h2 class="admin-title">Kênh Quản Trị Hệ Thống</h2>
-            <p class="admin-sub">Kiểm duyệt đối tác salon, đánh giá khách hàng và dòng tiền đặt cọc</p>
-          </div>
-        </div>
 
-        <!-- Admin Stats Bar -->
-        <div class="admin-stats-grid">
-          <div class="admin-stat-card">
-            <span class="stat-lbl">Đối tác Active</span>
-            <strong class="stat-val" id="adminActiveSalons">18</strong>
-          </div>
-          <div class="admin-stat-card">
-            <span class="stat-lbl">Chờ duyệt</span>
-            <strong class="stat-val text-gold" id="adminPendingSalons">2</strong>
-          </div>
-          <div class="admin-stat-card">
-            <span class="stat-lbl">Tổng cọc giữ sàn</span>
-            <strong class="stat-val text-emerald">48.5M</strong>
-          </div>
-        </div>
+        <!-- 5A. SUB-PANE: TRANG CHỦ ADMIN (SECTION A & IMAGE 3) -->
+        <div id="adminPaneHome">
+          <!-- 1. TỔNG QUAN HÔM NAY (CARD) -->
+          <div class="admin-overview-card">
+            <div class="overview-header-row">
+              <div>
+                <h3 class="overview-title">Tổng quan hôm nay</h3>
+                <p class="overview-sub">Cập nhật lúc 15:56 · 12/08/2025</p>
+              </div>
+              <div class="admin-date-pill">
+                <i class="fa-regular fa-calendar-days"></i>
+                <span>Hôm nay</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </div>
+            </div>
 
-        <!-- Admin Sub-tabs -->
-        <div class="partner-tabs">
-          <button class="partner-tab-btn active" onclick="switchAdminTab('approve', this)"><i class="fa-solid fa-building-circle-check"></i> Duyệt Salon Mới</button>
-          <button class="partner-tab-btn" onclick="switchAdminTab('reviews', this)"><i class="fa-solid fa-comments"></i> Kiểm Duyệt Đánh Giá</button>
-        </div>
+            <!-- 3 METRIC TILES ROW (IMAGE 3) -->
+            <div class="admin-metrics-row">
+              <!-- Tile 1: Doanh thu sàn -->
+              <div class="admin-metric-tile">
+                <div class="metric-icon-circle rose">
+                  <i class="fa-solid fa-coins"></i>
+                </div>
+                <span class="metric-label">Doanh thu sàn</span>
+                <strong class="metric-val">125.680.000đ</strong>
+                <span class="metric-trend up"><i class="fa-solid fa-arrow-trend-up"></i> +12% so với hôm qua</span>
+              </div>
 
-        <!-- Tab 1: Approve Salons -->
-        <div class="partner-tab-pane active" id="paneAdminApprove">
-          <div class="section-box">
-            <h3 class="pane-title" style="margin-bottom:12px;"><i class="fa-solid fa-clock-rotate-left"></i> Hồ Sơ Đăng Ký Chờ Phê Duyệt</h3>
-            
-            <div class="admin-salon-list" id="adminSalonList">
-              <!-- Item 1 -->
-              <div class="admin-salon-card" id="salonReq-1">
-                <div class="admin-salon-top">
-                  <div class="admin-salon-info">
-                    <h4>Royal Derma Clinic Thảo Điền</h4>
-                    <p><i class="fa-solid fa-location-dot"></i> 88 Xuân Thủy, TP. Thủ Đức</p>
-                    <span class="admin-service-type">Derma & Clinic Thẩm Mỹ</span>
+              <!-- Tile 2: Tiền cọc tạm giữ (TÁCH RIÊNG) -->
+              <div class="admin-metric-tile">
+                <div class="metric-icon-circle rose">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <span class="metric-label">Tổng tiền cọc tạm giữ</span>
+                <strong class="metric-val">28.400.000đ</strong>
+                <span class="metric-sub-note">3 đơn đang giữ cọc</span>
+              </div>
+
+              <!-- Tile 3: Tổng đơn hàng -->
+              <div class="admin-metric-tile">
+                <div class="metric-icon-circle rose">
+                  <i class="fa-solid fa-wallet"></i>
+                </div>
+                <span class="metric-label">Tổng đơn hàng</span>
+                <strong class="metric-val">48</strong>
+                <span class="metric-trend up"><i class="fa-solid fa-arrow-trend-up"></i> +8% so với hôm qua</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. VIỆC CẦN XỬ LÝ (SPEC A: 3 HỒ SƠ & 2 YÊU CẦU HOÀN CỌC) -->
+          <div class="admin-tasks-card">
+            <div class="tasks-header">
+              <div class="tasks-title-badge">
+                <h3 class="tasks-title">Việc cần xử lý</h3>
+                <span class="tasks-count-pill">5 chờ xử lý</span>
+              </div>
+            </div>
+
+            <div class="tasks-list">
+              <!-- Task 1: Hồ sơ cửa hàng chờ duyệt -->
+              <div class="task-row-item" onclick="switchAdminSection('shops')">
+                <div class="task-icon-box">
+                  <i class="fa-solid fa-store"></i>
+                </div>
+                <div class="task-info">
+                  <h4>Hồ sơ cửa hàng chờ duyệt</h4>
+                  <p>Kiểm tra thông tin và giấy phép</p>
+                </div>
+                <span class="task-badge">3 hồ sơ</span>
+              </div>
+
+              <!-- Task 2: Yêu cầu hoàn cọc -->
+              <div class="task-row-item" onclick="switchAdminSection('finance', 'deposit')">
+                <div class="task-icon-box">
+                  <i class="fa-solid fa-coins"></i>
+                </div>
+                <div class="task-info">
+                  <h4>Yêu cầu hoàn cọc</h4>
+                  <p>Kiểm tra lịch hẹn và giao dịch</p>
+                </div>
+                <span class="task-badge">2 yêu cầu</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. CHỨC NĂNG CHÍNH (IMAGE 3: 4 LARGE CARDS 2x2 GRID) -->
+          <div class="admin-main-functions-sec">
+            <div class="functions-header">
+              <h3 class="functions-title">Chức năng chính</h3>
+              <a href="javascript:void(0)" class="functions-link">Quản lý dễ dàng hơn <i class="fa-solid fa-chevron-right"></i></a>
+            </div>
+
+            <div class="functions-grid-2x2">
+              <!-- Card 1: Quản lý cửa hàng -->
+              <div class="function-card" onclick="switchAdminSection('shops')">
+                <div class="func-card-top">
+                  <div class="func-icon-box rose">
+                    <i class="fa-solid fa-store"></i>
                   </div>
-                  <span class="admin-status-badge pending" id="statusBadge-1">Chờ duyệt</span>
+                  <i class="fa-solid fa-chevron-right chevron-muted"></i>
                 </div>
-                <div class="admin-docs-row">
-                  <span><i class="fa-solid fa-file-lines"></i> Giấy phép KD: Đã nộp</span>
-                  <span><i class="fa-solid fa-gem"></i> Đăng ký Gói Pro Partner</span>
-                </div>
-                <div class="admin-actions-row">
-                  <button class="btn-adm-approve" onclick="adminApproveSalon(1, 'Royal Derma Clinic')"><i class="fa-solid fa-check"></i> Kích Hoạt Salon</button>
-                  <button class="btn-adm-reject" onclick="adminRejectSalon(1, 'Royal Derma Clinic')"><i class="fa-solid fa-xmark"></i> Từ Chối</button>
+                <div class="func-card-bottom">
+                  <h4>Quản lý cửa hàng</h4>
+                  <p>Thêm / Sửa / Xóa cửa hàng, quản lý thông tin & lịch làm việc.</p>
                 </div>
               </div>
 
-              <!-- Item 2 -->
-              <div class="admin-salon-card" id="salonReq-2">
-                <div class="admin-salon-top">
-                  <div class="admin-salon-info">
-                    <h4>Gentleman Grand Barber Club</h4>
-                    <p><i class="fa-solid fa-location-dot"></i> 12 Lê Lợi, Quận 1</p>
-                    <span class="admin-service-type">Hair Salon & Grooming VIP</span>
+              <!-- Card 2: Quản lý khách hàng -->
+              <div class="function-card" onclick="switchAdminSection('customers')">
+                <div class="func-card-top">
+                  <div class="func-icon-box rose">
+                    <i class="fa-solid fa-users"></i>
                   </div>
-                  <span class="admin-status-badge pending" id="statusBadge-2">Chờ duyệt</span>
+                  <i class="fa-solid fa-chevron-right chevron-muted"></i>
                 </div>
-                <div class="admin-docs-row">
-                  <span><i class="fa-solid fa-file-lines"></i> Giấy phép KD: Đã nộp</span>
-                  <span><i class="fa-solid fa-crown"></i> Đăng ký Gói VIP Sponsored</span>
+                <div class="func-card-bottom">
+                  <h4>Quản lý khách hàng</h4>
+                  <p>Tra cứu, xem chi tiết, thêm / sửa / khóa khách hàng.</p>
                 </div>
-                <div class="admin-actions-row">
-                  <button class="btn-adm-approve" onclick="adminApproveSalon(2, 'Gentleman Grand Barber')"><i class="fa-solid fa-check"></i> Kích Hoạt Salon</button>
-                  <button class="btn-adm-reject" onclick="adminRejectSalon(2, 'Gentleman Grand Barber')"><i class="fa-solid fa-xmark"></i> Từ Chối</button>
+              </div>
+
+              <!-- Card 3: Doanh thu -->
+              <div class="function-card" onclick="switchAdminSection('finance', 'revenue')">
+                <div class="func-card-top">
+                  <div class="func-icon-box purple">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                  </div>
+                  <i class="fa-solid fa-chevron-right chevron-muted"></i>
+                </div>
+                <div class="func-card-bottom">
+                  <h4>Doanh thu</h4>
+                  <p>Theo ngày / tuần / tháng. Báo cáo đối soát hoa hồng.</p>
+                </div>
+              </div>
+
+              <!-- Card 4: Tổng tiền cọc tạm giữ -->
+              <div class="function-card" onclick="switchAdminSection('finance', 'deposit')">
+                <div class="func-card-top">
+                  <div class="func-icon-box green">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                  </div>
+                  <i class="fa-solid fa-chevron-right chevron-muted"></i>
+                </div>
+                <div class="func-card-bottom">
+                  <h4>Tổng tiền cọc tạm giữ</h4>
+                  <p>Xem và quản lý các khoản cọc, duyệt hoàn tiền.</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Tab 2: Review Moderation -->
-        <div class="partner-tab-pane" id="paneAdminReviews" style="display:none;">
-          <div class="section-box">
-            <h3 class="pane-title" style="margin-bottom:12px;"><i class="fa-solid fa-user-shield"></i> Danh Sách Đánh Giá Cần Kiểm Duyệt</h3>
-            
-            <div class="admin-review-list">
-              <!-- Review 1 (Normal) -->
-              <div class="admin-review-item" id="admReview-1">
-                <div class="review-item-header">
-                  <div>
-                    <strong>Khách: Quý cô Khánh Linh</strong>
-                    <span class="text-muted"> đánh giá <strong>L’Amour Nail Lounge</strong></span>
-                  </div>
-                  <div class="review-stars-val"><i class="fa-solid fa-star"></i> 5.0</div>
+        <!-- 5B. SUB-PANE: QUẢN LÝ CỬA HÀNG (SPEC B) -->
+        <div id="adminPaneShops" style="display:none; padding:16px;">
+          <div class="pane-title-row">
+            <button class="back-inline-btn" onclick="switchAdminSection('home')"><i class="fa-solid fa-arrow-left"></i></button>
+            <h3 class="pane-title-lux">Quản lý Cửa Hàng (Đối tác Salon)</h3>
+          </div>
+
+          <!-- Search box -->
+          <div class="admin-search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="adminShopSearchInput" placeholder="Tìm theo tên, mã cửa hàng, SĐT..." oninput="filterAdminShops(this.value)" />
+          </div>
+
+          <!-- Status Filter Tabs: Tất cả, Chờ duyệt, Đang hoạt động, Tạm khóa, Từ chối -->
+          <div class="admin-filter-pills">
+            <button class="adm-pill active" onclick="filterAdminShopStatus('all', this)">Tất cả</button>
+            <button class="adm-pill" onclick="filterAdminShopStatus('Chờ duyệt', this)">Chờ duyệt</button>
+            <button class="adm-pill" onclick="filterAdminShopStatus('Đang hoạt động', this)">Đang hoạt động</button>
+            <button class="adm-pill" onclick="filterAdminShopStatus('Tạm khóa', this)">Tạm khóa</button>
+            <button class="adm-pill" onclick="filterAdminShopStatus('Từ chối', this)">Từ chối</button>
+          </div>
+
+          <!-- Shops List -->
+          <div class="admin-shops-list" id="adminShopsContainer">
+            <!-- Shop 1 -->
+            <div class="adm-shop-card" data-status="Đang hoạt động" onclick="openShopDetailModal('1')">
+              <div class="adm-card-top">
+                <div>
+                  <h4 class="adm-card-title">L'Amour Luxury Spa & Nail</h4>
+                  <p class="adm-card-code">Mã: SALON-001 · Ngày ĐK: 10/01/2025</p>
                 </div>
-                <p class="review-body-text">"Dịch vụ rất chu đáo, Master Linh làm móng vô cùng tỉ mỉ và êm ái. Không gian salon riêng tư, thơm mùi tinh dầu hoa hồng rất thư giãn!"</p>
-                <div class="review-item-footer">
-                  <span class="review-badge-verified"><i class="fa-solid fa-circle-check"></i> Đang hiển thị</span>
-                  <button class="btn-adm-hide" onclick="adminToggleReview(1, this)"><i class="fa-solid fa-eye-slash"></i> Ẩn đánh giá</button>
+                <span class="adm-status-tag active">Đang hoạt động</span>
+              </div>
+              <div class="adm-card-divider"></div>
+              <div class="adm-card-bottom">
+                <span>SĐT: 0908 123 456 · ĐD: Trần Minh Anh</span>
+                <span class="adm-detail-link">Hồ sơ chi tiết <i class="fa-solid fa-chevron-right"></i></span>
+              </div>
+            </div>
+
+            <!-- Shop 2 -->
+            <div class="adm-shop-card" data-status="Đang hoạt động" onclick="openShopDetailModal('2')">
+              <div class="adm-card-top">
+                <div>
+                  <h4 class="adm-card-title">An Yên Thảo Dược Retreat</h4>
+                  <p class="adm-card-code">Mã: SALON-002 · Ngày ĐK: 15/02/2025</p>
+                </div>
+                <span class="adm-status-tag active">Đang hoạt động</span>
+              </div>
+              <div class="adm-card-divider"></div>
+              <div class="adm-card-bottom">
+                <span>SĐT: 0912 345 678 · ĐD: Lê Hoàng Yến</span>
+                <span class="adm-detail-link">Hồ sơ chi tiết <i class="fa-solid fa-chevron-right"></i></span>
+              </div>
+            </div>
+
+            <!-- Shop 3 (Chờ duyệt) -->
+            <div class="adm-shop-card" data-status="Chờ duyệt" onclick="openShopDetailModal('3')">
+              <div class="adm-card-top">
+                <div>
+                  <h4 class="adm-card-title">The Royal Nail & Lash Lounge</h4>
+                  <p class="adm-card-code">Mã: SALON-003 · Ngày ĐK: 18/08/2025</p>
+                </div>
+                <span class="adm-status-tag pending">Chờ duyệt</span>
+              </div>
+              <div class="adm-card-divider"></div>
+              <div class="adm-card-bottom">
+                <span>SĐT: 0933 888 999 · ĐD: Nguyễn Ngọc Bích</span>
+                <span class="adm-detail-link">Xem duyệt hồ sơ <i class="fa-solid fa-chevron-right"></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5C. SUB-PANE: QUẢN LÝ KHÁCH HÀNG (SPEC C) -->
+        <div id="adminPaneCustomers" style="display:none; padding:16px;">
+          <div class="pane-title-row">
+            <button class="back-inline-btn" onclick="switchAdminSection('home')"><i class="fa-solid fa-arrow-left"></i></button>
+            <h3 class="pane-title-lux">Quản lý Khách Hàng (Tài khoản)</h3>
+          </div>
+
+          <div class="admin-search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="adminCustSearchInput" placeholder="Tìm theo tên, SĐT, mã KH..." oninput="filterAdminCustomers(this.value)" />
+          </div>
+
+          <!-- Customer List -->
+          <div class="admin-cust-list" id="adminCustContainer">
+            <div class="adm-shop-card" onclick="openCustomerDetailModal('1')">
+              <div class="adm-card-top">
+                <div class="cust-avatar-row">
+                  <div class="cust-icon-circle"><i class="fa-solid fa-user"></i></div>
+                  <div>
+                    <h4 class="adm-card-title">Quý cô Khánh Linh</h4>
+                    <p class="adm-card-code">Mã: CUST-001 · Ngày tham gia: 05/01/2025</p>
+                  </div>
+                </div>
+                <span class="adm-status-tag active">Đang hoạt động</span>
+              </div>
+              <div class="adm-card-divider"></div>
+              <div class="adm-card-bottom">
+                <span>Số lịch hẹn: 14 (Hủy: 0) · SĐT: 0901 888 777</span>
+                <span class="adm-detail-link">Xem hồ sơ <i class="fa-solid fa-chevron-right"></i></span>
+              </div>
+            </div>
+
+            <div class="adm-shop-card" onclick="openCustomerDetailModal('2')">
+              <div class="adm-card-top">
+                <div class="cust-avatar-row">
+                  <div class="cust-icon-circle"><i class="fa-solid fa-user"></i></div>
+                  <div>
+                    <h4 class="adm-card-title">Nguyễn Thị Mai</h4>
+                    <p class="adm-card-code">Mã: CUST-002 · Ngày tham gia: 12/02/2025</p>
+                  </div>
+                </div>
+                <span class="adm-status-tag active">Đang hoạt động</span>
+              </div>
+              <div class="adm-card-divider"></div>
+              <div class="adm-card-bottom">
+                <span>Số lịch hẹn: 8 (Hủy: 1) · SĐT: 0902 333 444</span>
+                <span class="adm-detail-link">Xem hồ sơ <i class="fa-solid fa-chevron-right"></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5D. SUB-PANE: TÀI CHÍNH & TIỀN CỌC (SPEC E) -->
+        <div id="adminPaneFinance" style="display:none; padding:16px;">
+          <div class="pane-title-row">
+            <button class="back-inline-btn" onclick="switchAdminSection('home')"><i class="fa-solid fa-arrow-left"></i></button>
+            <h3 class="pane-title-lux">Tài chính — Doanh thu và Tiền cọc</h3>
+          </div>
+
+          <!-- 2 Tab Selector: Doanh thu sàn | Tiền cọc -->
+          <div class="finance-tab-pill-box">
+            <button class="fin-pill active" id="btnFinRevenue" onclick="switchFinanceTab('revenue')">Doanh thu sàn</button>
+            <button class="fin-pill" id="btnFinDeposit" onclick="switchFinanceTab('deposit')">Tiền cọc tạm giữ</button>
+          </div>
+
+          <!-- Tab Content 1: Doanh thu sàn -->
+          <div id="finPaneRevenue" style="margin-top:14px;">
+            <div class="adm-finance-card">
+              <h4 class="fin-card-heading">Báo cáo doanh thu phí sàn</h4>
+              <p class="fin-card-sub">Bộ lọc: Hôm nay · 7 ngày · Tháng này · Tùy chỉnh</p>
+              <div class="adm-card-divider"></div>
+              <div class="fin-row">
+                <span>Tổng phí/hoa hồng sàn thu:</span>
+                <strong class="fin-val highlight">125.680.000 ₫</strong>
+              </div>
+              <div class="fin-row">
+                <span>Giao dịch thành công:</span>
+                <strong>348 giao dịch</strong>
+              </div>
+              <div class="fin-row">
+                <span>Phí hoàn trả/điều chỉnh:</span>
+                <strong class="text-danger">- 1.250.000 ₫</strong>
+              </div>
+              <div class="fin-row total">
+                <span>Doanh thu ròng sàn:</span>
+                <strong class="text-success">124.430.000 ₫</strong>
+              </div>
+              <button class="btn-export-excel" onclick="showToast('Đã xuất báo cáo đối soát Excel!', 'fa-file-excel')">
+                <i class="fa-solid fa-file-excel"></i> Xuất báo cáo đối soát Excel
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab Content 2: Tiền cọc tạm giữ -->
+          <div id="finPaneDeposit" style="display:none; margin-top:14px;">
+            <div class="adm-finance-card">
+              <h4 class="fin-card-heading">Quỹ tiền cọc đang tạm giữ</h4>
+              <p class="fin-card-sub">Tách riêng hoàn toàn, không tính vào doanh thu sàn</p>
+              <div class="fin-row total" style="margin-top:10px;">
+                <span>Tổng tiền cọc đang giữ:</span>
+                <strong class="fin-val highlight">28.400.000 ₫</strong>
+              </div>
+              <span class="text-success" style="font-size:11.5px; font-weight:600;"><i class="fa-solid fa-circle-check"></i> 3 khoản cọc hợp lệ chờ hoàn tất dịch vụ</span>
+            </div>
+
+            <h4 style="margin: 16px 0 10px 0; font-size:15px; color:#24090F;">Yêu cầu hoàn cọc chờ duyệt (2)</h4>
+
+            <div class="refund-req-list">
+              <div class="adm-shop-card" id="refundCard-1">
+                <div class="adm-card-top">
+                  <div>
+                    <strong>REF-101 · #BK-9021</strong>
+                    <p style="font-size:11.5px; color:#7A686D;">Khách: Nguyễn Thị Mai · Salon: L'Amour Luxury</p>
+                  </div>
+                  <strong style="color:#6B1228; font-size:15px;">50.000 ₫</strong>
+                </div>
+                <p style="font-size:11.5px; color:#24090F; margin: 4px 0;">Lý do: Khách báo hủy trước 24h theo chính sách hoàn cọc 100%</p>
+                <div class="adm-card-actions-row">
+                  <button class="btn-adm-approve" onclick="approveRefund('refundCard-1', '50.000đ')"><i class="fa-solid fa-check"></i> Duyệt hoàn cọc</button>
+                  <button class="btn-adm-reject" onclick="rejectRefund('refundCard-1')"><i class="fa-solid fa-xmark"></i> Từ chối</button>
                 </div>
               </div>
 
-              <!-- Review 2 (Flagged / Reported) -->
-              <div class="admin-review-item flagged" id="admReview-2">
-                <div class="review-item-header">
+              <div class="adm-shop-card" id="refundCard-2">
+                <div class="adm-card-top">
                   <div>
-                    <strong>Khách: User_91823</strong>
-                    <span class="text-muted"> đánh giá <strong>The Muse Studio</strong></span>
+                    <strong>REF-102 · #BK-8842</strong>
+                    <p style="font-size:11.5px; color:#7A686D;">Khách: Hoàng Kim Oanh · Salon: An Yên Retreat</p>
                   </div>
-                  <div class="review-stars-val bad"><i class="fa-solid fa-star"></i> 1.0</div>
+                  <strong style="color:#6B1228; font-size:15px;">84.000 ₫</strong>
                 </div>
-                <p class="review-body-text">"Quảng cáo sai sự thật, làm đau khách! Bấm link nhận voucher lừa đảo tại: http://spam-link.xyz"</p>
-                <div class="review-item-footer">
-                  <span class="review-badge-flagged" id="badgeFlagged-2"><i class="fa-solid fa-triangle-exclamation"></i> Bị báo cáo spam link</span>
-                  <button class="btn-adm-hide" onclick="adminToggleReview(2, this)"><i class="fa-solid fa-eye-slash"></i> Ẩn đánh giá</button>
+                <p style="font-size:11.5px; color:#24090F; margin: 4px 0;">Lý do: Salon đổi lịch đột xuất không báo trước</p>
+                <div class="adm-card-actions-row">
+                  <button class="btn-adm-approve" onclick="approveRefund('refundCard-2', '84.000đ')"><i class="fa-solid fa-check"></i> Duyệt hoàn cọc</button>
+                  <button class="btn-adm-reject" onclick="rejectRefund('refundCard-2')"><i class="fa-solid fa-xmark"></i> Từ chối</button>
                 </div>
               </div>
             </div>
@@ -816,26 +1179,26 @@
       <!-- ================= 6. BOTTOM NAVIGATION BAR (4 CLEAN PILLARS) ================= -->
       <nav class="bottom-nav">
         <a href="javascript:void(0)" class="nav-item active" id="navHome" onclick="switchNavTab('home')">
-          <div class="nav-icon-wrap"><i class="fa-solid fa-compass"></i></div>
-          <span class="nav-label">Khám phá</span>
+          <div class="nav-icon-wrap" id="navHomeIconWrap"><i class="fa-solid fa-house" id="navHomeIcon"></i></div>
+          <span class="nav-label" id="navHomeLabel">Trang chủ</span>
         </a>
 
         <a href="javascript:void(0)" class="nav-item" id="navActivity" onclick="switchNavTab('activity')">
-          <div class="nav-icon-wrap">
-            <i class="fa-solid fa-calendar-check"></i>
+          <div class="nav-icon-wrap" id="navActivityIconWrap">
+            <i class="fa-regular fa-calendar-days" id="navActivityIcon"></i>
             <span class="nav-badge" id="navActivityBadge">1</span>
           </div>
-          <span class="nav-label">Lịch hẹn</span>
+          <span class="nav-label" id="navActivityLabel">Lịch</span>
         </a>
 
         <a href="javascript:void(0)" class="nav-item" id="navPay" onclick="switchNavTab('payment')">
-          <div class="nav-icon-wrap"><i class="fa-solid fa-gem"></i></div>
-          <span class="nav-label">Đặc quyền</span>
+          <div class="nav-icon-wrap" id="navPayIconWrap"><i class="fa-regular fa-comment-dots" id="navPayIcon"></i></div>
+          <span class="nav-label" id="navPayLabel">Tin nhắn</span>
         </a>
 
         <a href="javascript:void(0)" class="nav-item" id="navRoleHub" onclick="openRoleHubModal()">
           <div class="nav-icon-wrap"><i class="fa-solid fa-sliders"></i></div>
-          <span class="nav-label" id="bottomNavRoleLabel">Vai trò</span>
+          <span class="nav-label" id="bottomNavRoleLabel">Tôi</span>
         </a>
       </nav>
 
@@ -861,6 +1224,16 @@
       </div>
 
       <div class="sheet-content">
+        <!-- 1. Form Khách Điền Thông Tin -->
+        <div class="form-group">
+          <label class="form-label"><i class="fa-solid fa-user"></i> Thông tin quý khách đặt hẹn:</label>
+          <div class="customer-form-fields">
+            <input type="text" id="custNameInput" class="haute-input" placeholder="Họ và tên quý khách *" value="Quý cô Khánh Linh" />
+            <input type="tel" id="custPhoneInput" class="haute-input" placeholder="Số điện thoại nhận vé & QR *" value="0903 123 456" />
+            <input type="text" id="custNoteInput" class="haute-input" placeholder="Ghi chú cho tiệm (da nhạy cảm, yêu cầu riêng...)" />
+          </div>
+        </div>
+
         <!-- Multi-Service Selection (Checkbox cards) -->
         <div class="form-group">
           <label class="form-label"><i class="fa-solid fa-wand-magic-sparkles"></i> Chọn dịch vụ trải nghiệm (Có thể chọn nhiều):</label>
@@ -943,8 +1316,29 @@
           </div>
         </div>
 
+        <!-- Tùy shop cần cọc hay không & 5 Mệnh giá cọc -->
+        <div class="form-group" id="depositConfigBox">
+          <div class="deposit-header-row">
+            <label class="form-label"><i class="fa-solid fa-wallet"></i> Khoản Đặt Cọc Giữ Suất (5 mệnh giá):</label>
+            <span class="badge-mini" id="depositShopBadge">Shop yêu cầu cọc</span>
+          </div>
+
+          <div class="deposit-tiers-carousel" id="depositTiersRow">
+            <button class="tier-pill-btn active" onclick="selectDepositTier(50000, this)">50.000đ</button>
+            <button class="tier-pill-btn" onclick="selectDepositTier(100000, this)">100.000đ</button>
+            <button class="tier-pill-btn" onclick="selectDepositTier(200000, this)">200.000đ</button>
+            <button class="tier-pill-btn" onclick="selectDepositTier(300000, this)">300.000đ</button>
+            <button class="tier-pill-btn" onclick="selectDepositTier(500000, this)">500.000đ</button>
+          </div>
+
+          <div class="no-deposit-alert-box" id="noDepositAlert" style="display:none;">
+            <i class="fa-solid fa-circle-check text-emerald"></i>
+            <span>Tiệm này hỗ trợ <strong>Giữ chỗ miễn phí (Cọc 0đ)</strong>. Quý khách thanh toán tại quầy khi trải nghiệm xong.</span>
+          </div>
+        </div>
+
         <!-- Payment Gateway for Online Deposit -->
-        <div class="form-group">
+        <div class="form-group" id="paymentGatewayGroup">
           <label class="form-label"><i class="fa-solid fa-credit-card"></i> Cổng thanh toán đặt cọc trực tuyến:</label>
           <div class="payment-methods-grid">
             <div class="pay-method-opt selected" onclick="selectPayMethod(this)">
@@ -1115,6 +1509,298 @@
       <div class="sheet-content" id="serviceDrawerList"></div>
     </div>
   </div>
+
+  <!-- G. DRAGGABLE FLOATING AI CHATBOT BUTTON (Edge movable) -->
+  <div id="draggableAiFab" class="draggable-ai-fab" title="Trợ lý AI tư vấn Salon (Kéo thả quanh viền)">
+    <div class="ai-fab-core">
+      <i class="fa-solid fa-sparkles"></i>
+      <span>AI BOT</span>
+    </div>
+    <div class="ai-fab-live-dot"></div>
+  </div>
+
+  <!-- H. AI ADVISOR MODAL SHEET -->
+  <div class="modal-overlay" id="aiAdvisorModal">
+    <div class="bottom-sheet ai-advisor-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="ai-header-brand">
+          <div class="ai-crest-badge"><i class="fa-solid fa-sparkles"></i></div>
+          <div>
+            <h3 class="sheet-title">Trợ Lý AI Đề Xuất Salon Glow</h3>
+            <span class="sheet-subtitle">Tư vấn thông minh theo nhu cầu, khoảng cách & mức cọc</span>
+          </div>
+        </div>
+        <button class="sheet-close-btn" onclick="closeAiAdvisorModal()">&times;</button>
+      </div>
+
+      <div class="sheet-content">
+        <!-- Quick Prompts Chips -->
+        <div class="ai-prompts-carousel">
+          <button class="ai-prompt-chip" onclick="askAiPrompt('💅 Tìm tiệm Nail gần nhất')">💅 Tiệm Nail gần nhất</button>
+          <button class="ai-prompt-chip" onclick="askAiPrompt('🌿 Spa không cần cọc')">🌿 Spa không cần cọc</button>
+          <button class="ai-prompt-chip" onclick="askAiPrompt('👑 Salon VIP 5 sao')">👑 Salon VIP 5★</button>
+          <button class="ai-prompt-chip" onclick="askAiPrompt('⚡ Tiệm đang trống lịch chiều nay')">⚡ Trống lịch chiều nay</button>
+        </div>
+
+        <!-- Chat Stream -->
+        <div class="ai-chat-stream" id="aiChatStream">
+          <div class="ai-msg-row ai">
+            <div class="ai-msg-avatar"><i class="fa-solid fa-sparkles"></i></div>
+            <div class="ai-msg-content">
+              Xin chào Quý cô! Em là <strong>Trợ lý AI GlowPrestige</strong> ✨. Em có thể tìm kiếm salon theo nhu cầu, lọc tiệm <strong>KHÔNG CẦN CỌC (Giữ chỗ 0đ)</strong> hoặc chọn mức cọc theo <strong>5 MỆNH GIÁ</strong> phù hợp nhất.
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Query Input Bar -->
+        <div class="ai-input-bar">
+          <input type="text" id="aiQueryInput" placeholder="Hỏi AI (Ví dụ: spa không cọc, nail gần Q1...)" onkeypress="if(event.key==='Enter') sendAiQuery()" />
+          <button class="ai-send-btn" onclick="sendAiQuery()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- I. ADMIN SHOP DETAIL MODAL (4 GROUPS PER SPEC B) -->
+  <div class="modal-overlay" id="shopDetailModal">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div>
+          <span class="sheet-subtitle">Chi tiết hồ sơ đối tác salon</span>
+          <h3 class="sheet-title" id="admShopModalTitle">L'Amour Luxury Spa & Nail</h3>
+        </div>
+        <button class="sheet-close-btn" onclick="closeShopDetailModal()">&times;</button>
+      </div>
+
+      <div class="sheet-content">
+        <!-- Nhóm 1: Thông tin chung -->
+        <div class="adm-info-group">
+          <h4 class="adm-info-group-title"><i class="fa-solid fa-store"></i> 1. Thông tin chung</h4>
+          <div class="adm-info-row"><span class="lbl">Tên thương hiệu:</span><strong id="admShopName">L'Amour Luxury Spa & Nail</strong></div>
+          <div class="adm-info-row"><span class="lbl">Mã cửa hàng:</span><span id="admShopCode">SALON-001</span></div>
+          <div class="adm-info-row"><span class="lbl">Địa chỉ:</span><span id="admShopAddress">Quận 1, TP. Hồ Chí Minh</span></div>
+          <div class="adm-info-row"><span class="lbl">Số điện thoại:</span><span>0908 123 456</span></div>
+          <div class="adm-info-row"><span class="lbl">Người đại diện:</span><span>Trần Minh Anh</span></div>
+        </div>
+
+        <!-- Nhóm 2: Hồ sơ pháp lý -->
+        <div class="adm-info-group">
+          <h4 class="adm-info-group-title"><i class="fa-solid fa-file-contract"></i> 2. Hồ sơ pháp lý</h4>
+          <div class="adm-info-row"><span class="lbl">Giấy phép ĐKKD:</span><span>GP-7901284/ĐKKD-TPHCM</span></div>
+          <div class="adm-info-row"><span class="lbl">Mã số thuế:</span><span>0318992145</span></div>
+          <div class="adm-info-row"><span class="lbl">Trạng thái xác minh:</span><span class="text-success"><i class="fa-solid fa-circle-check"></i> Đã đối soát & xác minh</span></div>
+          <div class="adm-info-row"><span class="lbl">Ngày duyệt mở sàn:</span><span>10/01/2025</span></div>
+        </div>
+
+        <!-- Nhóm 3: Dịch vụ & Bảng giá -->
+        <div class="adm-info-group">
+          <h4 class="adm-info-group-title"><i class="fa-solid fa-list-check"></i> 3. Danh mục dịch vụ niêm yết</h4>
+          <div class="adm-info-row"><span>• Sơn Gel Hữu Cơ Pháp + Dưỡng Móng</span><span>180.000đ (45p)</span></div>
+          <div class="adm-info-row"><span>• Nail Art Mắt Mèo Cực Quang VIP</span><span>280.000đ (60p)</span></div>
+          <div class="adm-info-row"><span>• Đắp Móng Form Hoàng Gia Swarovski</span><span>450.000đ (75p)</span></div>
+        </div>
+
+        <!-- Nhóm 4: Hoạt động & Vi phạm -->
+        <div class="adm-info-group">
+          <h4 class="adm-info-group-title"><i class="fa-solid fa-chart-line"></i> 4. Hoạt động & Lịch sử</h4>
+          <div class="adm-info-row"><span class="lbl">Lịch hẹn đã phục vụ:</span><strong>148 lượt</strong></div>
+          <div class="adm-info-row"><span class="lbl">Đánh giá trung bình:</span><span style="color:#d97706; font-weight:700;"><i class="fa-solid fa-star"></i> 4.9 (1.8k reviews)</span></div>
+          <div class="adm-info-row"><span class="lbl">Lịch sử vi phạm / Báo cáo:</span><span class="text-success">0 vi phạm</span></div>
+        </div>
+
+        <!-- Thao tác quản trị theo Spec B -->
+        <div class="adm-action-buttons-group">
+          <button class="btn-adm-approve" onclick="actionShopApprove()"><i class="fa-solid fa-circle-check"></i> Duyệt hồ sơ</button>
+          <button class="btn-adm-reject" onclick="actionShopReject()"><i class="fa-solid fa-ban"></i> Từ chối</button>
+          <button class="btn-plan outline" onclick="actionShopLock()"><i class="fa-solid fa-lock"></i> Tạm khóa / Mở</button>
+          <button class="btn-plan outline" style="color:#dc2626; border-color:#fca5a5;" onclick="actionShopTerminate()"><i class="fa-solid fa-triangle-exclamation"></i> Ngừng hợp tác</button>
+        </div>
+        <p style="font-size:10.5px; color:#7a5e66; text-align:center; margin-top:8px;">* Lưu ý quy tắc quản trị: Không xóa vĩnh viễn nếu còn lịch hẹn hoặc giao dịch cần đối soát.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- J. ADMIN CUSTOMER DETAIL MODAL (4 GROUPS PER SPEC C) -->
+  <div class="modal-overlay" id="customerDetailModal">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div>
+          <span class="sheet-subtitle">Hồ sơ khách hàng marketplace</span>
+          <h3 class="sheet-title" id="admCustModalTitle">Quý cô Khánh Linh</h3>
+        </div>
+        <button class="sheet-close-btn" onclick="closeCustomerDetailModal()">&times;</button>
+      </div>
+
+      <div class="sheet-content">
+        <!-- Nhóm 1: Thông tin tài khoản -->
+        <div class="adm-info-group">
+          <h4 class="adm-info-group-title"><i class="fa-solid fa-user"></i> 1. Thông tin tài khoản</h4>
+          <div class="adm-info-row"><span class="lbl">Họ và tên:</span><strong id="admCustName">Quý cô Khánh Linh</strong></div>
+          <div class="adm-info-row"><span class="lbl">Mã khách hàng:</span><span id="admCustCode">CUST-001</span></div>
+          <div class="adm-info-row"><span class="lbl">Số điện thoại:</span><span>0901 888 777</span></div>
+          <div class="adm-info-row"><span class="lbl">Ngày tham gia:</span><span>05/01/2025</span></div>
+          <div class="adm-info-row"><span class="lbl">Hạng thẻ:</span><span style="color:#9333ea; font-weight:800;"><i class="fa-solid fa-crown"></i> Diamond VIP</span></div>
+        </div>
+
+        <!-- Nhóm 2: Lịch sử đặt lịch -->
+        <div class="adm-info-group">
+          <h4 class="adm-info-group-title"><i class="fa-regular fa-calendar-check"></i> 2. Lịch sử đặt lịch</h4>
+          <div class="adm-info-row"><span class="lbl">Tổng số lịch đã đặt:</span><strong>14 lịch hẹn</strong></div>
+          <div class="adm-info-row"><span class="lbl">Đã hoàn thành:</span><span class="text-success">13 lịch</span></div>
+          <div class="adm-info-row"><span class="lbl">Đang chờ phục vụ:</span><span>1 lịch (Hôm nay 15:30)</span></div>
+          <div class="adm-info-row"><span class="lbl">Lịch đã hủy:</span><span>0 lịch</span></div>
+        </div>
+
+        <!-- Nhóm 3: Thanh toán & Tiền cọc -->
+        <div class="adm-info-group">
+          <h4 class="adm-info-group-title"><i class="fa-solid fa-coins"></i> 3. Lịch sử thanh toán & Tiền cọc</h4>
+          <div class="adm-info-row"><span class="lbl">Tổng chi tiêu qua sàn:</span><strong>3.850.000 ₫</strong></div>
+          <div class="adm-info-row"><span class="lbl">Tổng tiền cọc đã đặt:</span><span>650.000 ₫</span></div>
+          <div class="adm-info-row"><span class="lbl">Số tiền hoàn cọc đã nhận:</span><span>0 ₫</span></div>
+          <div class="adm-info-row"><span class="lbl">Số dư Ví GlowPrivé:</span><strong style="color:var(--dusty-merlot);">3.450.000 ₫</strong></div>
+        </div>
+
+        <!-- Nhóm 4: Hỗ trợ & Khiếu nại -->
+        <div class="adm-info-group">
+          <h4 class="adm-info-group-title"><i class="fa-solid fa-headset"></i> 4. Hỗ trợ & Khiếu nại</h4>
+          <div class="adm-info-row"><span class="lbl">Khiếu nại phát sinh:</span><span class="text-success">0 khiếu nại (Khách hàng uy tín)</span></div>
+          <div class="adm-info-row"><span class="lbl">Đánh giá trung bình gửi đi:</span><span>5.0 ★</span></div>
+        </div>
+
+        <!-- Thao tác quản trị theo Spec C -->
+        <div class="adm-action-buttons-group">
+          <button class="btn-plan outline" onclick="showToast('Cập nhật ghi chú hỗ trợ khách hàng', 'fa-pen-to-square')"><i class="fa-solid fa-pen-to-square"></i> Sửa thông tin</button>
+          <button class="btn-plan outline" style="color:#d97706; border-color:#fcd34d;" onclick="actionCustomerLock()"><i class="fa-solid fa-user-lock"></i> Khóa / Mở tài khoản</button>
+        </div>
+        <p style="font-size:10.5px; color:#7a5e66; text-align:center; margin-top:8px;">* Bảo mật: Không hiển thị mật khẩu và thông tin ngân hàng nhạy cảm. Mọi thao tác đều được ghi nhật ký.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- K. INTERACTIVE LIVE CHAT MODAL (FOR CUSTOMER, SHOP & SYSTEM) -->
+  <div class="modal-overlay" id="chatModal">
+    <div class="bottom-sheet" style="max-height:85vh; display:flex; flex-direction:column;">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header" style="background:var(--dusty-merlot); color:#ffffff;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="conv-avatar-box" style="width:36px; height:36px; font-size:15px; margin:0; background:#fae4dc; color:var(--dusty-merlot);">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+          <div>
+            <h3 class="sheet-title" id="chatModalRecipient" style="color:#ffffff; font-size:15px;">L’Amour Luxury Spa & Nail</h3>
+            <span style="font-size:11px; color:#f5d0c6;"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10b981; margin-right:4px;"></span>Đang trực tuyến</span>
+          </div>
+        </div>
+        <button class="sheet-close-btn" style="color:#ffffff;" onclick="closeChatModal()">&times;</button>
+      </div>
+
+      <div class="sheet-content" style="flex:1; display:flex; flex-direction:column; padding:12px 16px;">
+        <div class="ai-chat-stream" id="chatStream" style="flex:1; max-height:350px;">
+          <div class="ai-msg-row">
+            <div class="ai-msg-avatar" style="background:#fae4dc; color:var(--dusty-merlot);"><i class="fa-solid fa-store"></i></div>
+            <div class="ai-msg-content">
+              Dạ chào chị! Em là Master Linh đại diện salon L'Amour Luxury ạ. Hôm nay chị muốn bên em chuẩn bị trước màu gel nào cho lịch hẹn 15:30 không ạ? ✨
+            </div>
+          </div>
+          <div class="ai-msg-row user">
+            <div class="ai-msg-content">
+              Chị muốn thử tông thạch hồng cực quang đính đá nhẹ nhàng nhé em!
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-input-bar" style="margin-top:10px;">
+          <input type="text" id="liveChatInput" placeholder="Nhập tin nhắn trao đổi..." onkeypress="if(event.key==='Enter') sendLiveChatMessage()" />
+          <button class="ai-send-btn" onclick="sendLiveChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- L. ADMIN MORE MENU SHEET (SPEC SECTION 3) -->
+  <div class="modal-overlay" id="adminMoreModal">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div>
+          <span class="sheet-subtitle">Lối tắt & Chức năng mở rộng</span>
+          <h3 class="sheet-title">Chức Năng Quản Trị Hệ Thống</h3>
+        </div>
+        <button class="sheet-close-btn" onclick="closeAdminMoreModal()">&times;</button>
+      </div>
+
+      <div class="sheet-content">
+        <div class="tasks-list">
+          <!-- 1. Đơn đặt lịch -->
+          <div class="task-row-item" onclick="closeAdminMoreModal(); switchAdminSection('bookings')">
+            <div class="task-icon-box"><i class="fa-regular fa-calendar-check"></i></div>
+            <div class="task-info">
+              <h4>Quản lý đơn đặt lịch</h4>
+              <p>Tra cứu theo mã, trạng thái và đối soát cọc</p>
+            </div>
+            <i class="fa-solid fa-chevron-right chevron-muted"></i>
+          </div>
+
+          <!-- 2. Tài chính & Tiền cọc -->
+          <div class="task-row-item" onclick="closeAdminMoreModal(); switchAdminSection('finance')">
+            <div class="task-icon-box"><i class="fa-solid fa-coins"></i></div>
+            <div class="task-info">
+              <h4>Tài chính & Doanh thu sàn</h4>
+              <p>Báo cáo hoa hồng và quản lý tiền cọc</p>
+            </div>
+            <i class="fa-solid fa-chevron-right chevron-muted"></i>
+          </div>
+
+          <!-- 3. Đánh giá & báo cáo vi phạm -->
+          <div class="task-row-item" onclick="showToast('Duyệt 0 báo cáo spam & kiểm tra chất lượng review', 'fa-shield-halved')">
+            <div class="task-icon-box"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="task-info">
+              <h4>Đánh giá & Báo cáo vi phạm</h4>
+              <p>Duyệt báo cáo spam, xử lý khiếu nại</p>
+            </div>
+            <span class="task-badge" style="background:#10b981;">0 vi phạm</span>
+          </div>
+
+          <!-- 4. Thông báo hệ thống -->
+          <div class="task-row-item" onclick="showToast('Đã phát thông báo hệ thống bảo trì lúc 02:00', 'fa-bell')">
+            <div class="task-icon-box"><i class="fa-solid fa-bullhorn"></i></div>
+            <div class="task-info">
+              <h4>Thông báo hệ thống</h4>
+              <p>Thông báo hồ sơ mới, giao dịch bất thường</p>
+            </div>
+            <i class="fa-solid fa-chevron-right chevron-muted"></i>
+          </div>
+
+          <!-- 5. Phân quyền quản trị -->
+          <div class="task-row-item" onclick="showToast('Phân quyền: Admin Tổng • Kế toán • Hỗ trợ viên', 'fa-user-gear')">
+            <div class="task-icon-box"><i class="fa-solid fa-user-shield"></i></div>
+            <div class="task-info">
+              <h4>Tài khoản & Phân quyền</h4>
+              <p>Vai trò nhân viên quản trị và phân quyền hoàn cọc</p>
+            </div>
+            <i class="fa-solid fa-chevron-right chevron-muted"></i>
+          </div>
+
+          <!-- 6. Cài đặt hệ thống -->
+          <div class="task-row-item" onclick="showToast('Cài đặt phí sàn: 10% • Chính sách hoàn cọc: 2h', 'fa-gear')">
+            <div class="task-icon-box"><i class="fa-solid fa-sliders"></i></div>
+            <div class="task-info">
+              <h4>Cài đặt hệ thống</h4>
+              <p>Cấu hình phí nền tảng và chính sách cọc</p>
+            </div>
+            <i class="fa-solid fa-chevron-right chevron-muted"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- E. TOAST NOTIFICATION CONTAINER -->
   <div class="toast-container" id="toastContainer"></div>

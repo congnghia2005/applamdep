@@ -5,21 +5,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.app_lam_dep.model.BookingTicket
 import com.example.app_lam_dep.ui.icons.GlowIcon
 import com.example.app_lam_dep.ui.icons.GlowIcons
 import com.example.app_lam_dep.ui.icons.IconMedallion
-import com.example.app_lam_dep.ui.theme.ApplamdepTheme
 import com.example.app_lam_dep.ui.theme.ChampagneGold
 import com.example.app_lam_dep.ui.theme.DustyMerlot
 import com.example.app_lam_dep.ui.theme.PinkPanther
@@ -28,12 +28,36 @@ import com.example.app_lam_dep.ui.theme.TextMuted
 
 @Composable
 fun CustomerBookingsScreen(
+    bookings: List<BookingTicket> = emptyList(),
     modifier: Modifier = Modifier
 ) {
+    // Default sample ticket if list is empty
+    val displayBookings = if (bookings.isEmpty()) {
+        listOf(
+            BookingTicket(
+                id = "#GLOW-8921",
+                salonName = "L’Amour Haute Nail & Lash Lounge",
+                serviceName = "Sơn Gel Hữu Cơ Pháp + Dưỡng Móng (45p)",
+                servicePrice = "180.000 đ",
+                date = "Hôm nay",
+                timeSlot = "15:30",
+                specialist = "Master Linh (VIP)",
+                customerName = "Quý cô Khánh Linh",
+                customerPhone = "0903 123 456",
+                note = "Khách yêu cầu sơn tone hồng thạch tự nhiên",
+                requiresDeposit = true,
+                depositAmount = 50000L,
+                status = "ĐÃ XÁC NHẬN & ĐẶT CỌC"
+            )
+        )
+    } else {
+        bookings
+    }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFFBF7E8)), // Warm White base canvas
+            .background(Color(0xFFFBF7E8)),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -47,7 +71,7 @@ fun CustomerBookingsScreen(
                     color = Color(0xFF3A101A)
                 )
                 Text(
-                    text = "Quản lý vé booking, mã QR check-in, nhắc hẹn và đánh giá",
+                    text = "Quản lý vé booking, mã QR check-in, thông tin cọc và nhắc hẹn",
                     fontSize = 12.sp,
                     color = TextMuted
                 )
@@ -70,13 +94,13 @@ fun CustomerBookingsScreen(
                     IconMedallion(icon = GlowIcons.Bell, size = 38.dp, iconSize = 18.dp)
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            text = "Nhắc hẹn tự động: Còn 45 phút",
+                            text = "Hệ thống nhắc hẹn: Đã đồng bộ với Salon",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = DustyMerlot
                         )
                         Text(
-                            text = "Lịch hẹn tại L'Amour Lounge bắt đầu lúc 15:30. Nghệ nhân đã sẵn sàng.",
+                            text = "Thông tin đặt lịch của quý cô đã được chuyển về salon đối tác. Chuyên viên đã tiếp nhận.",
                             fontSize = 11.sp,
                             color = TextMuted,
                             lineHeight = 15.sp
@@ -86,8 +110,8 @@ fun CustomerBookingsScreen(
             }
         }
 
-        // 3. Active Booking Ticket Card (#GLOW-8921)
-        item {
+        // 3. Dynamic Active Booking Tickets
+        items(displayBookings) { ticket ->
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -99,7 +123,7 @@ fun CustomerBookingsScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(DustyMerlot)
+                            .background(if (ticket.requiresDeposit) DustyMerlot else SuccessGreen)
                             .padding(horizontal = 16.dp, vertical = 10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
@@ -107,15 +131,15 @@ fun CustomerBookingsScreen(
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             GlowIcon(icon = GlowIcons.Check, tint = Color.White, size = 14.dp)
                             Text(
-                                text = "ĐÃ XÁC NHẬN & ĐẶT CỌC",
+                                text = ticket.status,
                                 color = Color.White,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                         Text(
-                            text = "#GLOW-8921",
-                            color = PinkPanther,
+                            text = ticket.id,
+                            color = if (ticket.requiresDeposit) PinkPanther else Color.White,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -129,16 +153,51 @@ fun CustomerBookingsScreen(
                         // Salon & Service Name
                         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             Text(
-                                text = "L’Amour Haute Nail & Lash Lounge",
+                                text = ticket.salonName,
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF3A101A)
                             )
                             Text(
-                                text = "Sơn Gel Hữu Cơ Pháp + Dưỡng Móng (45p)",
+                                text = ticket.serviceName,
                                 fontSize = 13.sp,
                                 color = TextMuted
                             )
+                        }
+
+                        // Customer Info Row (Form Data Received)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color(0xFFFBF7E8))
+                                .padding(12.dp)
+                        ) {
+                            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(text = "KHÁCH HÀNG:", fontSize = 10.sp, color = TextMuted, fontWeight = FontWeight.Bold)
+                                    Text(text = ticket.customerName, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = DustyMerlot)
+                                }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(text = "SỐ ĐIỆN THOẠI:", fontSize = 10.sp, color = TextMuted, fontWeight = FontWeight.Bold)
+                                    Text(text = ticket.customerPhone, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF24090F))
+                                }
+                                if (ticket.note.isNotBlank()) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(text = "GHI CHÚ:", fontSize = 10.sp, color = TextMuted, fontWeight = FontWeight.Bold)
+                                        Text(text = ticket.note, fontSize = 11.sp, color = TextMuted, maxLines = 1)
+                                    }
+                                }
+                            }
                         }
 
                         // Time & Specialist Info Boxes
@@ -155,7 +214,7 @@ fun CustomerBookingsScreen(
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                     Text(text = "THỜI GIAN", fontSize = 9.5.sp, color = TextMuted, fontWeight = FontWeight.Bold)
-                                    Text(text = "15:30 - Hôm nay", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF24090F))
+                                    Text(text = "${ticket.timeSlot} • ${ticket.date}", fontSize = 12.5.sp, fontWeight = FontWeight.Bold, color = Color(0xFF24090F))
                                 }
                             }
 
@@ -168,7 +227,7 @@ fun CustomerBookingsScreen(
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                     Text(text = "CHUYÊN VIÊN", fontSize = 9.5.sp, color = TextMuted, fontWeight = FontWeight.Bold)
-                                    Text(text = "Master Linh (VIP)", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF24090F))
+                                    Text(text = ticket.specialist, fontSize = 12.5.sp, fontWeight = FontWeight.Bold, color = Color(0xFF24090F))
                                 }
                             }
                         }
@@ -197,7 +256,7 @@ fun CustomerBookingsScreen(
                                     GlowIcon(icon = GlowIcons.QrCode, tint = Color(0xFF24090F), size = 88.dp, contentDescription = "Mã QR check-in")
                                 }
                                 Text(
-                                    text = "Đưa mã QR này cho lễ tân để nhận phòng VIP ngay",
+                                    text = "Đưa mã QR này cho lễ tân tiệm ${ticket.salonName} để check-in",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = DustyMerlot,
@@ -215,15 +274,24 @@ fun CustomerBookingsScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(text = "Tổng giá trị dịch vụ:", fontSize = 12.5.sp, color = TextMuted)
-                                Text(text = "180.000 đ", fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF24090F))
+                                Text(text = "Giá dịch vụ dự kiến:", fontSize = 12.5.sp, color = TextMuted)
+                                Text(text = ticket.servicePrice, fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF24090F))
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(text = "Tiền cọc 30% đã thanh toán (MoMo Sandbox):", fontSize = 12.5.sp, color = TextMuted)
-                                Text(text = "-50.000 đ", fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold, color = DustyMerlot)
+                                Text(
+                                    text = if (ticket.requiresDeposit) "Tiền cọc đã thanh toán (Đã nhận):" else "Chính sách cọc:",
+                                    fontSize = 12.5.sp,
+                                    color = TextMuted
+                                )
+                                Text(
+                                    text = if (ticket.requiresDeposit) "-${formatVnd(ticket.depositAmount)}" else "0 đ (Miễn cọc)",
+                                    fontSize = 12.5.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = if (ticket.requiresDeposit) DustyMerlot else SuccessGreen
+                                )
                             }
                             HorizontalDivider(color = Color(0xFFEBDCD3))
                             Row(
@@ -231,7 +299,12 @@ fun CustomerBookingsScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(text = "Thanh toán còn lại tại Salon:", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3A101A))
-                                Text(text = "130.000 đ", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = DustyMerlot)
+                                Text(
+                                    text = if (ticket.requiresDeposit) "Theo hóa đơn tại quầy" else ticket.servicePrice,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = DustyMerlot
+                                )
                             }
                         }
 
@@ -269,69 +342,9 @@ fun CustomerBookingsScreen(
                 }
             }
         }
-
-        // 4. Completed Booking Card (Đã hoàn tất)
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(Color(0xFFEFECE6))
-                            .padding(horizontal = 8.dp, vertical = 3.dp)
-                    ) {
-                        Text(text = "ĐÃ HOÀN TẤT", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = TextMuted)
-                    }
-
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(
-                            text = "An Yên Thảo Dược & Luxury Retreat",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF3A101A)
-                        )
-                        Text(
-                            text = "Gội đầu dưỡng sinh cung đình 75p • Ngày 05/10/2026",
-                            fontSize = 12.sp,
-                            color = TextMuted
-                        )
-                    }
-
-                    Button(
-                        onClick = {},
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(42.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFDF2EF))
-                    ) {
-                        GlowIcon(icon = GlowIcons.StarFilled, tint = ChampagneGold, size = 16.dp)
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Đánh giá 5 sao & Nhận xét (+100 xu)",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = DustyMerlot
-                        )
-                    }
-                }
-            }
-        }
     }
 }
 
-@Preview(showBackground = true, widthDp = 393, heightDp = 852)
-@Composable
-fun CustomerBookingsScreenPreview() {
-    ApplamdepTheme {
-        CustomerBookingsScreen()
-    }
+private fun formatVnd(amount: Long): String {
+    return String.format("%,d đ", amount).replace(',', '.')
 }

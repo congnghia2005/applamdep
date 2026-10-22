@@ -13,14 +13,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.app_lam_dep.ui.icons.GlowIcon
 import com.example.app_lam_dep.ui.icons.GlowIcons
 import com.example.app_lam_dep.ui.theme.ChampagneGold
-import com.example.app_lam_dep.ui.theme.DustyMerlot
 import com.example.app_lam_dep.ui.theme.GoldSoft
-import com.example.app_lam_dep.ui.theme.PinkPanther
 
 @Composable
 fun AppHeader(
@@ -31,53 +30,61 @@ fun AppHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(DustyMerlot)
-            .statusBarsPadding() // Proper padding below status bar
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+            .background(Color(0xFF360814))
+            .statusBarsPadding()
+            .padding(horizontal = 10.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // App Logo & Title (Matching web prototype brand-crest)
+        // App Logo & Title (Weighted so it shrinks text if needed without pushing the role pills)
         Row(
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(38.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Brush.linearGradient(listOf(Color.White.copy(alpha = 0.16f), Color.White.copy(alpha = 0.04f))))
-                    .border(1.dp, Brush.linearGradient(listOf(GoldSoft, ChampagneGold.copy(alpha = 0.4f))), RoundedCornerShape(12.dp)),
+                    .size(34.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.White.copy(alpha = 0.08f))
+                    .border(1.dp, Brush.linearGradient(listOf(GoldSoft, ChampagneGold.copy(alpha = 0.5f))), RoundedCornerShape(10.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                GlowIcon(icon = GlowIcons.Diamond, tint = GoldSoft, size = 20.dp, contentDescription = "Glow Prestige")
+                GlowIcon(icon = GlowIcons.Diamond, tint = GoldSoft, size = 18.dp, contentDescription = "Glow Prestige")
             }
             Column {
                 Text(
                     text = "GLOW PRESTIGE",
                     color = Color.White,
-                    fontSize = 13.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Black,
-                    letterSpacing = 1.sp
+                    letterSpacing = 0.5.sp,
+                    maxLines = 1
                 )
                 Text(
                     text = when (currentRole) {
-                        1 -> "Khu vực Đối tác Salon"
-                        2 -> "Quản trị viên (Admin)"
-                        else -> "Haute Couture Beauty"
+                        1 -> "Đối tác Salon"
+                        2 -> "Quản trị Admin"
+                        else -> "Khám phá vẻ đẹp"
                     },
-                    color = PinkPanther,
-                    fontSize = 11.sp
+                    color = Color(0xFFE5B8C2),
+                    fontSize = 9.5.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
 
-        // 3-Role Switcher Pills (Matching web prototype role-selector-pills)
+        // 3-Role Switcher Pills (Khách Hàng | Salon | Admin) - Compact & guaranteed to fit on mobile screens
         Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
-                .background(Color(0xFF1E060C).copy(alpha = 0.55f))
-                .padding(3.dp)
+                .background(Color(0xFF1B0308).copy(alpha = 0.85f))
+                .border(0.75.dp, Color(0xFFE5B8C2).copy(alpha = 0.2f), RoundedCornerShape(20.dp))
+                .padding(2.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             RoleTabButton(
                 text = "Khách Hàng",
@@ -104,15 +111,15 @@ private fun RoleTabButton(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (isSelected) Color(0xFFFBF7E8) else Color.Transparent
-    val textColor = if (isSelected) DustyMerlot else Color(0xFFD1B8BE)
+    val backgroundColor = if (isSelected) Color.White else Color.Transparent
+    val textColor = if (isSelected) Color(0xFF360814) else Color.White.copy(alpha = 0.85f)
 
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
             .background(backgroundColor)
             .clickable { onClick() }
-            .padding(horizontal = 10.dp, vertical = 6.dp),
+            .padding(horizontal = 7.dp, vertical = 5.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(

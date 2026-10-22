@@ -1,5 +1,6 @@
 package com.example.app_lam_dep.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,22 +18,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.app_lam_dep.R
 import com.example.app_lam_dep.ui.icons.GlowIcon
 import com.example.app_lam_dep.ui.icons.GlowIcons
-import com.example.app_lam_dep.ui.icons.IconMedallion
 import com.example.app_lam_dep.ui.theme.ChampagneGold
 import com.example.app_lam_dep.ui.theme.DustyMerlot
 import com.example.app_lam_dep.ui.theme.GoldSoft
 import com.example.app_lam_dep.ui.theme.PinkPanther
-import com.example.app_lam_dep.ui.theme.SuccessGreen
 import com.example.app_lam_dep.ui.theme.TextMuted
 
-data class BeautyCategory(val name: String, val icon: ImageVector, val isHot: Boolean = false)
-data class HeroBanner(val badge: String, val title: String, val subtitle: String, val buttonText: String)
-data class SalonMarketplaceItem(val id: Int, val name: String, val services: String, val rating: Double, val reviews: String, val distance: String, val price: String, val isSponsored: Boolean = false)
+data class BeautyCategoryItem(val name: String, val icon: ImageVector)
+data class FavoriteServiceItem(val name: String, val price: String, val imageRes: Int, val salon: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,103 +42,147 @@ fun CustomerHomeScreen(
     onNavigateToSalon: (String) -> Unit,
     onSelectServiceForBooking: (String) -> Unit,
     onSelectCategory: (String) -> Unit = {},
+    onOpenShopPlans: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    var searchQuery by remember { mutableStateOf("") }
     var activeCategoryModal by remember { mutableStateOf<String?>(null) }
+    var isFavorite by remember { mutableStateOf(false) }
 
-    // Mỗi danh mục có icon riêng, đúng ngữ nghĩa dịch vụ (không dùng emoji)
+    // 8 categories matching Image 1
     val categories = listOf(
-        BeautyCategory("Làm Nail Art", GlowIcons.NailPolish, true),
-        BeautyCategory("Spa Trị Liệu", GlowIcons.Lotus),
-        BeautyCategory("Chăm sóc da", GlowIcons.Serum),
-        BeautyCategory("Đặt lịch VIP", GlowIcons.Crown),
-        BeautyCategory("Hair Salon", GlowIcons.Scissors),
-        BeautyCategory("Makeup Tiệc", GlowIcons.Lipstick),
-        BeautyCategory("Dưỡng sinh", GlowIcons.Leaf)
+        BeautyCategoryItem("Làm Nail Art", GlowIcons.NailPolish),
+        BeautyCategoryItem("Spa Trị Liệu", GlowIcons.Lotus),
+        BeautyCategoryItem("Chăm sóc da", GlowIcons.Serum),
+        BeautyCategoryItem("Đặt lịch VIP", GlowIcons.Crown),
+        BeautyCategoryItem("Hair Salon", GlowIcons.Scissors),
+        BeautyCategoryItem("Makeup Tiệc", GlowIcons.Lipstick),
+        BeautyCategoryItem("Dưỡng sinh", GlowIcons.Leaf),
+        BeautyCategoryItem("Khác", GlowIcons.MoreHorizontal)
     )
 
-    val banners = listOf(
-        HeroBanner("HAUTE NAIL", "Nail Art Mắt Mèo", "Sơn gel ngọc trai & Dưỡng móng Pháp", "Đặt cọc giữ suất"),
-        HeroBanner("SIGNATURE SPA", "Nghỉ Dưỡng Đá Nóng", "Xông tinh dầu hoa hồng & Thảo dược 90p", "Trải nghiệm")
-    )
-
-    val salons = listOf(
-        SalonMarketplaceItem(1, "L’Amour Haute Nail & Lash Lounge", "Sơn gel hữu cơ • Thiết kế móng nghệ thuật Haute • Nối mi tơ lụa", 4.99, "(1.8k+ đánh giá)", "0.8 km • Đồng Khởi, Q.1", "50.000đ", true),
-        SalonMarketplaceItem(2, "An Yên Thảo Dược & Luxury Retreat", "Gội đầu dưỡng sinh cung đình • Massage đá nóng Himalaya", 4.97, "(1.1k+ đánh giá)", "1.5 km • Tú Xương, Q.3", "50.000đ", false)
+    val favoriteServices = listOf(
+        FavoriteServiceItem("Sơn Gel Pháp + Dưỡng Móng", "180.000 đ", R.drawable.nail_french_gel, "L'Amour"),
+        FavoriteServiceItem("Nail Art Mắt Mèo Cực Quang VIP", "280.000 đ", R.drawable.nail_cateye_aurora, "L'Amour"),
+        FavoriteServiceItem("Massage Đá Nóng & Thảo Dược", "350.000 đ", R.drawable.shop_hero_spa, "An Yên")
     )
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(Color(0xFFFBF7E8)),
-        contentPadding = PaddingValues(bottom = 32.dp),
+        contentPadding = PaddingValues(bottom = 36.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Search Bar Row
+        // 1. Search Bar Top Row (Image 1 Header integration)
         item {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(DustyMerlot)
-                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color(0xFF360814), Color(0xFF2B0710))
+                        )
+                    )
+                    .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 18.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White.copy(alpha = 0.12f))
-                        .border(1.dp, GoldSoft.copy(alpha = 0.35f), RoundedCornerShape(12.dp))
-                        .clickable { },
-                    contentAlignment = Alignment.Center
-                ) {
-                    GlowIcon(icon = GlowIcons.Camera, tint = GoldSoft, size = 20.dp, contentDescription = "Tìm bằng hình ảnh")
-                }
-
                 Row(
                     modifier = Modifier
-                        .weight(1f)
-                        .height(42.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .clip(RoundedCornerShape(24.dp))
                         .background(Color.White)
-                        .padding(horizontal = 12.dp),
+                        .border(1.dp, Color(0xFFEBDCD3), RoundedCornerShape(24.dp))
+                        .padding(horizontal = 14.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    GlowIcon(icon = GlowIcons.Search, tint = DustyMerlot.copy(alpha = 0.7f), size = 18.dp)
-                    Text(text = "Tìm theo tên tiệm, dịch vụ, quận...", fontSize = 12.sp, color = TextMuted)
-                }
-
-                // Nút hạng thành viên VIP
-                Box(
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clip(CircleShape)
-                        .background(Brush.linearGradient(listOf(Color(0xFFF3E2B8), ChampagneGold)))
-                        .border(1.dp, Color.White.copy(alpha = 0.6f), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    GlowIcon(icon = GlowIcons.Crown, tint = DustyMerlot, size = 20.dp, contentDescription = "Hạng VIP")
+                    GlowIcon(
+                        icon = GlowIcons.Search,
+                        tint = Color(0xFF7A686D),
+                        size = 20.dp,
+                        contentDescription = "Search"
+                    )
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (searchQuery.isEmpty()) {
+                            Text(
+                                text = "Tìm salon, dịch vụ, quận...",
+                                color = Color(0xFF8E7A80),
+                                fontSize = 13.sp
+                            )
+                        }
+                        TextField(
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            ),
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .clickable { },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        GlowIcon(
+                            icon = GlowIcons.Filter,
+                            tint = Color(0xFF360814),
+                            size = 18.dp,
+                            contentDescription = "Bộ lọc"
+                        )
+                    }
                 }
             }
         }
 
-        // Categories Grid (Clickable to open category bottom sheet)
+        // 2. Section: Khám phá dịch vụ (Image 1 4x2 grid with soft rose medallions)
         item {
-            Card(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                shape = RoundedCornerShape(26.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val rows = categories.chunked(4)
+                    Text(
+                        text = "Khám phá dịch vụ",
+                        fontSize = 17.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF3A101A)
+                    )
+                    Row(
+                        modifier = Modifier.clickable { activeCategoryModal = "Tất cả dịch vụ" },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        Text(
+                            text = "Tất cả",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF6B1228)
+                        )
+                        GlowIcon(
+                            icon = GlowIcons.ChevronRight,
+                            tint = Color(0xFF6B1228),
+                            size = 12.dp
+                        )
+                    }
+                }
+
+                // 4x2 Grid of services
+                val rows = categories.chunked(4)
+                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                     rows.forEach { rowItems ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -146,44 +192,47 @@ fun CustomerHomeScreen(
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     modifier = Modifier
-                                        .width(70.dp)
-                                        .clickable { onSelectCategory(cat.name) }
+                                        .width(76.dp)
+                                        .clickable {
+                                            activeCategoryModal = cat.name
+                                            onSelectCategory(cat.name)
+                                        }
                                 ) {
+                                    // Soft blush circular medallion matching Image 1
                                     Box(
-                                        modifier = Modifier.size(56.dp),
+                                        modifier = Modifier
+                                            .size(54.dp)
+                                            .clip(CircleShape)
+                                            .background(
+                                                Brush.radialGradient(
+                                                    colors = listOf(
+                                                        Color(0xFFFFF9F5),
+                                                        Color(0xFFF9E7E2)
+                                                    )
+                                                )
+                                            )
+                                            .border(1.dp, Color(0xFFF3CEC5), CircleShape),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        IconMedallion(
+                                        GlowIcon(
                                             icon = cat.icon,
-                                            size = 52.dp,
-                                            iconSize = 24.dp,
+                                            tint = Color(0xFF6B1228),
+                                            size = 24.dp,
                                             contentDescription = cat.name
                                         )
-                                        if (cat.isHot) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .align(Alignment.TopEnd)
-                                                    .clip(RoundedCornerShape(6.dp))
-                                                    .background(Brush.linearGradient(listOf(Color(0xFF8A2E44), DustyMerlot)))
-                                                    .border(0.75.dp, GoldSoft, RoundedCornerShape(6.dp))
-                                                    .padding(horizontal = 4.dp, vertical = 1.dp)
-                                            ) {
-                                                Text(text = "HOT", fontSize = 7.sp, color = GoldSoft, fontWeight = FontWeight.Bold, letterSpacing = 0.5.sp)
-                                            }
-                                        }
                                     }
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
                                         text = cat.name,
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 11.5.sp,
+                                        fontWeight = FontWeight.Medium,
                                         color = Color(0xFF24090F),
                                         maxLines = 1
                                     )
                                 }
                             }
                             repeat(4 - rowItems.size) {
-                                Spacer(modifier = Modifier.width(70.dp))
+                                Spacer(modifier = Modifier.width(76.dp))
                             }
                         }
                     }
@@ -191,213 +240,522 @@ fun CustomerHomeScreen(
             }
         }
 
-        // Dual Quick Action Hub
+        // 3. Dual Quick Action Cards (Image 1: Ví GlowPrivé & Hôm nay 15:30)
         item {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                // Left Card: Ví GlowPrivé (Dark wine card)
                 Card(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(86.dp)
+                        .clickable { },
                     shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.linearGradient(
+                                    colors = listOf(
+                                        Color(0xFF3D0C18),
+                                        Color(0xFF290610),
+                                        Color(0xFF1F030B)
+                                    )
+                                )
+                            )
+                            .padding(12.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.12f))
+                                    .border(1.dp, ChampagneGold.copy(alpha = 0.5f), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                GlowIcon(
+                                    icon = GlowIcons.Crown,
+                                    tint = ChampagneGold,
+                                    size = 20.dp,
+                                    contentDescription = "Crown"
+                                )
+                            }
+                            Column {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                                ) {
+                                    Text(
+                                        text = "VÍ TÀI KHOẢN",
+                                        fontSize = 9.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFFE5B8C2),
+                                        letterSpacing = 0.5.sp
+                                    )
+                                    GlowIcon(icon = GlowIcons.ChevronRight, tint = Color(0xFFE5B8C2), size = 9.dp)
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "3.450.000 đ",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Right Card: Hôm nay 15:30 · L'Amour (White card)
+                Card(
+                    modifier = Modifier
+                        .weight(1.05f)
+                        .height(86.dp)
+                        .clickable { },
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Row(
-                        modifier = Modifier.padding(14.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Column {
-                            Text(text = "VÍ GLOWPRIVÉ", fontSize = 9.5.sp, color = TextMuted, fontWeight = FontWeight.Bold)
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(text = "3.450.000 đ", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold, color = Color(0xFF24090F))
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color(0xFFF9EFEF)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            GlowIcon(icon = GlowIcons.Calendar, tint = Color(0xFF6B1228), size = 20.dp)
                         }
-                        IconMedallion(
-                            icon = GlowIcons.Diamond,
-                            size = 34.dp,
-                            iconSize = 17.dp,
-                            tint = ChampagneGold,
-                            contentDescription = "Ví GlowPrivé"
+                        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(text = "Hôm nay", fontSize = 10.sp, color = Color(0xFF7A686D), fontWeight = FontWeight.Medium)
+                                Box(
+                                    modifier = Modifier
+                                        .size(5.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFE11D48))
+                                )
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Text(
+                                    text = "15:30 · L'Amour",
+                                    fontSize = 13.5.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF24090F)
+                                )
+                            }
+                            // Star rating pill
+                            Row(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(Color(0xFFFFF7ED))
+                                    .padding(horizontal = 5.dp, vertical = 2.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(2.dp)
+                            ) {
+                                GlowIcon(icon = GlowIcons.StarFilled, tint = ChampagneGold, size = 10.dp)
+                                Text(text = "4.9", fontSize = 9.5.sp, fontWeight = FontWeight.Bold, color = Color(0xFF882C42))
+                                GlowIcon(icon = GlowIcons.ChevronRight, tint = Color(0xFF882C42), size = 9.dp)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 4. Suggested Stores Banner Card (Cửa Hàng Gợi Ý Dành Cho Bạn)
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .height(185.dp)
+                    .clickable { onNavigateToSalon("L'Amour Luxury Spa & Nail") },
+                shape = RoundedCornerShape(22.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    // High-res VIP image
+                    Image(
+                        painter = painterResource(id = R.drawable.banner_glowprive_vip),
+                        contentDescription = "Cửa Hàng Gợi Ý Banner",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+
+                    // Dark luxury gradient overlay
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.horizontalGradient(
+                                    colors = listOf(
+                                        Color(0xFF2C0610).copy(alpha = 0.95f),
+                                        Color(0xFF2C0610).copy(alpha = 0.70f),
+                                        Color.Transparent
+                                    )
+                                )
+                            )
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                            // Pill badge
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(Color.White.copy(alpha = 0.15f))
+                                    .border(0.75.dp, ChampagneGold.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
+                                    .padding(horizontal = 8.dp, vertical = 3.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    GlowIcon(icon = GlowIcons.Sparkle, tint = ChampagneGold, size = 11.dp)
+                                    Text(
+                                        text = "CỬA HÀNG GỢI Ý DÀNH CHO BẠN",
+                                        color = ChampagneGold,
+                                        fontSize = 8.5.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        letterSpacing = 0.5.sp
+                                    )
+                                }
+                            }
+
+                            Text(
+                                text = "Top Salon Đã Kiểm Duyệt &\nƯu Đãi Độc Quyền",
+                                color = Color.White,
+                                fontFamily = FontFamily.Serif,
+                                fontSize = 17.5.sp,
+                                fontWeight = FontWeight.Bold,
+                                lineHeight = 22.sp
+                            )
+
+                            Text(
+                                text = "• L'Amour Luxury Spa: Giảm 20% dịch vụ Nail Art & Mi\n• An Yên Dưỡng Sinh: Tặng Voucher 100.000đ gội đầu\n• Đánh giá 4.9★ - Phục vụ tận tâm, chuyên nghiệp",
+                                color = Color(0xFFF3CEC5),
+                                fontSize = 9.5.sp,
+                                lineHeight = 13.5.sp
+                            )
+                        }
+
+                        // Explore button
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color.White)
+                                .clickable { onNavigateToSalon("L'Amour Luxury Spa & Nail") }
+                                .padding(horizontal = 14.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            Text(
+                                text = "Khám phá các Cửa hàng gợi ý",
+                                fontSize = 11.5.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF360814)
+                            )
+                            GlowIcon(icon = GlowIcons.ChevronRight, tint = Color(0xFF360814), size = 12.dp)
+                        }
+                    }
+
+                    // Carousel 3-dots indicator at bottom center
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(width = 14.dp, height = 4.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(Color.White)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .size(4.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.45f))
+                        )
+                        Box(
+                            modifier = Modifier
+                                .size(4.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.45f))
+                        )
+                    }
+                }
+            }
+        }
+
+        // 5. Section: Salon nổi bật (Image 1 L'Amour Luxury Spa & Nail)
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Salon nổi bật",
+                        fontSize = 17.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF3A101A)
+                    )
+                    Row(
+                        modifier = Modifier.clickable { onNavigateToSalon("L'Amour Luxury Spa & Nail") },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        Text(
+                            text = "Xem tất cả",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF6B1228)
+                        )
+                        GlowIcon(
+                            icon = GlowIcons.ChevronRight,
+                            tint = Color(0xFF6B1228),
+                            size = 12.dp
                         )
                     }
                 }
 
                 Card(
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onNavigateToSalon("L'Amour Luxury Spa & Nail") },
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.padding(14.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Text(text = "HÔM NAY", fontSize = 9.5.sp, color = TextMuted, fontWeight = FontWeight.Bold)
-                                Box(
-                                    modifier = Modifier
-                                        .size(6.dp)
-                                        .clip(CircleShape)
-                                        .background(SuccessGreen)
-                                )
+                    Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            // Thumbnail photo: salon_luxury_interior
+                            Image(
+                                painter = painterResource(id = R.drawable.salon_luxury_interior),
+                                contentDescription = "Salon Interior",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(105.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                            )
+
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "L'Amour Luxury Spa & Nail",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.5.sp,
+                                        color = Color(0xFF24090F)
+                                    )
+                                    Box(
+                                        modifier = Modifier.clickable { isFavorite = !isFavorite }
+                                    ) {
+                                        GlowIcon(
+                                            icon = if (isFavorite) GlowIcons.HeartFilled else GlowIcons.Heart,
+                                            tint = if (isFavorite) Color(0xFFE11D48) else Color(0xFF8E7A80),
+                                            size = 18.dp
+                                        )
+                                    }
+                                }
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    GlowIcon(icon = GlowIcons.StarFilled, tint = ChampagneGold, size = 13.dp)
+                                    Text(
+                                        text = "4.9",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF24090F)
+                                    )
+                                    Text(
+                                        text = "(1.8k+ đánh giá)",
+                                        fontSize = 11.sp,
+                                        color = Color(0xFF7A686D)
+                                    )
+                                }
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    GlowIcon(icon = GlowIcons.MapPin, tint = Color(0xFF7A686D), size = 12.dp)
+                                    Text(
+                                        text = "Quận 1, TP. Hồ Chí Minh · 2.3 km",
+                                        fontSize = 11.sp,
+                                        color = Color(0xFF7A686D)
+                                    )
+                                }
+
+                                // Tags row
+                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    listOf("Nail Art", "Spa", "Chăm sóc da").forEach { tag ->
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(6.dp))
+                                                .background(Color(0xFFF9EFEF))
+                                                .padding(horizontal = 7.dp, vertical = 2.dp)
+                                        ) {
+                                            Text(
+                                                text = tag,
+                                                fontSize = 10.sp,
+                                                color = Color(0xFF6B1228),
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        }
+                                    }
+                                }
                             }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(text = "15:30 • L'Amour", fontSize = 13.sp, fontWeight = FontWeight.ExtraBold, color = Color(0xFF24090F))
                         }
+
+                        // Promo discount pill banner
                         Row(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(PinkPanther.copy(alpha = 0.4f))
-                                .padding(horizontal = 6.dp, vertical = 4.dp),
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color(0xFFFDF2EE))
+                                .padding(horizontal = 10.dp, vertical = 7.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(3.dp)
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            GlowIcon(icon = GlowIcons.StarFilled, tint = ChampagneGold, size = 12.dp)
-                            Text(text = "4.9", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = DustyMerlot)
+                            GlowIcon(icon = GlowIcons.Tag, tint = Color(0xFF6B1228), size = 14.dp)
+                            Text(
+                                text = "Giảm 20% cho dịch vụ nail art",
+                                fontSize = 11.5.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF6B1228)
+                            )
                         }
                     }
                 }
             }
         }
 
-        // Hero Banners
+        // 6. Section: Dịch vụ yêu thích (Image 1 bottom carousel)
         item {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Trải nghiệm Thượng lưu", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3A101A))
+                    Text(
+                        text = "Dịch vụ yêu thích",
+                        fontSize = 17.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF3A101A)
+                    )
                     Row(
                         modifier = Modifier.clickable { },
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
                     ) {
-                        Text(text = "Tất cả", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = DustyMerlot)
-                        GlowIcon(icon = GlowIcons.ChevronRight, tint = DustyMerlot, size = 14.dp)
+                        Text(
+                            text = "Xem tất cả",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF6B1228)
+                        )
+                        GlowIcon(
+                            icon = GlowIcons.ChevronRight,
+                            tint = Color(0xFF6B1228),
+                            size = 12.dp
+                        )
                     }
                 }
 
                 LazyRow(
-                    contentPadding = PaddingValues(horizontal = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(end = 8.dp)
                 ) {
-                    items(banners) { banner ->
+                    items(favoriteServices) { fav ->
                         Card(
                             modifier = Modifier
-                                .width(290.dp)
-                                .height(150.dp),
-                            shape = RoundedCornerShape(20.dp),
-                            colors = CardDefaults.cardColors(containerColor = DustyMerlot)
+                                .width(155.dp)
+                                .clickable { onSelectServiceForBooking(fav.name) },
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Brush.linearGradient(listOf(Color(0xFF2B0811), DustyMerlot, Color(0xFF882C42))))
-                                    .padding(14.dp)
-                            ) {
-                                Column(
-                                    modifier = Modifier.fillMaxHeight(),
-                                    verticalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(6.dp))
-                                            .background(Color.White.copy(alpha = 0.2f))
-                                            .padding(horizontal = 8.dp, vertical = 2.dp)
-                                    ) {
-                                        Text(text = banner.badge, fontSize = 8.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                                    }
-                                    Column {
-                                        Text(text = banner.title, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                                        Spacer(modifier = Modifier.height(2.dp))
-                                        Text(text = banner.subtitle, fontSize = 10.sp, color = PinkPanther)
-                                    }
-                                    Button(
-                                        onClick = { onSelectServiceForBooking(banner.title) },
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                                        shape = RoundedCornerShape(8.dp),
-                                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                                        modifier = Modifier.height(30.dp)
-                                    ) {
-                                        Text(text = banner.buttonText, fontSize = 10.sp, color = DustyMerlot, fontWeight = FontWeight.Bold)
-                                    }
+                            Column {
+                                Image(
+                                    painter = painterResource(id = fav.imageRes),
+                                    contentDescription = fav.name,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(110.dp)
+                                )
+                                Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                    Text(
+                                        text = fav.name,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF24090F),
+                                        maxLines = 1
+                                    )
+                                    Text(
+                                        text = fav.salon,
+                                        fontSize = 10.5.sp,
+                                        color = Color(0xFF7A686D)
+                                    )
+                                    Text(
+                                        text = fav.price,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF6B1228)
+                                    )
                                 }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Salon Marketplace Feed (Clickable to Salon Detail)
-        item {
-            Column(
-                modifier = Modifier.padding(horizontal = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = "Không Gian Làm Đẹp Thượng Lưu",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF3A101A)
-                )
-
-                salons.forEach { salon ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onNavigateToSalon(salon.name) },
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.Top
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    if (salon.isSponsored) {
-                                        Row(
-                                            modifier = Modifier
-                                                .clip(RoundedCornerShape(6.dp))
-                                                .background(PinkPanther)
-                                                .padding(horizontal = 6.dp, vertical = 2.dp),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(3.dp)
-                                        ) {
-                                            GlowIcon(icon = GlowIcons.Crown, tint = DustyMerlot, size = 10.dp)
-                                            Text(text = "SPONSORED TOP", fontSize = 8.sp, fontWeight = FontWeight.Bold, color = DustyMerlot)
-                                        }
-                                        Spacer(modifier = Modifier.height(4.dp))
-                                    }
-                                    Text(text = salon.name, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3A101A))
-                                }
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    GlowIcon(icon = GlowIcons.StarFilled, tint = ChampagneGold, size = 14.dp)
-                                    Text(text = "${salon.rating}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3A101A))
-                                    Text(text = salon.reviews, fontSize = 10.sp, color = TextMuted)
-                                }
-                            }
-                            Text(text = salon.services, fontSize = 12.sp, color = TextMuted)
-                            HorizontalDivider(color = Color(0xFFEBDCD3))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    GlowIcon(icon = GlowIcons.MapPin, tint = DustyMerlot.copy(alpha = 0.7f), size = 13.dp)
-                                    Text(text = salon.distance, fontSize = 11.sp, color = TextMuted)
-                                }
-                                Text(text = "Cọc 30%: ${salon.price}", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = DustyMerlot)
                             }
                         }
                     }
@@ -406,7 +764,7 @@ fun CustomerHomeScreen(
         }
     }
 
-    // Category Service Bottom Sheet Modal (Matching second screenshot)
+    // Category Bottom Sheet Modal
     if (activeCategoryModal != null) {
         ModalBottomSheet(
             onDismissRequest = { activeCategoryModal = null },
@@ -419,10 +777,10 @@ fun CustomerHomeScreen(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Text(
-                    text = "NGHỆ NHÂN TẠO MẪU MÓNG CHUẨN SALON CHÂU ÂU",
+                    text = "DỊCH VỤ LÀM ĐẸP THƯỢNG LƯU",
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    color = DustyMerlot,
+                    color = Color(0xFF6B1228),
                     letterSpacing = 1.sp
                 )
                 Row(
@@ -431,7 +789,7 @@ fun CustomerHomeScreen(
                 ) {
                     GlowIcon(icon = GlowIcons.Sparkle, tint = ChampagneGold, size = 18.dp)
                     Text(
-                        text = "Bộ Sưu Tập $activeCategoryModal Haute Couture",
+                        text = "Bộ Sưu Tập $activeCategoryModal",
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF3A101A)
@@ -440,105 +798,39 @@ fun CustomerHomeScreen(
 
                 HorizontalDivider(color = Color(0xFFEBDCD3))
 
-                val categoryServices = listOf(
-                    CategoryServiceModalItem("Sơn Gel Hữu Cơ Pháp + Dưỡng Móng Tinh Dầu", "45 phút", 4.99, "54k", "180.000 đ", "Signature"),
-                    CategoryServiceModalItem("Nail Art Mắt Mèo Cực Quang & Tráng Gương", "60 phút", 5.0, "84k", "280.000 đ", "Xu hướng"),
-                    CategoryServiceModalItem("Đắp Móng Form Hoàng Gia & Đính Đá Swarovski", "75 phút", 4.98, "135k", "450.000 đ", "Haute VIP"),
-                    CategoryServiceModalItem("Chăm Sóc Móng Spa Tinh Chất Ngọc Trai", "50 phút", 4.95, "66k", "220.000 đ", "Dưỡng sâu")
+                val modalServices = listOf(
+                    "Sơn Gel Hữu Cơ Pháp + Dưỡng Móng" to "180.000 đ",
+                    "Nail Art Mắt Mèo Cực Quang VIP" to "280.000 đ",
+                    "Đắp Móng Hoàng Gia Đính Đá Swarovski" to "450.000 đ"
                 )
 
-                categoryServices.forEach { item ->
+                modalServices.forEach { (sName, sPrice) ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
                                 activeCategoryModal = null
-                                onSelectServiceForBooking(item.name)
+                                onSelectServiceForBooking(sName)
                             },
-                        shape = RoundedCornerShape(18.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFBF7E8)),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                        shape = RoundedCornerShape(14.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFBF7E8))
                     ) {
-                        Column(
-                            modifier = Modifier.padding(14.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.Top
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = item.name,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp,
-                                        color = DustyMerlot
-                                    )
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                        Text(text = "${item.duration} •", fontSize = 11.sp, color = TextMuted)
-                                        GlowIcon(icon = GlowIcons.StarFilled, tint = ChampagneGold, size = 11.dp)
-                                        Text(text = "${item.rating} • Cọc 30%: ${item.deposit}", fontSize = 11.sp, color = TextMuted)
-                                    }
-                                }
-
-                                Box(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(6.dp))
-                                        .background(PinkPanther.copy(alpha = 0.5f))
-                                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                                ) {
-                                    Text(
-                                        text = item.tag,
-                                        fontSize = 9.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = DustyMerlot
-                                    )
-                                }
+                            Column {
+                                Text(text = sName, fontSize = 13.5.sp, fontWeight = FontWeight.Bold, color = Color(0xFF24090F))
+                                Text(text = "Thời lượng 45-60 phút", fontSize = 11.sp, color = Color(0xFF7A686D))
                             }
-
-                            HorizontalDivider(color = Color(0xFFF0E5DE))
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = item.price,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    fontSize = 15.sp,
-                                    color = DustyMerlot
-                                )
-
-                                Button(
-                                    onClick = {
-                                        activeCategoryModal = null
-                                        onSelectServiceForBooking(item.name)
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = DustyMerlot),
-                                    shape = RoundedCornerShape(10.dp),
-                                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
-                                    modifier = Modifier.height(34.dp)
-                                ) {
-                                    Text("Đặt cọc", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                                }
-                            }
+                            Text(text = sPrice, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF6B1228))
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
 }
-
-data class CategoryServiceModalItem(
-    val name: String,
-    val duration: String,
-    val rating: Double,
-    val deposit: String,
-    val price: String,
-    val tag: String
-)

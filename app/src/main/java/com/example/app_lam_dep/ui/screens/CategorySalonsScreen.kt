@@ -56,7 +56,9 @@ data class GrabSalon(
     val promoVoucher: String,
     val isSignatureBadge: Boolean,
     val signatureBadgeText: String,
-    val services: List<GrabFeaturedService>
+    val services: List<GrabFeaturedService>,
+    val requiresDeposit: Boolean = true,
+    val depositLabel: String = "Cọc từ 50k (5 mệnh giá)"
 )
 
 @Composable
@@ -146,7 +148,9 @@ fun CategorySalonsScreen(
                         GrabFeaturedService("s10", "Gội Dưỡng Sinh 75p", "250.000đ", listOf(Color(0xFF1E3A2F), Color(0xFF386653))),
                         GrabFeaturedService("s11", "Massage Đá Nóng 90p", "490.000đ", listOf(Color(0xFF4D2B1C), Color(0xFF7D4A32))),
                         GrabFeaturedService("s12", "Ngâm Chân Thảo Mộc", "150.000đ", listOf(Color(0xFF303C24), Color(0xFF53663E)))
-                    )
+                    ),
+                    requiresDeposit = false,
+                    depositLabel = "Không cần cọc • Giữ chỗ 0đ"
                 ),
                 GrabSalon(
                     id = "5",
@@ -598,10 +602,10 @@ private fun GrabStyleSalonDetailCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "ƯU ĐÃI CỌC",
+                            text = if (salon.requiresDeposit) "ƯU ĐÃI CỌC" else "MIỄN CỌC 0Đ",
                             fontSize = 7.5.sp,
                             fontWeight = FontWeight.Bold,
-                            color = GoldSoft
+                            color = if (salon.requiresDeposit) GoldSoft else SuccessGreen
                         )
                     }
                 }
@@ -657,10 +661,10 @@ private fun GrabStyleSalonDetailCard(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = "Cọc từ 50.000đ",
+                            text = salon.depositLabel,
                             fontSize = 11.5.sp,
                             fontWeight = FontWeight.Bold,
-                            color = DustyMerlot
+                            color = if (salon.requiresDeposit) DustyMerlot else SuccessGreen
                         )
                         Text(text = "•", fontSize = 11.sp, color = TextMuted)
                         Text(text = "${salon.distance} • ${salon.eta}", fontSize = 11.sp, color = TextMuted)

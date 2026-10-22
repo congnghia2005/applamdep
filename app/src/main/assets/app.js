@@ -189,7 +189,13 @@ function switchRole(roleName) {
   const adminView = document.getElementById('adminView');
   const actView = document.getElementById('activityView');
   const headerSearch = document.getElementById('customerHeaderSearch');
+  const headerSubtitle = document.getElementById('headerSubtitle');
   const roleLabel = document.getElementById('bottomNavRoleLabel');
+  const navHomeLabel = document.getElementById('navHomeLabel');
+  const navActivityLabel = document.getElementById('navActivityLabel');
+  const navPayLabel = document.getElementById('navPayLabel');
+  const navActivityIcon = document.getElementById('navActivityIcon');
+  const navPayIcon = document.getElementById('navPayIcon');
 
   // Update pills
   document.getElementById('pillCustomer')?.classList.toggle('active', roleName === 'customer');
@@ -205,8 +211,14 @@ function switchRole(roleName) {
     if (adminView) adminView.style.display = 'none';
     if (actView) actView.style.display = 'none';
     if (headerSearch) headerSearch.style.display = 'flex';
+    if (headerSubtitle) headerSubtitle.innerText = 'Khám phá vẻ đẹp của bạn';
+    if (navHomeLabel) navHomeLabel.innerText = 'Khám phá';
+    if (navActivityLabel) navActivityLabel.innerText = 'Lịch';
+    if (navPayLabel) navPayLabel.innerText = 'Tin nhắn';
+    if (roleLabel) roleLabel.innerText = 'Tôi';
+    if (navActivityIcon) navActivityIcon.className = 'fa-regular fa-calendar-days';
+    if (navPayIcon) navPayIcon.className = 'fa-regular fa-comment-dots';
     document.getElementById('navHome')?.classList.add('active');
-    if (roleLabel) roleLabel.innerText = 'Vai trò';
     showToast('Đang ở: Giao diện Khách Hàng Thượng Lưu', 'fa-user');
   } else if (roleName === 'partner') {
     if (custView) custView.style.display = 'none';
@@ -214,21 +226,69 @@ function switchRole(roleName) {
     if (adminView) adminView.style.display = 'none';
     if (actView) actView.style.display = 'none';
     if (headerSearch) headerSearch.style.display = 'none';
-    if (roleLabel) roleLabel.innerText = 'Salon';
-    showToast('Đang ở: Kênh Quản Lý Dành Cho Đối Tác Salon', 'fa-store');
+    if (headerSubtitle) headerSubtitle.innerText = 'Khu vực Đối tác Salon';
+    if (navHomeLabel) navHomeLabel.innerText = 'Trang chủ';
+    if (navActivityLabel) navActivityLabel.innerText = 'Lịch';
+    if (navPayLabel) navPayLabel.innerText = 'Tin nhắn';
+    if (roleLabel) roleLabel.innerText = 'Tôi';
+    if (navActivityIcon) navActivityIcon.className = 'fa-regular fa-calendar-days';
+    if (navPayIcon) navPayIcon.className = 'fa-regular fa-comment-dots';
+    document.getElementById('navHome')?.classList.add('active');
+    showToast('Đang ở: Khu vực Đối tác Salon • L\'Amour Luxury', 'fa-store');
   } else if (roleName === 'admin') {
     if (custView) custView.style.display = 'none';
     if (partView) partView.style.display = 'none';
     if (adminView) adminView.style.display = 'block';
     if (actView) actView.style.display = 'none';
     if (headerSearch) headerSearch.style.display = 'none';
-    if (roleLabel) roleLabel.innerText = 'Admin';
+    if (headerSubtitle) headerSubtitle.innerText = 'Quản trị viên (Admin)';
+    // 4 Fixed bottom tabs per Section 4
+    if (navHomeLabel) navHomeLabel.innerText = 'Trang chủ';
+    if (navActivityLabel) navActivityLabel.innerText = 'Cửa hàng';
+    if (navPayLabel) navPayLabel.innerText = 'Khách hàng';
+    if (roleLabel) roleLabel.innerText = 'Thêm';
+    if (navActivityIcon) navActivityIcon.className = 'fa-solid fa-store';
+    if (navPayIcon) navPayIcon.className = 'fa-solid fa-users';
+    switchAdminSection('home');
+    document.getElementById('navHome')?.classList.add('active');
     showToast('Đang ở: Kênh Quản Trị Hệ Thống & Kiểm Duyệt', 'fa-shield-halved');
   }
 }
 
+let salonIsActive = true;
+function toggleSalonStatus() {
+  salonIsActive = !salonIsActive;
+  const statusText = document.getElementById('partnerStatusText');
+  if (statusText) {
+    statusText.innerText = salonIsActive ? 'Đang hoạt động' : 'Tạm nghỉ nhận khách';
+  }
+  showToast(
+    salonIsActive ? 'Trạng thái gian hàng: Đang hoạt động nhận khách' : 'Đã tạm ngưng nhận khách mới hôm nay',
+    salonIsActive ? 'fa-circle-check' : 'fa-pause'
+  );
+}
+
+function openReviewsModal() {
+  showToast('⭐ Điểm trung bình 4.9/5 (1.8k+ đánh giá từ khách hàng đã trải nghiệm)', 'fa-star');
+}
+
+function togglePartnerTools() {
+  const content = document.getElementById('partnerToolsContent');
+  const chevron = document.getElementById('toolsChevron');
+  if (!content) return;
+  const isHidden = content.style.display === 'none';
+  content.style.display = isHidden ? 'block' : 'none';
+  if (chevron) {
+    chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+  }
+}
+
 function openRoleHubModal() {
-  // Cyclical quick toggle when tapping bottom nav "Vai trò"
+  if (currentRole === 'admin') {
+    openAdminMoreModal();
+    return;
+  }
+  // Cyclical quick toggle when tapping bottom nav "Tôi"
   if (currentRole === 'customer') switchRole('partner');
   else if (currentRole === 'partner') switchRole('admin');
   else switchRole('customer');
@@ -246,9 +306,40 @@ function switchNavTab(tabKey) {
 
   document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
 
+  // ADMIN ROLE BOTTOM NAVIGATION
+  if (currentRole === 'admin') {
+    if (tabKey === 'home') {
+      document.getElementById('navHome')?.classList.add('active');
+      switchAdminSection('home');
+    } else if (tabKey === 'activity') {
+      document.getElementById('navActivity')?.classList.add('active');
+      switchAdminSection('shops');
+    } else if (tabKey === 'payment') {
+      document.getElementById('navPay')?.classList.add('active');
+      switchAdminSection('customers');
+    } else if (tabKey === 'roleHub' || tabKey === 'more') {
+      document.getElementById('navRoleHub')?.classList.add('active');
+      openAdminMoreModal();
+    }
+    return;
+  }
+
+  // CUSTOMER & PARTNER NAVIGATION
   if (tabKey === 'home') {
     document.getElementById('navHome')?.classList.add('active');
-    switchRole('customer');
+    if (currentRole === 'customer') {
+      if (custView) custView.style.display = 'block';
+      if (partView) partView.style.display = 'none';
+      if (adminView) adminView.style.display = 'none';
+      if (actView) actView.style.display = 'none';
+      if (headerSearch) headerSearch.style.display = 'flex';
+    } else {
+      if (custView) custView.style.display = 'none';
+      if (partView) partView.style.display = 'block';
+      if (adminView) adminView.style.display = 'none';
+      if (actView) actView.style.display = 'none';
+      if (headerSearch) headerSearch.style.display = 'none';
+    }
   } else if (tabKey === 'activity') {
     document.getElementById('navActivity')?.classList.add('active');
     if (custView) custView.style.display = 'none';
@@ -256,9 +347,15 @@ function switchNavTab(tabKey) {
     if (adminView) adminView.style.display = 'none';
     if (actView) actView.style.display = 'block';
     if (headerSearch) headerSearch.style.display = 'none';
-  } else if (tabKey === 'payment') {
+    switchMsgPane('activity');
+  } else if (tabKey === 'payment' || tabKey === 'messages') {
     document.getElementById('navPay')?.classList.add('active');
-    showToast(`Ví GlowPrivé: ${userWalletBalance.toLocaleString('vi-VN')}đ • Hoàn 15% tiền cọc cho thành viên Diamond`, 'fa-gem');
+    if (custView) custView.style.display = 'none';
+    if (partView) partView.style.display = 'none';
+    if (adminView) adminView.style.display = 'none';
+    if (actView) actView.style.display = 'block';
+    if (headerSearch) headerSearch.style.display = 'none';
+    switchMsgPane('messages');
   }
 }
 
@@ -269,11 +366,39 @@ function openActivityTab() {
 /* =========================================================
    3. MULTI-SERVICE SELECTION & BOOKING CALCULATION
 ========================================================= */
-function openBookingModal(serviceName = 'L’Amour Haute Beauty Lounge', defaultPrice = 180000, defaultDur = 45) {
+let currentBookingRequiresDeposit = true;
+let selectedDepositTierAmount = 50000;
+
+function openBookingModal(serviceName = 'L’Amour Haute Beauty Lounge', defaultPrice = 180000, defaultDur = 45, requiresDeposit = true) {
   closeServiceDrawer();
   const modal = document.getElementById('bookingModal');
   const title = document.getElementById('bookingServiceTitle');
   if (title) title.innerText = serviceName;
+
+  // Check if salon is An Yên (free deposit) or specified
+  if (serviceName.toLowerCase().includes('yên') || serviceName.toLowerCase().includes('dưỡng sinh') || !requiresDeposit) {
+    currentBookingRequiresDeposit = false;
+  } else {
+    currentBookingRequiresDeposit = true;
+  }
+
+  // Update UI for deposit vs no deposit
+  const tiersRow = document.getElementById('depositTiersRow');
+  const noDepAlert = document.getElementById('noDepositAlert');
+  const depBadge = document.getElementById('depositShopBadge');
+  const payGroup = document.getElementById('paymentGatewayGroup');
+
+  if (currentBookingRequiresDeposit) {
+    if (tiersRow) tiersRow.style.display = 'flex';
+    if (noDepAlert) noDepAlert.style.display = 'none';
+    if (depBadge) { depBadge.innerText = 'Shop yêu cầu cọc'; depBadge.className = 'badge-mini'; }
+    if (payGroup) payGroup.style.display = 'block';
+  } else {
+    if (tiersRow) tiersRow.style.display = 'none';
+    if (noDepAlert) noDepAlert.style.display = 'flex';
+    if (depBadge) { depBadge.innerText = 'Shop miễn cọc (0đ)'; depBadge.className = 'badge-mini highlight'; }
+    if (payGroup) payGroup.style.display = 'none';
+  }
   
   // Initialize services selection
   selectedBookingServices = [{ name: 'Sơn Gel Hữu Cơ Pháp + Dưỡng Móng', price: defaultPrice, duration: defaultDur }];
@@ -313,7 +438,7 @@ function toggleMultiService(cardEl, priceVal, durationVal) {
 function recalculateBookingCart() {
   const totalDuration = selectedBookingServices.reduce((acc, s) => acc + s.duration, 0);
   const totalPrice = selectedBookingServices.reduce((acc, s) => acc + s.price, 0);
-  const depositPrice = Math.round((totalPrice * 0.3) / 1000) * 1000; // 30% deposit rule
+  const depositPrice = currentBookingRequiresDeposit ? selectedDepositTierAmount : 0;
   const remainPrice = Math.max(0, totalPrice - depositPrice);
 
   const durEl = document.getElementById('multiTotalDuration');
@@ -324,9 +449,23 @@ function recalculateBookingCart() {
 
   if (durEl) durEl.innerText = `${totalDuration} phút (${selectedBookingServices.length} dịch vụ)`;
   if (subEl) subEl.innerText = totalPrice.toLocaleString('vi-VN') + 'đ';
-  if (depEl) depEl.innerText = depositPrice.toLocaleString('vi-VN') + 'đ';
-  if (finEl) finEl.innerText = remainPrice.toLocaleString('vi-VN') + 'đ';
-  if (btnEl) btnEl.innerHTML = `<i class="fa-solid fa-shield-check"></i> Thanh Toán Cọc ${depositPrice.toLocaleString('vi-VN')}đ & Giữ Suất`;
+  if (depEl) depEl.innerText = currentBookingRequiresDeposit ? depositPrice.toLocaleString('vi-VN') + 'đ' : '0đ (Miễn cọc)';
+  if (finEl) finEl.innerText = currentBookingRequiresDeposit ? remainPrice.toLocaleString('vi-VN') + 'đ' : totalPrice.toLocaleString('vi-VN') + 'đ';
+
+  if (btnEl) {
+    if (currentBookingRequiresDeposit) {
+      btnEl.innerHTML = `<i class="fa-solid fa-shield-check"></i> Xác Nhận Đặt Cọc ${depositPrice.toLocaleString('vi-VN')}đ & Nhận Vé QR`;
+    } else {
+      btnEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Xác Nhận Giữ Chỗ Miễn Phí (0đ) & Nhận Vé QR`;
+    }
+  }
+}
+
+function selectDepositTier(amount, btnEl) {
+  selectedDepositTierAmount = amount;
+  document.querySelectorAll('.tier-pill-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  recalculateBookingCart();
 }
 
 // 10-Minute Hold Slot Timer
@@ -369,30 +508,44 @@ function selectPayMethod(el) {
   el.classList.add('selected');
 }
 
-// Confirm Booking with Deposit
+// Confirm Booking with Customer Info Form
 function confirmBookingWithDeposit() {
+  const custName = document.getElementById('custNameInput')?.value || 'Quý cô Khánh Linh';
+  const custPhone = document.getElementById('custPhoneInput')?.value || '0903 123 456';
+  const custNote = document.getElementById('custNoteInput')?.value || '';
+
   const totalPrice = selectedBookingServices.reduce((acc, s) => acc + s.price, 0);
-  const depositPrice = Math.round((totalPrice * 0.3) / 1000) * 1000;
+  const depositPrice = currentBookingRequiresDeposit ? selectedDepositTierAmount : 0;
   const names = selectedBookingServices.map(s => s.name).join(' + ');
 
   closeBookingModal();
-  showToast(`🎉 Đặt cọc ${depositPrice.toLocaleString('vi-VN')}đ thành công! Đã tạo vé & mã QR Check-in VIP`, 'fa-shield-check');
+  if (currentBookingRequiresDeposit) {
+    showToast(`🎉 Đặt cọc ${depositPrice.toLocaleString('vi-VN')}đ thành công! Đã gửi thông tin về Salon cho ${custName}`, 'fa-shield-check');
+  } else {
+    showToast(`🎉 Đặt lịch giữ chỗ miễn phí (0đ) thành công cho ${custName}! Đã gửi thông tin về Salon`, 'fa-circle-check');
+  }
 
-  // Update Activity Ticket info
+  // Update Activity Ticket info with customer info
   const servNameEl = document.getElementById('ticketServiceName');
   const totEl = document.getElementById('ticketTotalPrice');
   const depEl = document.getElementById('ticketDepositPaid');
   const remEl = document.getElementById('ticketRemainPrice');
   const statPill = document.getElementById('ticketStatusPill');
 
-  if (servNameEl) servNameEl.innerText = names;
+  if (servNameEl) servNameEl.innerHTML = `<strong>${names}</strong><br><span style="font-size:11px; color:var(--text-muted); font-weight:600;">Khách: ${custName} • ${custPhone}</span>`;
   if (totEl) totEl.innerText = totalPrice.toLocaleString('vi-VN') + 'đ';
-  if (depEl) depEl.innerText = `-${depositPrice.toLocaleString('vi-VN')}đ`;
-  if (remEl) remEl.innerText = (totalPrice - depositPrice).toLocaleString('vi-VN') + 'đ';
+  if (depEl) depEl.innerText = currentBookingRequiresDeposit ? `-${depositPrice.toLocaleString('vi-VN')}đ` : '0đ (Miễn cọc)';
+  if (remEl) remEl.innerText = (currentBookingRequiresDeposit ? Math.max(0, totalPrice - depositPrice) : totalPrice).toLocaleString('vi-VN') + 'đ';
   if (statPill) {
-    statPill.innerHTML = '<i class="fa-solid fa-circle-check"></i> ĐÃ XÁC NHẬN & ĐẶT CỌC';
-    statPill.style.background = '#dcfce7';
-    statPill.style.color = '#15803d';
+    if (currentBookingRequiresDeposit) {
+      statPill.innerHTML = '<i class="fa-solid fa-circle-check"></i> ĐÃ XÁC NHẬN & ĐẶT CỌC';
+      statPill.style.background = '#dcfce7';
+      statPill.style.color = '#15803d';
+    } else {
+      statPill.innerHTML = '<i class="fa-solid fa-circle-check"></i> ĐÃ XÁC NHẬN GIỮ CHỖ (0Đ)';
+      statPill.style.background = '#dbeafe';
+      statPill.style.color = '#1d4ed8';
+    }
   }
 
   setTimeout(() => {
@@ -777,3 +930,506 @@ function togglePhoneFrame() {
     showToast('Chế độ xem: Toàn màn hình Responsive');
   }
 }
+
+/* =========================================================
+   6. GÓI ĐỐI TÁC (3, 6, 12 THÁNG) & ƯU ĐÃI FREE THÁNG ĐẦU
+========================================================= */
+function selectPlanCycle(months, btnEl) {
+  document.querySelectorAll('.cycle-pill-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  const stdPriceEl = document.getElementById('planStandardPrice');
+  const vipPriceEl = document.getElementById('planVipPrice');
+  const vipRegEl = document.getElementById('vipRegularPart');
+  const vipAdEl = document.getElementById('vipAdPart');
+
+  let stdFee = 1090000;
+  let vipAd = 1700000;
+
+  if (months === 3) {
+    stdFee = 590000;
+    vipAd = 900000;
+  } else if (months === 12) {
+    stdFee = 1990000;
+    vipAd = 3000000;
+  }
+
+  const vipTotal = stdFee + vipAd;
+
+  if (stdPriceEl) stdPriceEl.innerHTML = `${stdFee.toLocaleString('vi-VN')}đ <span>/ ${months} tháng</span>`;
+  if (vipPriceEl) vipPriceEl.innerHTML = `${vipTotal.toLocaleString('vi-VN')}đ <span>/ ${months} tháng</span>`;
+  if (vipRegEl) vipRegEl.innerText = `• Phí thường niên mở sàn: ${stdFee.toLocaleString('vi-VN')}đ`;
+  if (vipAdEl) vipAdEl.innerText = `• Phí quảng cáo đẩy top đề xuất: ${vipAd.toLocaleString('vi-VN')}đ`;
+}
+
+function subscribePlan(planName) {
+  showToast(`🎉 Kích hoạt ${planName} thành công! Được áp dụng ưu đãi MIỄN PHÍ THÁNG ĐẦU TIÊN (30 ngày 0đ)!`, 'fa-crown');
+}
+
+/* =========================================================
+   7. DRAGGABLE FLOATING AI CHATBOT BUTTON (Edge movable)
+========================================================= */
+function initDraggableAiFab() {
+  const fab = document.getElementById('draggableAiFab');
+  if (!fab) return;
+
+  let isDragging = false;
+  let startX, startY, initialLeft, initialTop;
+
+  fab.addEventListener('mousedown', startDrag);
+  fab.addEventListener('touchstart', startDrag, { passive: false });
+
+  function startDrag(e) {
+    isDragging = false;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    startX = clientX;
+    startY = clientY;
+    const rect = fab.getBoundingClientRect();
+    initialLeft = rect.left;
+    initialTop = rect.top;
+
+    document.addEventListener('mousemove', onDrag);
+    document.addEventListener('touchmove', onDrag, { passive: false });
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchend', endDrag);
+  }
+
+  function onDrag(e) {
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const dx = clientX - startX;
+    const dy = clientY - startY;
+
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+      isDragging = true;
+      if (e.cancelable) e.preventDefault();
+      
+      const newX = Math.max(10, Math.min(window.innerWidth - 70, initialLeft + dx));
+      const newY = Math.max(60, Math.min(window.innerHeight - 80, initialTop + dy));
+
+      fab.style.left = newX + 'px';
+      fab.style.top = newY + 'px';
+      fab.style.right = 'auto';
+      fab.style.bottom = 'auto';
+    }
+  }
+
+  function endDrag() {
+    document.removeEventListener('mousemove', onDrag);
+    document.removeEventListener('touchmove', onDrag);
+    document.removeEventListener('mouseup', endDrag);
+    document.removeEventListener('touchend', endDrag);
+  }
+
+  fab.addEventListener('click', (e) => {
+    if (!isDragging) {
+      openAiAdvisorModal();
+    }
+  });
+}
+
+function openAiAdvisorModal() {
+  const modal = document.getElementById('aiAdvisorModal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeAiAdvisorModal() {
+  const modal = document.getElementById('aiAdvisorModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function askAiPrompt(promptText) {
+  const input = document.getElementById('aiQueryInput');
+  if (input) input.value = promptText;
+  sendAiQuery();
+}
+
+function sendAiQuery() {
+  const input = document.getElementById('aiQueryInput');
+  const stream = document.getElementById('aiChatStream');
+  if (!input || !stream) return;
+
+  const query = input.value.trim();
+  if (!query) return;
+
+  // Append user message bubble
+  const userRow = document.createElement('div');
+  userRow.className = 'ai-msg-row user';
+  userRow.innerHTML = `<div class="ai-msg-content">${query}</div>`;
+  stream.appendChild(userRow);
+  input.value = '';
+
+  const isNoDeposit = query.toLowerCase().includes('không cọc') || query.toLowerCase().includes('miễn cọc');
+
+  // Generate AI Response with direct shop recommendation
+  setTimeout(() => {
+    const aiRow = document.createElement('div');
+    aiRow.className = 'ai-msg-row ai';
+
+    let recHtml = '';
+    if (isNoDeposit) {
+      recHtml = `
+        <div class="ai-shop-rec-card">
+          <div class="rec-title">🌿 An Yên Thảo Dược & Luxury Retreat</div>
+          <div class="rec-meta">★ 4.97 (1.1k+ đánh giá) • 1.5 km • Q.3</div>
+          <div class="rec-service">Dịch vụ: Gội Đầu Dưỡng Sinh Cung Đình 75p (250.000đ)</div>
+          <div class="rec-badge no-deposit">🎉 KHÔNG CẦN CỌC • GIỮ CHỖ 0Đ</div>
+          <div class="rec-actions">
+            <button class="btn-rec-book" onclick="closeAiAdvisorModal(); openBookingModal('Gội Đầu Dưỡng Sinh Cung Đình', 250000, 45, false)">Đặt Giữ Chỗ Miễn Phí</button>
+          </div>
+        </div>
+      `;
+    } else {
+      recHtml = `
+        <div class="ai-shop-rec-card">
+          <div class="rec-title">👑 L'Amour Haute Nail & Lash Lounge (VIP Sponsor)</div>
+          <div class="rec-meta">★ 4.99 (1.8k+ đánh giá) • 0.8 km • Đồng Khởi, Q.1</div>
+          <div class="rec-service">Dịch vụ: Sơn Gel Hữu Cơ Pháp + Dưỡng Móng (180.000đ)</div>
+          <div class="rec-badge deposit">📌 CÓ CỌC (Shop set 5 mức từ 50.000đ)</div>
+          <div class="rec-actions">
+            <button class="btn-rec-book" onclick="closeAiAdvisorModal(); openBookingModal('Sơn Gel Hữu Cơ Pháp', 180000, 45, true)">Đặt Lịch Cọc 5 Mệnh Giá</button>
+          </div>
+        </div>
+      `;
+    }
+
+    aiRow.innerHTML = `
+      <div class="ai-msg-avatar"><i class="fa-solid fa-sparkles"></i></div>
+      <div class="ai-msg-content">
+        Dạ em đã chọn lọc salon uy tín hoàn hảo theo yêu cầu của quý cô:
+        ${recHtml}
+      </div>
+    `;
+    stream.appendChild(aiRow);
+    stream.scrollTop = stream.scrollHeight;
+  }, 400);
+
+  stream.scrollTop = stream.scrollHeight;
+}
+
+// Auto init Draggable AI Button on load
+document.addEventListener('DOMContentLoaded', () => {
+  initDraggableAiFab();
+});
+setTimeout(() => {
+  initDraggableAiFab();
+}, 500);
+
+/* =========================================================
+   18. CUSTOMER & MESSAGES INTERACTIONS (IMAGE 1 & 2)
+========================================================= */
+
+function toggleFavorite(e, btn) {
+  e.stopPropagation();
+  btn.classList.toggle('active');
+  const icon = btn.querySelector('i');
+  if (btn.classList.contains('active')) {
+    icon.className = 'fa-solid fa-heart';
+    showToast("Đã lưu L'Amour Luxury vào danh sách yêu thích!", 'fa-heart');
+  } else {
+    icon.className = 'fa-regular fa-heart';
+    showToast("Đã bỏ lưu khỏi danh sách yêu thích");
+  }
+}
+
+function openAllCategoriesModal() {
+  showToast('Khám phá toàn bộ 8 danh mục dịch vụ làm đẹp cao cấp', 'fa-crown');
+}
+
+function openSalonDetail(id) {
+  showToast("Xem chi tiết salon L'Amour Luxury Spa & Nail • Q.1", 'fa-store');
+}
+
+// Messages & Activity Pane Switcher
+function switchMsgPane(paneName) {
+  const pMsg = document.getElementById('paneMsgMessages');
+  const pAct = document.getElementById('paneMsgActivity');
+  const tAct = document.getElementById('tabActivityToggle');
+  const tMsg = document.getElementById('tabMessagesToggle');
+
+  if (paneName === 'messages') {
+    if (pMsg) pMsg.style.display = 'block';
+    if (pAct) pAct.style.display = 'none';
+    if (tMsg) tMsg.classList.add('active');
+    if (tAct) tAct.classList.remove('active');
+  } else {
+    if (pMsg) pMsg.style.display = 'none';
+    if (pAct) pAct.style.display = 'block';
+    if (tAct) tAct.classList.add('active');
+    if (tMsg) tMsg.classList.remove('active');
+  }
+}
+
+// Messages Filter Pills
+function filterMsgCategory(tag, btn) {
+  document.querySelectorAll('.msg-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const items = document.querySelectorAll('.msg-conv-item');
+  items.forEach(item => {
+    if (tag === 'all' || item.getAttribute('data-tag') === tag) {
+      item.style.display = 'flex';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
+
+// Messages Search
+function handleMsgSearch(query) {
+  const q = query.toLowerCase().trim();
+  const items = document.querySelectorAll('.msg-conv-item');
+  items.forEach(item => {
+    const text = item.innerText.toLowerCase();
+    item.style.display = text.includes(q) ? 'flex' : 'none';
+  });
+}
+
+// Live Chat Modal (Interactive conversation)
+function openChatModal(recipient) {
+  const modal = document.getElementById('chatModal');
+  const title = document.getElementById('chatModalRecipient');
+  if (title) title.innerText = recipient;
+  if (modal) modal.classList.add('active');
+}
+
+function closeChatModal() {
+  const modal = document.getElementById('chatModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function sendLiveChatMessage() {
+  const input = document.getElementById('liveChatInput');
+  const stream = document.getElementById('chatStream');
+  if (!input || !stream) return;
+
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  // Append user row
+  const userRow = document.createElement('div');
+  userRow.className = 'ai-msg-row user';
+  userRow.innerHTML = `<div class="ai-msg-content">${msg}</div>`;
+  stream.appendChild(userRow);
+  input.value = '';
+
+  // Auto reply after 600ms
+  setTimeout(() => {
+    const replyRow = document.createElement('div');
+    replyRow.className = 'ai-msg-row';
+    replyRow.innerHTML = `
+      <div class="ai-msg-avatar" style="background:#fae4dc; color:var(--dusty-merlot);"><i class="fa-solid fa-store"></i></div>
+      <div class="ai-msg-content">
+        Dạ vâng ạ! Em đã lưu yêu cầu "<em>${msg}</em>" vào hồ sơ lịch hẹn của chị rồi nhé! ✨ Chúc chị ngày mới tuyệt vời!
+      </div>
+    `;
+    stream.appendChild(replyRow);
+    stream.scrollTop = stream.scrollHeight;
+  }, 600);
+
+  stream.scrollTop = stream.scrollHeight;
+}
+
+
+/* =========================================================
+   19. ADMIN MANAGEMENT INTERACTIONS (IMAGE 3 & SPEC A-G)
+========================================================= */
+
+// Switch admin sub-sections (Home, Shops, Customers, Finance)
+function switchAdminSection(sectionName, subTab = 'revenue') {
+  const pHome = document.getElementById('adminPaneHome');
+  const pShops = document.getElementById('adminPaneShops');
+  const pCusts = document.getElementById('adminPaneCustomers');
+  const pFin = document.getElementById('adminPaneFinance');
+
+  if (pHome) pHome.style.display = sectionName === 'home' ? 'block' : 'none';
+  if (pShops) pShops.style.display = sectionName === 'shops' ? 'block' : 'none';
+  if (pCusts) pCusts.style.display = sectionName === 'customers' ? 'block' : 'none';
+  if (pFin) pFin.style.display = sectionName === 'finance' ? 'block' : 'none';
+
+  if (sectionName === 'finance') {
+    switchFinanceTab(subTab);
+  }
+
+  // Update bottom nav active state if role is admin
+  if (currentRole === 'admin') {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    if (sectionName === 'home') document.getElementById('navHome')?.classList.add('active');
+    else if (sectionName === 'shops') document.getElementById('navActivity')?.classList.add('active');
+    else if (sectionName === 'customers') document.getElementById('navPay')?.classList.add('active');
+  }
+}
+
+// Finance Tab switcher (Doanh thu sàn vs Tiền cọc)
+function switchFinanceTab(tabKey) {
+  const pRev = document.getElementById('finPaneRevenue');
+  const pDep = document.getElementById('finPaneDeposit');
+  const bRev = document.getElementById('btnFinRevenue');
+  const bDep = document.getElementById('btnFinDeposit');
+
+  if (tabKey === 'revenue') {
+    if (pRev) pRev.style.display = 'block';
+    if (pDep) pDep.style.display = 'none';
+    if (bRev) bRev.classList.add('active');
+    if (bDep) bDep.classList.remove('active');
+  } else {
+    if (pRev) pRev.style.display = 'none';
+    if (pDep) pDep.style.display = 'block';
+    if (bDep) bDep.classList.add('active');
+    if (bRev) bRev.classList.remove('active');
+  }
+}
+
+// Shop filters & search
+function filterAdminShopStatus(status, btn) {
+  document.querySelectorAll('.adm-filter-pills .adm-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const cards = document.querySelectorAll('#adminShopsContainer .adm-shop-card');
+  cards.forEach(card => {
+    if (status === 'all' || card.getAttribute('data-status') === status) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+function filterAdminShops(query) {
+  const q = query.toLowerCase().trim();
+  const cards = document.querySelectorAll('#adminShopsContainer .adm-shop-card');
+  cards.forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(q) ? 'block' : 'none';
+  });
+}
+
+function filterAdminCustomers(query) {
+  const q = query.toLowerCase().trim();
+  const cards = document.querySelectorAll('#adminCustContainer .adm-shop-card');
+  cards.forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(q) ? 'block' : 'none';
+  });
+}
+
+// Modals: Shop details (4 groups)
+function openShopDetailModal(shopId) {
+  const modal = document.getElementById('shopDetailModal');
+  const title = document.getElementById('admShopModalTitle');
+  const name = document.getElementById('admShopName');
+  const code = document.getElementById('admShopCode');
+
+  if (shopId === '1') {
+    if (title) title.innerText = "L'Amour Luxury Spa & Nail";
+    if (name) name.innerText = "L'Amour Luxury Spa & Nail";
+    if (code) code.innerText = "SALON-001";
+  } else if (shopId === '2') {
+    if (title) title.innerText = "An Yên Thảo Dược Retreat";
+    if (name) name.innerText = "An Yên Thảo Dược Retreat";
+    if (code) code.innerText = "SALON-002";
+  } else if (shopId === '3') {
+    if (title) title.innerText = "The Royal Nail & Lash Lounge";
+    if (name) name.innerText = "The Royal Nail & Lash Lounge";
+    if (code) code.innerText = "SALON-003";
+  }
+
+  if (modal) modal.classList.add('active');
+}
+
+function closeShopDetailModal() {
+  const modal = document.getElementById('shopDetailModal');
+  if (modal) modal.classList.remove('active');
+}
+
+// Modals: Customer details (4 groups)
+function openCustomerDetailModal(custId) {
+  const modal = document.getElementById('customerDetailModal');
+  const title = document.getElementById('admCustModalTitle');
+  const name = document.getElementById('admCustName');
+  const code = document.getElementById('admCustCode');
+
+  if (custId === '1') {
+    if (title) title.innerText = "Quý cô Khánh Linh";
+    if (name) name.innerText = "Quý cô Khánh Linh";
+    if (code) code.innerText = "CUST-001";
+  } else {
+    if (title) title.innerText = "Nguyễn Thị Mai";
+    if (name) name.innerText = "Nguyễn Thị Mai";
+    if (code) code.innerText = "CUST-002";
+  }
+
+  if (modal) modal.classList.add('active');
+}
+
+function closeCustomerDetailModal() {
+  const modal = document.getElementById('customerDetailModal');
+  if (modal) modal.classList.remove('active');
+}
+
+// Modals: Admin More Menu
+function openAdminMoreModal() {
+  const modal = document.getElementById('adminMoreModal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeAdminMoreModal() {
+  const modal = document.getElementById('adminMoreModal');
+  if (modal) modal.classList.remove('active');
+}
+
+// Admin Actions
+function approveRefund(cardId, amount) {
+  const card = document.getElementById(cardId);
+  if (card) {
+    card.style.background = '#f0fdf4';
+    card.style.borderColor = '#86efac';
+    card.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0;">
+        <span style="font-size:12px; font-weight:700; color:#15803d;"><i class="fa-solid fa-circle-check"></i> Đã duyệt hoàn ${amount} tự động về Ví khách hàng</span>
+        <span style="font-size:11px; color:#7a5e66;">Vừa xong</span>
+      </div>
+    `;
+  }
+  showToast(`Đã duyệt hoàn ${amount} thành công! Tiền cọc đã chuyển về Ví khách hàng.`, 'fa-circle-check');
+}
+
+function rejectRefund(cardId) {
+  const card = document.getElementById(cardId);
+  if (card) {
+    card.style.opacity = '0.5';
+    card.innerHTML = `
+      <div style="padding:4px 0; font-size:12px; color:#dc2626; font-weight:700;">
+        <i class="fa-solid fa-circle-xmark"></i> Yêu cầu hoàn cọc đã bị từ chối theo chính sách hủy muộn &lt; 2h
+      </div>
+    `;
+  }
+  showToast('Đã từ chối yêu cầu hoàn cọc. Đã gửi thông báo cho khách hàng.', 'fa-ban');
+}
+
+function actionShopApprove() {
+  showToast('Hồ sơ salon đã được DUYỆT thành công! Gian hàng đã kích hoạt trên Marketplace.', 'fa-circle-check');
+  closeShopDetailModal();
+}
+
+function actionShopReject() {
+  showToast('Đã từ chối duyệt hồ sơ. Yêu cầu salon bổ sung thông tin giấy phép.', 'fa-triangle-exclamation');
+  closeShopDetailModal();
+}
+
+function actionShopLock() {
+  showToast('Đã cập nhật trạng thái Tạm khóa / Mở khóa gian hàng.', 'fa-lock');
+  closeShopDetailModal();
+}
+
+function actionShopTerminate() {
+  showToast('Đã ngưng hợp tác với đối tác. Các lịch hẹn hiện có vẫn được bảo lưu để đối soát.', 'fa-triangle-exclamation');
+  closeShopDetailModal();
+}
+
+function actionCustomerLock() {
+  showToast('Đã thay đổi trạng thái Khóa / Mở khóa tài khoản khách hàng!', 'fa-user-lock');
+  closeCustomerDetailModal();
+}
+
