@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">Glow Beauty</string>
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_booking">Chọn lịch</string>
+    <string name="nav_wallet">Ví tiền</string>
+    <string name="nav_profile">Tài khoản</string>
+    <string name="nav_map">Bản đồ</string>
+
+    <!-- Search & Filter -->
+    <string name="search_placeholder">Tìm salon, spa, nail gần bạn...</string>
+    <string name="filter_title">Bộ lọc tìm kiếm</string>
+    <string name="filter_price">Mức giá</string>
+    <string name="filter_rating">Đánh giá sao</string>
+    <string name="filter_distance">Khoảng cách</string>
+    <string name="filter_apply">Áp dụng</string>
+    <string name="filter_reset">Đặt lại</string>
+    <string name="vip_badge">ĐỐI TÁC VIP</string>
+    <string name="deposit_badge">YÊU CẦU CỌC</string>
+    <string name="no_deposit_badge">KHÔNG CẦN CỌC</string>
+
+    <!-- Booking -->
+    <string name="booking_title">Chọn lịch hẹn</string>
+    <string name="booking_shop_address">Địa chỉ quán:</string>
+    <string name="booking_services_selected">Dịch vụ đã chọn</string>
+    <string name="booking_select_slot">Khung giờ hẹn</string>
+    <string name="booking_customer_info">Thông tin người đặt</string>
+    <string name="booking_name">Họ và tên</string>
+    <string name="booking_phone">Số điện thoại</string>
+    <string name="booking_note">Ghi chú yêu cầu đặc biệt</string>
+    <string name="booking_confirm_button">Xác nhận đặt lịch</string>
+    <string name="booking_cancel_button">Hủy lịch</string>
+    <string name="booking_cancel_dialog_title">Xác nhận hủy lịch hẹn</string>
+    <string name="booking_cancel_policy_eligible">Bạn hủy trước giờ hẹn hơn 2 tiếng. Tiền cọc sẽ được hoàn 100% về ví trong ứng dụng.</string>
+    <string name="booking_cancel_policy_ineligible">Đã quá thời hạn hủy (dưới 2 tiếng trước giờ hẹn). Tiền cọc không được hoàn lại theo quy định.</string>
+
+    <!-- Wallet & Escrow -->
+    <string name="wallet_title">Ví GLOW Pay</string>
+    <string name="wallet_balance">Số dư ví khả dụng</string>
+    <string name="wallet_topup">Nạp tiền vào ví</string>
+    <string name="wallet_history">Lịch sử giao dịch</string>
+    <string name="wallet_held_deposit">Sàn tạm giữ cọc</string>
+    <string name="wallet_refunded">Đã hoàn tiền về ví</string>
+    <string name="wallet_released">Đã giải ngân cho tiệm</string>
+    <string name="mock_payment_confirm">Mở trang quét mã QR thanh toán</string>
+
+    <!-- Common States -->
+    <string name="loading">Đang tải...</string>
+    <string name="error_general">Đã có lỗi xảy ra. Vui lòng thử lại.</string>
+    <string name="empty_results">Không tìm thấy kết quả phù hợp</string>
+    <string name="retry">Thử lại</string>
+</resources>
