@@ -339,7 +339,7 @@ class MainActivity : ComponentActivity() {
                                             onNavigateToRegistration = { merchantSubScreen = "REGISTRATION" },
                                             modifier = Modifier.padding(innerPadding)
                                         )
-                                        "REGISTRATION" -> com.applamdep.merchant.ui.profile.MerchantRegistrationScreen(
+                                        "REGISTRATION" -> com.applamdep.merchant.ui.register.MerchantRegisterScreen(
                                             onBack = { merchantSubScreen = "PROFILE" },
                                             onRegistrationSubmitted = { merchantSubScreen = "PROFILE" },
                                             modifier = Modifier.padding(innerPadding)

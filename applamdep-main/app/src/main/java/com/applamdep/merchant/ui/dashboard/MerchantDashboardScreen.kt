@@ -1,6 +1,5 @@
 package com.applamdep.merchant.ui.dashboard
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,22 +17,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.applamdep.customer.core.base.UiState
-import com.applamdep.customer.core.di.ViewModelFactory
-import com.applamdep.customer.core.util.CurrencyFormatter
-import com.applamdep.customer.ui.components.GrabCard
-import com.applamdep.customer.ui.components.GrabEmptyState
-import com.applamdep.customer.ui.components.GrabLoadingState
-import com.applamdep.customer.ui.theme.*
+import com.example.app_lam_dep.R
+import com.applamdep.merchant.core.base.UiState
+import com.applamdep.merchant.core.di.MerchantViewModelFactory
+import com.applamdep.merchant.core.util.Formatters
+import com.applamdep.merchant.ui.component.EmptyStateView
+import com.applamdep.merchant.ui.component.ErrorStateView
+import com.applamdep.merchant.ui.component.LoadingStateView
+import com.applamdep.merchant.ui.component.StatusBadge
+import com.applamdep.merchant.ui.theme.*
 
 /**
- * DASHBOARD CỔNG ĐỐI TÁC CỬA HÀNG (MERCHANT PORTAL - 10 CHỨC NĂNG QUY CHUẨN)
+ * DASHBOARD CỔNG ĐỐI TÁC CỬA HÀNG (MERCHANT PORTAL - 10 PHÂN HỆ QUY CHUẨN)
+ * Điều hướng nhanh chóng đến tất cả các nghiệp vụ của salon
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,28 +46,29 @@ fun MerchantDashboardScreen(
     onNavigateToFinance: () -> Unit,
     onNavigateToProfile: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: MerchantDashboardViewModel = viewModel(factory = ViewModelFactory.Factory)
+    viewModel: MerchantDashboardViewModel = viewModel(factory = MerchantViewModelFactory.DefaultFactory),
+    shopId: String = "shop_01",
+    ownerUid: String = "merchant_user_01"
 ) {
-    val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val autoCount by viewModel.autoCompletedCount.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsState()
+    val autoCount by viewModel.autoCompletedCount.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadDashboard()
+    LaunchedEffect(shopId, ownerUid) {
+        viewModel.loadDashboard(shopId, ownerUid)
     }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = GrabBackground,
+        containerColor = MerchantBackground,
         topBar = {
             TopAppBar(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier
-                                .size(34.dp)
+                                .size(36.dp)
                                 .clip(CircleShape)
-                                .background(GrabGreen),
+                                .background(MerchantPrimary),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -82,12 +84,12 @@ fun MerchantDashboardScreen(
                                 text = "Merchant Portal",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = GrabTextPrimary
+                                color = MerchantTextPrimary
                             )
                             Text(
                                 text = "Kênh Quản Trị Cửa Hàng",
                                 fontSize = 11.sp,
-                                color = GrabTextSecondary
+                                color = MerchantTextSecondary
                             )
                         }
                     }
@@ -96,24 +98,23 @@ fun MerchantDashboardScreen(
                     IconButton(onClick = onNavigateToProfile) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
-                            tint = GrabTextPrimary
+                            contentDescription = "Hồ sơ",
+                            tint = MerchantTextPrimary
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = GrabSurface)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MerchantSurface)
             )
         }
     ) { innerPadding ->
         when (val state = uiState) {
             is UiState.Loading -> {
-                GrabLoadingState(modifier = Modifier.padding(innerPadding))
+                LoadingStateView(message = "Đang tải tổng quan salon...")
             }
             is UiState.Error -> {
-                GrabEmptyState(
-                    title = "Lỗi tải thông tin",
-                    subtitle = state.message,
-                    modifier = Modifier.padding(innerPadding)
+                ErrorStateView(
+                    message = state.message,
+                    onRetry = { viewModel.loadDashboard(shopId, ownerUid) }
                 )
             }
             is UiState.Success -> {
@@ -129,23 +130,30 @@ fun MerchantDashboardScreen(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // 1. Header cơ sở đối tác & Huy hiệu gói
-                    GrabCard {
+                    // 1. Thẻ hồ sơ đối tác & Huy hiệu gói
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = MerchantCard),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(
                                 modifier = Modifier
                                     .size(54.dp)
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(GrabGreenLight),
+                                    .background(MerchantPrimaryLight),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Spa,
                                     contentDescription = null,
-                                    tint = GrabGreenDark,
+                                    tint = MerchantPrimary,
                                     modifier = Modifier.size(28.dp)
                                 )
                             }
@@ -158,19 +166,19 @@ fun MerchantDashboardScreen(
                                         text = profile.shopName,
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = GrabTextPrimary
+                                        color = MerchantTextPrimary
                                     )
                                     if (profile.isVip) {
                                         Spacer(modifier = Modifier.width(6.dp))
                                         Box(
                                             modifier = Modifier
                                                 .clip(RoundedCornerShape(4.dp))
-                                                .background(Color(0xFFFFB800))
+                                                .background(MerchantVipBg)
                                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                                         ) {
                                             Text(
                                                 text = "VIP",
-                                                color = Color.White,
+                                                color = MerchantVipGold,
                                                 fontSize = 10.sp,
                                                 fontWeight = FontWeight.Bold
                                             )
@@ -178,30 +186,18 @@ fun MerchantDashboardScreen(
                                     }
                                 }
 
-                                Spacer(modifier = Modifier.height(2.dp))
+                                Spacer(modifier = Modifier.height(3.dp))
 
                                 Text(
-                                    text = "Chủ tiệm: ${profile.ownerName} · ${profile.phone}",
+                                    text = "Chủ tiệm: ${profile.ownerName.ifBlank { "Đối tác" }} · ${profile.phone}",
                                     fontSize = 12.sp,
-                                    color = GrabTextSecondary
+                                    color = MerchantTextSecondary
                                 )
 
-                                Spacer(modifier = Modifier.height(4.dp))
+                                Spacer(modifier = Modifier.height(6.dp))
 
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(8.dp)
-                                            .clip(CircleShape)
-                                            .background(if (profile.isApproved) GrabGreen else Color(0xFFE5A100))
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(
-                                        text = if (profile.isApproved) "Đã duyệt hoạt động" else "Chờ xét duyệt hồ sơ",
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = if (profile.isApproved) GrabGreenDark else Color(0xFFB77900)
-                                    )
+                                    StatusBadge(status = profile.status)
                                 }
                             }
                         }
@@ -213,133 +209,132 @@ fun MerchantDashboardScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(10.dp))
-                                .background(Color(0xFFE8F5E9))
+                                .background(MerchantSecondary.copy(alpha = 0.1f))
                                 .padding(12.dp)
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     imageVector = Icons.Default.CheckCircle,
                                     contentDescription = null,
-                                    tint = GrabGreenDark
+                                    tint = MerchantSecondary
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Text(
                                     text = "Đã tự động chuyển $autoCount lịch hẹn sang trạng thái HOÀN THÀNH (sau 30p kết thúc) và giải ngân tiền cọc.",
                                     fontSize = 12.sp,
-                                    color = GrabGreenDark,
+                                    color = MerchantSecondary,
                                     lineHeight = 16.sp
                                 )
                             }
                         }
                     }
 
-                    // 2. Các chỉ số thống kê cơ bản (Requirement #10)
+                    // 2. Các chỉ số thống kê kinh doanh (Requirement #10)
                     Text(
-                        text = "Hiệu quả hôm nay",
+                        text = stringResource(R.string.merchant_stats_title),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = GrabTextPrimary
+                        color = MerchantTextPrimary
                     )
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        MetricCard(
+                        DashboardMetricCard(
                             title = "Lịch hôm nay",
                             value = "${stats.totalBookingsToday}",
-                            subtitle = "${stats.pendingBookings} chờ duyệt",
+                            subtitle = "Lượt khách",
                             icon = Icons.Default.CalendarToday,
-                            color = GrabGreenDark,
+                            color = MerchantPrimary,
                             modifier = Modifier.weight(1f)
                         )
-                        MetricCard(
-                            title = "Doanh thu ước tính",
-                            value = CurrencyFormatter.formatVnd(stats.estimatedRevenueToday),
-                            subtitle = "Tháng: ${CurrencyFormatter.formatVnd(stats.totalRevenueMonth)}",
-                            icon = Icons.Default.MonetizationOn,
-                            color = Color(0xFF0070BA),
-                            modifier = Modifier.weight(1.3f)
-                        )
-                        MetricCard(
-                            title = "Đánh giá",
-                            value = "${stats.averageRating} ★",
-                            subtitle = "${stats.totalReviews} lượt",
-                            icon = Icons.Default.Star,
-                            color = Color(0xFFFFB800),
-                            modifier = Modifier.weight(0.9f)
+
+                        DashboardMetricCard(
+                            title = "Chờ xác nhận",
+                            value = "${stats.pendingBookings}",
+                            subtitle = "Đơn hẹn mới",
+                            icon = Icons.Default.PendingActions,
+                            color = MerchantWarning,
+                            modifier = Modifier.weight(1f)
                         )
                     }
 
-                    // 3. Lưới 6 phân hệ quản lý đối tác
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        DashboardMetricCard(
+                            title = "Đang phục vụ",
+                            value = "${stats.inServiceBookings}",
+                            subtitle = "Khách tại quán",
+                            icon = Icons.Default.Face,
+                            color = MerchantPrimaryDark,
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        DashboardMetricCard(
+                            title = "Doanh thu hôm nay",
+                            value = Formatters.formatCurrency(stats.estimatedRevenueToday),
+                            subtitle = "Cọc & Dịch vụ",
+                            icon = Icons.Default.AttachMoney,
+                            color = MerchantSecondary,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    // 3. Danh mục truy cập nhanh 6 phân hệ quản trị
                     Text(
-                        text = "Công cụ quản lý cửa hàng",
+                        text = "Phân hệ quản trị Salon",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = GrabTextPrimary
+                        color = MerchantTextPrimary
                     )
 
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            ActionTile(
-                                title = "Lịch hẹn khách",
-                                subtitle = "Xem, duyệt & trạng thái",
-                                icon = Icons.Default.EventNote,
-                                badge = "${stats.pendingBookings + stats.confirmedBookings}",
-                                onClick = onNavigateToBookings,
-                                modifier = Modifier.weight(1f)
-                            )
-                            ActionTile(
-                                title = "Dịch vụ & Bảng giá",
-                                subtitle = "Thêm, sửa, xóa dịch vụ",
-                                icon = Icons.Default.DesignServices,
-                                onClick = onNavigateToServices,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
+                        FeatureRow(
+                            icon = Icons.Default.EventNote,
+                            title = "Quản lý Lịch hẹn & Trạng thái",
+                            description = "Xác nhận, bắt đầu làm, hoàn tất đơn (+30p)",
+                            badge = if (stats.pendingBookings > 0) "${stats.pendingBookings} mới" else null,
+                            onClick = onNavigateToBookings
+                        )
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            ActionTile(
-                                title = "Ca làm & Khung giờ",
-                                subtitle = "Giờ mở cửa, slot trống",
-                                icon = Icons.Default.Schedule,
-                                onClick = onNavigateToSchedule,
-                                modifier = Modifier.weight(1f)
-                            )
-                            ActionTile(
-                                title = "Đánh giá & Phản hồi",
-                                subtitle = "Trả lời khách, tố cáo",
-                                icon = Icons.Default.RateReview,
-                                onClick = onNavigateToReviews,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
+                        FeatureRow(
+                            icon = Icons.Default.ContentCut,
+                            title = "Quản lý Dịch vụ Salon",
+                            description = "Bảng giá, thời lượng thực hiện, ẩn/xóa an toàn",
+                            onClick = onNavigateToServices
+                        )
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            ActionTile(
-                                title = "Theo dõi Tiền cọc",
-                                subtitle = "Bảo lãnh & giải ngân",
-                                icon = Icons.Default.AccountBalanceWallet,
-                                onClick = onNavigateToFinance,
-                                modifier = Modifier.weight(1f)
-                            )
-                            ActionTile(
-                                title = "Hồ sơ & Đăng ký",
-                                subtitle = "Thông tin tiệm, cơ sở",
-                                icon = Icons.Default.Store,
-                                onClick = onNavigateToProfile,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
+                        FeatureRow(
+                            icon = Icons.Default.AccessTime,
+                            title = "Lịch làm việc & Khung giờ Slot",
+                            description = "Cấu hình ca mở cửa, kiểm soát sức chứa slot",
+                            onClick = onNavigateToSchedule
+                        )
+
+                        FeatureRow(
+                            icon = Icons.Default.StarHalf,
+                            title = "Đánh giá & Phản hồi khách",
+                            description = "Xem sao, trả lời phản hồi, báo cáo vi phạm",
+                            badge = "${stats.averageRating} ★",
+                            onClick = onNavigateToReviews
+                        )
+
+                        FeatureRow(
+                            icon = Icons.Default.AccountBalanceWallet,
+                            title = "Tiền cọc Ký quỹ Escrow",
+                            description = "Theo dõi cọc sàn giữ, giải ngân, hoàn tiền",
+                            onClick = onNavigateToFinance
+                        )
+
+                        FeatureRow(
+                            icon = Icons.Default.Store,
+                            title = "Hồ sơ Cửa hàng & Gói Hội viên",
+                            description = "Thông tin cơ sở, chính sách 5 mức cọc, gói VIP",
+                            onClick = onNavigateToProfile
+                        )
                     }
                 }
             }
@@ -349,7 +344,7 @@ fun MerchantDashboardScreen(
 }
 
 @Composable
-private fun MetricCard(
+private fun DashboardMetricCard(
     title: String,
     value: String,
     subtitle: String,
@@ -357,115 +352,135 @@ private fun MetricCard(
     color: Color,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(GrabSurface)
-            .padding(12.dp)
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MerchantCard),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Column {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = color,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.height(6.dp))
+        Column(modifier = Modifier.padding(14.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 12.sp,
+                    color = MerchantTextSecondary,
+                    fontWeight = FontWeight.Medium
+                )
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(color.copy(alpha = 0.12f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = color,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
                 text = value,
-                fontSize = 15.sp,
+                fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
-                color = GrabTextPrimary
+                color = MerchantTextPrimary
             )
-            Text(
-                text = title,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Medium,
-                color = GrabTextSecondary
-            )
+
             Spacer(modifier = Modifier.height(2.dp))
+
             Text(
                 text = subtitle,
                 fontSize = 10.sp,
-                color = GrabTextHint
+                color = MerchantTextHint
             )
         }
     }
 }
 
 @Composable
-private fun ActionTile(
-    title: String,
-    subtitle: String,
+private fun FeatureRow(
     icon: ImageVector,
+    title: String,
+    description: String,
     badge: String? = null,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(GrabSurface)
-            .clickable(onClick = onClick)
-            .padding(14.dp)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MerchantCard),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Column {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MerchantPrimary.copy(alpha = 0.1f)),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(GrabGreenLight),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = GrabGreenDark,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                if (badge != null) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(GrabStatusError)
-                            .padding(horizontal = 7.dp, vertical = 2.dp)
-                    ) {
-                        Text(
-                            text = badge,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
-                } else {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        tint = GrabTextHint,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MerchantPrimary,
+                    modifier = Modifier.size(20.dp)
+                )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
-            Text(
-                text = title,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = GrabTextPrimary
-            )
-            Text(
-                text = subtitle,
-                fontSize = 11.sp,
-                color = GrabTextSecondary
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MerchantTextPrimary
+                )
+                Text(
+                    text = description,
+                    fontSize = 11.sp,
+                    color = MerchantTextSecondary
+                )
+            }
+
+            if (badge != null) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(MerchantVipBg)
+                        .padding(horizontal = 8.dp, vertical = 3.dp)
+                ) {
+                    Text(
+                        text = badge,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MerchantVipGold
+                    )
+                }
+                Spacer(modifier = Modifier.width(6.dp))
+            }
+
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = null,
+                tint = MerchantTextHint,
+                modifier = Modifier.size(16.dp)
             )
         }
     }

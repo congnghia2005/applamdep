@@ -3,262 +3,368 @@ package com.applamdep.merchant.ui.profile
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.app_lam_dep.R
+import com.applamdep.merchant.core.base.UiState
+import com.applamdep.merchant.core.util.Formatters
+import com.applamdep.merchant.domain.model.ShopProfile
+import com.applamdep.merchant.ui.component.EmptyStateView
+import com.applamdep.merchant.ui.component.LoadingStateView
+import com.applamdep.merchant.ui.component.MerchantTopBar
+import com.applamdep.merchant.ui.component.StatusBadge
+import com.applamdep.merchant.ui.theme.*
+
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.applamdep.customer.core.base.UiState
-import com.applamdep.customer.core.di.ViewModelFactory
-import com.applamdep.customer.ui.components.GrabButton
-import com.applamdep.customer.ui.components.GrabCard
-import com.applamdep.customer.ui.components.GrabLoadingState
-import com.applamdep.customer.ui.theme.*
+import com.applamdep.merchant.core.di.MerchantViewModelFactory
 
 /**
- * QUẢN LÝ HỒ SƠ CƠ SỞ & ĐĂNG KÝ XÉT DUYỆT (MERCHANT REQUIREMENT #1 & #2)
+ * QUẢN LÝ HỒ SƠ CỬA HÀNG (MERCHANT REQUIREMENT #2 - P0)
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MerchantProfileScreen(
-    onBack: () -> Unit,
-    onNavigateToRegistration: () -> Unit,
+    onBack: () -> Unit = {},
+    onNavigateToRegistration: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
-    viewModel: MerchantProfileViewModel = viewModel(factory = ViewModelFactory.Factory)
+    viewModel: MerchantProfileViewModel = viewModel(factory = MerchantViewModelFactory.DefaultFactory),
+    ownerUid: String = "merchant_user_01"
 ) {
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadProfile()
+    LaunchedEffect(ownerUid) {
+        viewModel.loadProfile(ownerUid)
     }
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = GrabBackground,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Hồ sơ Cửa hàng & Xét duyệt",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = GrabTextPrimary
+            MerchantTopBar(
+                title = stringResource(R.string.merchant_profile_title),
+                onBackClick = onBack
+            )
+        },
+        containerColor = MerchantBackground,
+        modifier = modifier.fillMaxSize()
+    ) { innerPadding ->
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            when (val state = uiState) {
+                is UiState.Loading -> LoadingStateView()
+                is UiState.Error -> EmptyStateView(title = state.message)
+                is UiState.Success -> {
+                    ProfileContent(
+                        shop = state.data,
+                        viewModel = viewModel,
+                        onSaved = { msg ->
+                            Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                        }
                     )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = GrabTextPrimary
+                }
+                is UiState.Idle -> LoadingStateView()
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProfileContent(
+    shop: ShopProfile,
+    viewModel: MerchantProfileViewModel,
+    onSaved: (String) -> Unit
+) {
+    var name by remember(shop) { mutableStateOf(shop.name) }
+    var ownerName by remember(shop) { mutableStateOf(shop.ownerName) }
+    var phone by remember(shop) { mutableStateOf(shop.phone) }
+    var email by remember(shop) { mutableStateOf(shop.email) }
+    var address by remember(shop) { mutableStateOf(shop.address) }
+    var hours by remember(shop) { mutableStateOf(shop.openingHours) }
+    var description by remember(shop) { mutableStateOf(shop.description) }
+    var requireDeposit by remember(shop) { mutableStateOf(shop.requireDeposit) }
+    var depositInput by remember(shop) { mutableStateOf(shop.depositOptions.joinToString(", ")) }
+    var imagesList by remember(shop) { mutableStateOf(shop.images.ifEmpty { listOf("https://images.unsplash.com/photo-1560066984-138dadb4c035") }) }
+
+    var showWarningDialog by remember { mutableStateOf(false) }
+    var pendingSaveProfile by remember { mutableStateOf<ShopProfile?>(null) }
+
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Trạng thái hiện tại
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MerchantSurface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(text = "Trạng thái cơ sở trên sàn", fontSize = 12.sp, color = MerchantTextSecondary)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = shop.name, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MerchantTextPrimary)
+                    if (shop.lastEditedAt != null) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Lần sửa thông tin gần nhất: ${Formatters.formatDateTime(shop.lastEditedAt)}",
+                            fontSize = 11.sp,
+                            color = MerchantWarning
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = GrabSurface)
-            )
-        }
-    ) { innerPadding ->
-        when (val state = uiState) {
-            is UiState.Loading -> {
-                GrabLoadingState(modifier = Modifier.padding(innerPadding))
+                }
+                StatusBadge(status = shop.status)
             }
-            is UiState.Error -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = state.message, color = GrabStatusError)
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(onClick = onNavigateToRegistration) {
-                            Text("Đăng ký hồ sơ cơ sở mới")
+        }
+
+        // KHỐI 1: THÔNG TIN CHÍNH
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MerchantSurface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(text = "Thông tin cơ sở", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = MerchantTextPrimary)
+
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Tên cửa hàng / Salon *") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = ownerName,
+                        onValueChange = { ownerName = it },
+                        label = { Text("Chủ cơ sở") },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f)
+                    )
+                    OutlinedTextField(
+                        value = phone,
+                        onValueChange = { phone = it },
+                        label = { Text("Hotline") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                        singleLine = true,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email liên hệ") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = address,
+                    onValueChange = { address = it },
+                    label = { Text("Địa chỉ cơ sở *") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = hours,
+                    onValueChange = { hours = it },
+                    label = { Text("Giờ phục vụ") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Mô tả giới thiệu") },
+                    modifier = Modifier.fillMaxWidth().height(80.dp)
+                )
+            }
+        }
+
+        // KHỐI 2: HÌNH ẢNH CỬA HÀNG (THÊM / XÓA)
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MerchantSurface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(text = "Hình ảnh cơ sở (${imagesList.size})", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = MerchantTextPrimary)
+
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(imagesList) { imgUrl ->
+                        Box(
+                            modifier = Modifier
+                                .size(80.dp)
+                                .background(MerchantSurfaceVariant, RoundedCornerShape(10.dp))
+                                .padding(4.dp)
+                        ) {
+                            Text(text = "Ảnh Salon", fontSize = 11.sp, color = MerchantTextSecondary, modifier = Modifier.align(Alignment.Center))
+                            IconButton(
+                                onClick = { imagesList = imagesList.filterNot { it == imgUrl } },
+                                modifier = Modifier.size(20.dp).align(Alignment.TopEnd)
+                            ) {
+                                Icon(Icons.Default.Close, contentDescription = "Xóa", tint = MerchantError, modifier = Modifier.size(16.dp))
+                            }
+                        }
+                    }
+
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .size(80.dp)
+                                .background(MerchantPrimaryLight, RoundedCornerShape(10.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            IconButton(onClick = {
+                                imagesList = imagesList + "https://images.unsplash.com/photo-sample-${System.currentTimeMillis()}"
+                                Toast.makeText(context, "Đã thêm ảnh mới", Toast.LENGTH_SHORT).show()
+                            }) {
+                                Icon(Icons.Default.Add, contentDescription = "Thêm ảnh", tint = MerchantPrimary)
+                            }
                         }
                     }
                 }
             }
-            is UiState.Success -> {
-                val profile = state.data
-                var shopName by remember { mutableStateOf(profile.shopName) }
-                var ownerName by remember { mutableStateOf(profile.ownerName) }
-                var phone by remember { mutableStateOf(profile.phone) }
-                var email by remember { mutableStateOf(profile.email) }
-                var address by remember { mutableStateOf(profile.address) }
-                var description by remember { mutableStateOf(profile.description) }
-                var openingHours by remember { mutableStateOf(profile.openingHours) }
+        }
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+        // KHỐI 3: CHÍNH SÁCH ĐẶT CỌC
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MerchantSurface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Trạng thái hồ sơ
-                    GrabCard {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(46.dp)
-                                    .clip(CircleShape)
-                                    .background(if (profile.isApproved) GrabGreenLight else Color(0xFFFFF9E6)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = if (profile.isApproved) Icons.Default.Verified else Icons.Default.HourglassTop,
-                                    contentDescription = null,
-                                    tint = if (profile.isApproved) GrabGreenDark else Color(0xFFB77900)
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text(
-                                    text = if (profile.isApproved) "Hồ sơ đã được phê duyệt" else "Đang chờ Admin xét duyệt",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = if (profile.isApproved) GrabGreenDark else Color(0xFFB77900)
-                                )
-                                Text(
-                                    text = "Gói thành viên: ${profile.membershipPlan} · Đăng ký ngày 23/10/2026",
-                                    fontSize = 12.sp,
-                                    color = GrabTextSecondary
-                                )
-                            }
-                        }
-                    }
+                    Text(text = "Yêu cầu khách cọc trước", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = MerchantTextPrimary)
+                    Switch(
+                        checked = requireDeposit,
+                        onCheckedChange = { requireDeposit = it },
+                        colors = SwitchDefaults.colors(checkedThumbColor = MerchantPrimary)
+                    )
+                }
 
-                    // Form chỉnh sửa hồ sơ
-                    GrabCard {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Text(
-                                text = "Thông tin cơ sở làm đẹp",
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = GrabTextPrimary
-                            )
-
-                            OutlinedTextField(
-                                value = shopName,
-                                onValueChange = { shopName = it },
-                                label = { Text("Tên cơ sở / Salon") },
-                                singleLine = true,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                OutlinedTextField(
-                                    value = ownerName,
-                                    onValueChange = { ownerName = it },
-                                    label = { Text("Người đại diện") },
-                                    singleLine = true,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                OutlinedTextField(
-                                    value = phone,
-                                    onValueChange = { phone = it },
-                                    label = { Text("Số điện thoại") },
-                                    singleLine = true,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-
-                            OutlinedTextField(
-                                value = email,
-                                onValueChange = { email = it },
-                                label = { Text("Email liên hệ") },
-                                singleLine = true,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-
-                            OutlinedTextField(
-                                value = address,
-                                onValueChange = { address = it },
-                                label = { Text("Địa chỉ chi tiết cơ sở") },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-
-                            OutlinedTextField(
-                                value = openingHours,
-                                onValueChange = { openingHours = it },
-                                label = { Text("Khung giờ đón khách") },
-                                singleLine = true,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-
-                            OutlinedTextField(
-                                value = description,
-                                onValueChange = { description = it },
-                                label = { Text("Mô tả giới thiệu salon") },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(100.dp)
-                            )
-                        }
-                    }
-
-                    // Nút lưu
-                    GrabButton(
-                        text = "Lưu cập nhật hồ sơ",
-                        onClick = {
-                            val updated = profile.copy(
-                                shopName = shopName.trim(),
-                                ownerName = ownerName.trim(),
-                                phone = phone.trim(),
-                                email = email.trim(),
-                                address = address.trim(),
-                                description = description.trim(),
-                                openingHours = openingHours.trim()
-                            )
-                            viewModel.updateProfile(
-                                profile = updated,
-                                onSuccess = {
-                                    Toast.makeText(context, "Đã lưu thông tin hồ sơ salon!", Toast.LENGTH_SHORT).show()
-                                },
-                                onError = { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
-                            )
-                        },
+                if (requireDeposit) {
+                    OutlinedTextField(
+                        value = depositInput,
+                        onValueChange = { depositInput = it },
+                        label = { Text("5 mệnh giá cọc (VNĐ, cách nhau bằng dấu phẩy)") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth()
                     )
-
-                    // Nút nộp hồ sơ tiệm mới khác
-                    OutlinedButton(
-                        onClick = onNavigateToRegistration,
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(imageVector = Icons.Default.AddBusiness, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Gửi hồ sơ đăng ký cơ sở mới khác")
-                    }
                 }
             }
-            else -> Unit
         }
+
+        // NÚT LƯU THAY ĐỔI
+        Button(
+            onClick = {
+                val parsedDeposit = depositInput.split(",").mapNotNull { it.trim().toLongOrNull() }
+                val updated = shop.copy(
+                    name = name.trim(),
+                    ownerName = ownerName.trim(),
+                    phone = phone.trim(),
+                    email = email.trim(),
+                    address = address.trim(),
+                    openingHours = hours.trim(),
+                    description = description.trim(),
+                    requireDeposit = requireDeposit,
+                    depositOptions = parsedDeposit,
+                    images = imagesList
+                )
+
+                if (viewModel.hasCriticalChanges(updated)) {
+                    // Nếu sửa Tên hoặc Địa chỉ của shop đã APPROVED -> Hiển thị cảnh báo
+                    pendingSaveProfile = updated
+                    showWarningDialog = true
+                } else {
+                    viewModel.updateProfile(
+                        updatedProfile = updated,
+                        onSuccess = onSaved,
+                        onError = { Toast.makeText(context, it, Toast.LENGTH_LONG).show() }
+                    )
+                }
+            },
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = MerchantPrimary),
+            modifier = Modifier.fillMaxWidth().height(52.dp)
+        ) {
+            Text(text = stringResource(R.string.merchant_profile_save_changes), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        }
+    }
+
+    // DIALOG CẢNH BÁO SỬA THÔNG TIN QUAN TRỌNG
+    if (showWarningDialog && pendingSaveProfile != null) {
+        AlertDialog(
+            onDismissRequest = { showWarningDialog = false },
+            icon = {
+                Icon(Icons.Default.WarningAmber, contentDescription = null, tint = MerchantWarning, modifier = Modifier.size(36.dp))
+            },
+            title = {
+                Text(text = "Cảnh báo thay đổi thông tin quan trọng", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text(
+                    text = "Bạn đang thay đổi Tên hoặc Địa chỉ của cửa hàng đã được kiểm duyệt. Hệ thống sẽ ghi nhận mốc thời gian sửa đổi (lastEditedAt) để Ban Quản Trị nắm thông tin hậu kiểm.\n\nCửa hàng của bạn vẫn tiếp tục hoạt động bình thường trên sàn mà không bị ẩn đi.",
+                    fontSize = 13.sp,
+                    lineHeight = 18.sp,
+                    color = MerchantTextSecondary
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showWarningDialog = false
+                        viewModel.updateProfile(
+                            updatedProfile = pendingSaveProfile!!,
+                            onSuccess = onSaved,
+                            onError = { Toast.makeText(context, it, Toast.LENGTH_LONG).show() }
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MerchantPrimary)
+                ) {
+                    Text("Tôi hiểu & Lưu thay đổi")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showWarningDialog = false }) {
+                    Text("Hủy bỏ")
+                }
+            }
+        )
     }
 }

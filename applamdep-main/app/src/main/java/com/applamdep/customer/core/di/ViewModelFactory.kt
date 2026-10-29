@@ -108,6 +108,13 @@ object ViewModelFactory {
                 merchantRepository = app.container.merchantRepository
             )
         }
+        initializer {
+            val app = customerApplication()
+            com.applamdep.merchant.ui.register.MerchantRegisterViewModel(
+                shopRepository = com.applamdep.merchant.data.repository.ShopRepositoryImpl(),
+                planRepository = com.applamdep.merchant.data.repository.PlanRepositoryImpl()
+            )
+        }
     }
 }
 

@@ -2,13 +2,18 @@ package com.applamdep.merchant.ui.service
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,132 +23,212 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.applamdep.customer.core.base.UiState
-import com.applamdep.customer.core.di.ViewModelFactory
-import com.applamdep.customer.core.util.CurrencyFormatter
-import com.applamdep.customer.domain.model.ServiceItem
-import com.applamdep.customer.ui.components.GrabButton
-import com.applamdep.customer.ui.components.GrabCard
-import com.applamdep.customer.ui.components.GrabEmptyState
-import com.applamdep.customer.ui.components.GrabLoadingState
-import com.applamdep.customer.ui.theme.*
+import com.example.app_lam_dep.R
+import com.applamdep.merchant.core.base.UiState
+import com.applamdep.merchant.core.di.MerchantViewModelFactory
+import com.applamdep.merchant.core.util.Formatters
+import com.applamdep.merchant.domain.model.ServiceItem
+import com.applamdep.merchant.domain.rule.ServiceRemovalPolicy
+import com.applamdep.merchant.ui.component.EmptyStateView
+import com.applamdep.merchant.ui.component.ErrorStateView
+import com.applamdep.merchant.ui.component.LoadingStateView
+import com.applamdep.merchant.ui.component.MerchantTopBar
+import com.applamdep.merchant.ui.component.StatusBadge
+import com.applamdep.merchant.ui.theme.*
 
 /**
- * QUẢN LÝ DỊCH VỤ CỦA CỬA HÀNG (MERCHANT REQUIREMENT #3)
- * - Thêm, sửa, xóa dịch vụ
- * - Thiết lập giá và thời lượng phục vụ
+ * 1. TÍNH CHẤT OOP: ĐÓNG GÓI & TRỪU TƯỢNG
+ * GIAI ĐOẠN 4: CHỨC NĂNG 3 - QUẢN LÝ DỊCH VỤ CỬA HÀNG (MERCHANT REQUIREMENT #3)
+ * - Quản lý CRUD: Thêm, sửa, xóa dịch vụ, phân loại nhóm dịch vụ.
+ * - Thiết lập giá niêm yết (VNĐ), thời lượng phục vụ (phút), mô tả.
+ * - Cơ chế bảo vệ dữ liệu: Chuyển sang ẩn (Soft Delete) khi đang có khách đặt hẹn chưa hoàn tất.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MerchantServiceManagementScreen(
-    onBack: () -> Unit,
+    onBack: () -> Unit = {},
     modifier: Modifier = Modifier,
-    viewModel: MerchantServiceViewModel = viewModel(factory = ViewModelFactory.Factory)
+    viewModel: MerchantServiceViewModel = viewModel(factory = MerchantViewModelFactory.DefaultFactory),
+    shopId: String = "shop_01"
 ) {
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsState()
 
     var editingService by remember { mutableStateOf<ServiceItem?>(null) }
     var isAddingNew by remember { mutableStateOf(false) }
     var serviceToDelete by remember { mutableStateOf<ServiceItem?>(null) }
+    var selectedCategory by remember { mutableStateOf("Tất cả") }
+    var searchQuery by remember { mutableStateOf("") }
 
-    LaunchedEffect(Unit) {
-        viewModel.loadServices()
+    LaunchedEffect(shopId) {
+        viewModel.loadServices(shopId)
     }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = GrabBackground,
+        containerColor = MerchantBackground,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Quản lý Dịch vụ Salon",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = GrabTextPrimary
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = GrabTextPrimary
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = GrabSurface)
+            MerchantTopBar(
+                title = stringResource(R.string.merchant_service_title),
+                onBackClick = onBack
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { isAddingNew = true },
-                containerColor = GrabGreen,
-                contentColor = Color.White
+                containerColor = MerchantPrimary,
+                contentColor = Color.White,
+                shape = CircleShape
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Thêm dịch vụ")
+                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.merchant_service_add))
             }
         }
     ) { innerPadding ->
-        when (val state = uiState) {
-            is UiState.Loading -> {
-                GrabLoadingState(modifier = Modifier.padding(innerPadding))
-            }
-            is UiState.Error -> {
-                GrabEmptyState(
-                    title = "Lỗi tải dịch vụ",
-                    subtitle = state.message,
-                    modifier = Modifier.padding(innerPadding)
-                )
-            }
-            is UiState.Success -> {
-                val services = state.data
-                if (services.isEmpty()) {
-                    GrabEmptyState(
-                        icon = Icons.Default.DesignServices,
-                        title = "Chưa có dịch vụ nào",
-                        subtitle = "Bấm dấu + bên dưới để thêm dịch vụ làm đẹp đầu tiên cho salon của bạn.",
-                        modifier = Modifier.padding(innerPadding)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            when (val state = uiState) {
+                is UiState.Loading -> {
+                    LoadingStateView(message = "Đang tải danh sách dịch vụ...")
+                }
+                is UiState.Error -> {
+                    ErrorStateView(
+                        message = state.message,
+                        onRetry = { viewModel.loadServices(shopId) }
                     )
-                } else {
-                    LazyColumn(
+                }
+                is UiState.Success -> {
+                    val allServices = state.data
+                    val categories = listOf("Tất cả") + allServices.map { it.category.ifBlank { "Làm đẹp" } }.distinct()
+
+                    val filteredServices = allServices.filter { service ->
+                        val matchCat = selectedCategory == "Tất cả" || service.category.equals(selectedCategory, ignoreCase = true)
+                        val matchSearch = searchQuery.isBlank() || service.name.contains(searchQuery, ignoreCase = true)
+                        matchCat && matchSearch
+                    }
+
+                    // Thanh tìm kiếm và bộ lọc nhóm danh mục
+                    Column(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                            .fillMaxWidth()
+                            .background(MerchantSurface)
+                            .padding(horizontal = 16.dp, vertical = 10.dp)
                     ) {
-                        items(services, key = { it.id }) { service ->
-                            ServiceManageCard(
-                                service = service,
-                                onEdit = { editingService = service },
-                                onDelete = { serviceToDelete = service }
-                            )
+                        OutlinedTextField(
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            placeholder = { Text("Tìm kiếm tên dịch vụ...", fontSize = 13.sp, color = MerchantTextHint) },
+                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = MerchantTextHint) },
+                            trailingIcon = {
+                                if (searchQuery.isNotEmpty()) {
+                                    IconButton(onClick = { searchQuery = "" }) {
+                                        Icon(Icons.Default.Close, contentDescription = "Clear", tint = MerchantTextHint)
+                                    }
+                                }
+                            },
+                            singleLine = true,
+                            shape = RoundedCornerShape(10.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MerchantPrimary,
+                                unfocusedBorderColor = MerchantBorder,
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        // Category Chips
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            categories.forEach { cat ->
+                                val isSelected = cat == selectedCategory
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(if (isSelected) MerchantPrimary else MerchantCard)
+                                        .border(1.dp, if (isSelected) MerchantPrimary else MerchantBorder, RoundedCornerShape(20.dp))
+                                        .clickable { selectedCategory = cat }
+                                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                                ) {
+                                    Text(
+                                        text = cat,
+                                        fontSize = 12.sp,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                        color = if (isSelected) Color.White else MerchantTextPrimary
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    if (filteredServices.isEmpty()) {
+                        EmptyStateView(
+                            title = "Không tìm thấy dịch vụ phù hợp",
+                            subtitle = if (allServices.isEmpty())
+                                "Bấm nút '+' bên dưới để tạo dịch vụ đầu tiên cho salon của bạn."
+                            else
+                                "Thử đổi từ khóa tìm kiếm hoặc chọn danh mục khác."
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(filteredServices, key = { it.id }) { service ->
+                                ServiceItemCard(
+                                    service = service,
+                                    onEdit = { editingService = service },
+                                    onDelete = { serviceToDelete = service },
+                                    onToggleActive = { updatedActive ->
+                                        viewModel.updateService(
+                                            service = service.copy(active = updatedActive),
+                                            onSuccess = {
+                                                Toast.makeText(
+                                                    context,
+                                                    if (updatedActive) "Đã bật kinh doanh dịch vụ" else "Đã tạm ẩn nhận khách",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            },
+                                            onError = { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }
+                else -> Unit
             }
-            else -> Unit
         }
 
         // Dialog Thêm hoặc Sửa dịch vụ
         if (isAddingNew || editingService != null) {
             val initial = editingService ?: ServiceItem(
                 id = "",
-                shopId = "shop_lamour",
+                shopId = shopId,
                 name = "",
-                description = "",
+                category = if (selectedCategory != "Tất cả") selectedCategory else "Nail Art",
                 price = 150000L,
                 durationMinutes = 45,
-                category = "Nail Art & Care",
+                description = "",
+                active = true,
                 imageUrl = "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500&auto=format&fit=crop"
             )
 
@@ -178,32 +263,78 @@ fun MerchantServiceManagementScreen(
             )
         }
 
-        // Dialog xác nhận xóa
+        // Dialog xác nhận Xóa / Ẩn dịch vụ với cảnh báo ràng buộc đơn đặt lịch
         serviceToDelete?.let { s ->
             AlertDialog(
                 onDismissRequest = { serviceToDelete = null },
-                title = { Text(text = "Xóa dịch vụ?", fontWeight = FontWeight.Bold) },
-                text = { Text(text = "Bạn có chắc muốn xóa dịch vụ '${s.name}' khỏi bảng giá không?") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.WarningAmber,
+                        contentDescription = null,
+                        tint = MerchantWarning,
+                        modifier = Modifier.size(32.dp)
+                    )
+                },
+                title = {
+                    Text(
+                        text = stringResource(R.string.merchant_service_delete),
+                        fontWeight = FontWeight.Bold,
+                        color = MerchantTextPrimary
+                    )
+                },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = "Bạn có chắc chắn muốn xóa dịch vụ '${s.name}'?",
+                            fontSize = 14.sp,
+                            color = MerchantTextPrimary
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(MerchantWarning.copy(alpha = 0.1f))
+                                .padding(10.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.merchant_service_in_use_warning),
+                                fontSize = 12.sp,
+                                color = MerchantTextSecondary,
+                                lineHeight = 16.sp
+                            )
+                        }
+                    }
+                },
                 confirmButton = {
                     Button(
                         onClick = {
-                            viewModel.deleteService(
+                            viewModel.deleteOrHideService(
                                 serviceId = s.id,
-                                onSuccess = {
-                                    Toast.makeText(context, "Đã xóa dịch vụ.", Toast.LENGTH_SHORT).show()
+                                shopId = shopId,
+                                onDecision = { decision ->
+                                    when (decision) {
+                                        is ServiceRemovalPolicy.ServiceRemovalDecision.SoftDelete -> {
+                                            Toast.makeText(context, decision.reason, Toast.LENGTH_LONG).show()
+                                        }
+                                        is ServiceRemovalPolicy.ServiceRemovalDecision.HardDelete -> {
+                                            Toast.makeText(context, decision.message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
                                     serviceToDelete = null
                                 },
-                                onError = { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
+                                onError = {
+                                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                                }
                             )
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = GrabStatusError)
+                        colors = ButtonDefaults.buttonColors(containerColor = MerchantError)
                     ) {
-                        Text(text = "Xóa")
+                        Text(text = "Đồng ý", fontWeight = FontWeight.Bold)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { serviceToDelete = null }) {
-                        Text(text = "Hủy", color = GrabTextSecondary)
+                        Text(text = "Hủy", color = MerchantTextSecondary)
                     }
                 }
             )
@@ -212,71 +343,167 @@ fun MerchantServiceManagementScreen(
 }
 
 @Composable
-private fun ServiceManageCard(
+private fun ServiceItemCard(
     service: ServiceItem,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onToggleActive: (Boolean) -> Unit
 ) {
-    GrabCard {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                model = service.imageUrl ?: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500&auto=format&fit=crop",
-                contentDescription = service.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(RoundedCornerShape(8.dp))
-            )
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = service.name,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = GrabTextPrimary
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MerchantCard),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AsyncImage(
+                    model = service.imageUrl ?: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500&auto=format&fit=crop",
+                    contentDescription = service.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(68.dp)
+                        .clip(RoundedCornerShape(10.dp))
                 )
-                Spacer(modifier = Modifier.height(2.dp))
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = service.name,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MerchantTextPrimary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = Formatters.formatCurrency(service.price),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MerchantPrimary
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.AccessTime,
+                                contentDescription = null,
+                                tint = MerchantTextSecondary,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Text(
+                                text = "${service.durationMinutes} phút",
+                                fontSize = 12.sp,
+                                color = MerchantTextSecondary
+                            )
+                        }
+
+                        Text(text = "·", color = MerchantTextHint)
+
+                        Text(
+                            text = service.category.ifBlank { "Làm đẹp" },
+                            fontSize = 11.sp,
+                            color = MerchantGoldDark,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+
+            if (service.description.isNotBlank()) {
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "${CurrencyFormatter.formatVnd(service.price)}  ·  ${service.durationMinutes} phút",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = GrabGreenDark
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = "Nhóm: ${service.category}",
-                    fontSize = 11.sp,
-                    color = GrabTextSecondary
+                    text = service.description,
+                    fontSize = 12.sp,
+                    color = MerchantTextSecondary,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
-            // Nút sửa & xóa
-            Row {
-                IconButton(onClick = onEdit) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit",
-                        tint = GrabGreenDark,
-                        modifier = Modifier.size(20.dp)
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 10.dp),
+                thickness = 0.5.dp,
+                color = MerchantDivider
+            )
+
+            // Bottom action row: Active status switch + Sửa/Xóa
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Switch(
+                        checked = service.active,
+                        onCheckedChange = onToggleActive,
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = MerchantPrimary,
+                            uncheckedThumbColor = Color.White,
+                            uncheckedTrackColor = MerchantBorder
+                        ),
+                        modifier = Modifier.scale(0.8f)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = if (service.active) stringResource(R.string.merchant_service_active) else stringResource(R.string.merchant_service_inactive),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = if (service.active) MerchantPrimary else MerchantTextHint
                     )
                 }
-                IconButton(onClick = onDelete) {
-                    Icon(
-                        imageVector = Icons.Default.DeleteOutline,
-                        contentDescription = "Delete",
-                        tint = GrabStatusError,
-                        modifier = Modifier.size(20.dp)
-                    )
+
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    OutlinedButton(
+                        onClick = onEdit,
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                        modifier = Modifier.height(34.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MerchantPrimary),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MerchantPrimary)
+                    ) {
+                        Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(15.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "Sửa", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
+
+                    IconButton(
+                        onClick = onDelete,
+                        modifier = Modifier.size(34.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DeleteOutline,
+                            contentDescription = stringResource(R.string.merchant_service_delete),
+                            tint = MerchantError,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+private fun Modifier.scale(scale: Float): Modifier = this.then(
+    Modifier.size(width = (52 * scale).dp, height = (32 * scale).dp)
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -287,37 +514,70 @@ private fun ServiceEditDialog(
     onSave: (ServiceItem) -> Unit
 ) {
     var name by remember { mutableStateOf(initialService.name) }
-    var priceText by remember { mutableStateOf(initialService.price.toString()) }
+    var priceText by remember { mutableStateOf(if (initialService.price > 0) initialService.price.toString() else "") }
     var durationText by remember { mutableStateOf(initialService.durationMinutes.toString()) }
-    var category by remember { mutableStateOf(initialService.category) }
+    var category by remember { mutableStateOf(initialService.category.ifBlank { "Nail Art" }) }
     var description by remember { mutableStateOf(initialService.description) }
+    var active by remember { mutableStateOf(initialService.active) }
+    var errorText by remember { mutableStateOf<String?>(null) }
 
-    val categories = listOf("Nail Art & Care", "Lash & Brow", "Spa & Massage", "Hair Salon", "Skincare")
+    val popularCategories = listOf("Nail Art", "Nối Mi & Mày", "Gội Đầu Dưỡng Sinh", "Chăm Sóc Da", "Make-up", "Massage")
+    val quickDurations = listOf(30, 45, 60, 90, 120)
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = if (isNew) "Thêm dịch vụ mới" else "Chỉnh sửa dịch vụ",
+                text = if (isNew) stringResource(R.string.merchant_service_add) else stringResource(R.string.merchant_service_edit),
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
-                color = GrabTextPrimary
+                color = MerchantTextPrimary
             )
         },
         text = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                if (errorText != null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MerchantError.copy(alpha = 0.1f))
+                            .padding(8.dp)
+                    ) {
+                        Text(text = errorText ?: "", fontSize = 12.sp, color = MerchantError)
+                    }
+                }
+
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Tên dịch vụ") },
+                    onValueChange = { name = it; errorText = null },
+                    label = { Text(stringResource(R.string.merchant_service_name)) },
+                    placeholder = { Text("Ví dụ: Sơn gel Hàn Quốc cao cấp") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                // Nhóm dịch vụ
+                Text(text = "Nhóm dịch vụ:", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MerchantTextSecondary)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    popularCategories.forEach { cat ->
+                        FilterChip(
+                            selected = category == cat,
+                            onClick = { category = cat },
+                            label = { Text(cat, fontSize = 11.sp) }
+                        )
+                    }
+                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -325,8 +585,8 @@ private fun ServiceEditDialog(
                 ) {
                     OutlinedTextField(
                         value = priceText,
-                        onValueChange = { priceText = it },
-                        label = { Text("Giá niêm yết (VNĐ)") },
+                        onValueChange = { priceText = it; errorText = null },
+                        label = { Text(stringResource(R.string.merchant_service_price)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         modifier = Modifier.weight(1.2f)
@@ -334,55 +594,91 @@ private fun ServiceEditDialog(
 
                     OutlinedTextField(
                         value = durationText,
-                        onValueChange = { durationText = it },
-                        label = { Text("Thời lượng (phút)") },
+                        onValueChange = { durationText = it; errorText = null },
+                        label = { Text(stringResource(R.string.merchant_service_duration)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
-                        modifier = Modifier.weight(0.8f)
+                        modifier = Modifier.weight(0.9f)
                     )
                 }
 
-                OutlinedTextField(
-                    value = category,
-                    onValueChange = { category = it },
-                    label = { Text("Danh mục dịch vụ") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                // Quick duration chips
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    quickDurations.forEach { d ->
+                        AssistChip(
+                            onClick = { durationText = d.toString() },
+                            label = { Text("${d}p", fontSize = 11.sp) }
+                        )
+                    }
+                }
 
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Mô tả chi tiết") },
+                    label = { Text("Mô tả dịch vụ") },
+                    placeholder = { Text("Các bước thực hiện, công nghệ sử dụng, xuất xứ mỹ phẩm...") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(80.dp)
+                        .height(84.dp)
                 )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = active,
+                        onCheckedChange = { active = it },
+                        colors = CheckboxDefaults.colors(checkedColor = MerchantPrimary)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Mở kinh doanh ngay sau khi lưu",
+                        fontSize = 13.sp,
+                        color = MerchantTextPrimary
+                    )
+                }
             }
         },
         confirmButton = {
             Button(
                 onClick = {
-                    val p = priceText.toLongOrNull() ?: 100000L
-                    val d = durationText.toIntOrNull() ?: 45
+                    val p = priceText.toLongOrNull()
+                    val d = durationText.toIntOrNull()
+                    if (name.trim().length < 3) {
+                        errorText = "Tên dịch vụ phải có ít nhất 3 ký tự"
+                        return@Button
+                    }
+                    if (p == null || p < 0L) {
+                        errorText = "Giá dịch vụ không hợp lệ"
+                        return@Button
+                    }
+                    if (d == null || d <= 0) {
+                        errorText = "Thời lượng phục vụ phải lớn hơn 0 phút"
+                        return@Button
+                    }
+
                     val updated = initialService.copy(
                         name = name.trim(),
+                        category = category.trim(),
                         price = p,
                         durationMinutes = d,
-                        category = category.trim(),
-                        description = description.trim()
+                        description = description.trim(),
+                        active = active
                     )
                     onSave(updated)
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = GrabGreen),
-                enabled = name.isNotBlank()
+                colors = ButtonDefaults.buttonColors(containerColor = MerchantPrimary)
             ) {
-                Text(text = if (isNew) "Tạo mới" else "Lưu")
+                Text(text = if (isNew) "Tạo mới" else "Lưu thay đổi", fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "Hủy", color = GrabTextSecondary)
+                Text(text = "Hủy", color = MerchantTextSecondary)
             }
         }
     )
