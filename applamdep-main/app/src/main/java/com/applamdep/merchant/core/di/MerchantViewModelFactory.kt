@@ -28,6 +28,41 @@ class MerchantViewModelFactory(
                     shopRepository = container.shopRepository
                 ) as T
             }
+            modelClass.isAssignableFrom(com.applamdep.merchant.ui.service.MerchantServiceViewModel::class.java) -> {
+                com.applamdep.merchant.ui.service.MerchantServiceViewModel(
+                    serviceRepository = container.serviceRepository,
+                    bookingRepository = container.bookingRepository
+                ) as T
+            }
+            modelClass.isAssignableFrom(com.applamdep.merchant.ui.schedule.MerchantScheduleViewModel::class.java) -> {
+                com.applamdep.merchant.ui.schedule.MerchantScheduleViewModel(
+                    scheduleRepository = container.scheduleRepository,
+                    slotRepository = container.slotRepository
+                ) as T
+            }
+            modelClass.isAssignableFrom(com.applamdep.merchant.ui.booking.MerchantBookingViewModel::class.java) -> {
+                com.applamdep.merchant.ui.booking.MerchantBookingViewModel(
+                    bookingRepository = container.bookingRepository,
+                    transactionRepository = container.transactionRepository
+                ) as T
+            }
+            modelClass.isAssignableFrom(com.applamdep.merchant.ui.review.MerchantReviewViewModel::class.java) -> {
+                com.applamdep.merchant.ui.review.MerchantReviewViewModel(
+                    reviewRepository = container.reviewRepository
+                ) as T
+            }
+            modelClass.isAssignableFrom(com.applamdep.merchant.ui.finance.MerchantFinanceViewModel::class.java) -> {
+                com.applamdep.merchant.ui.finance.MerchantFinanceViewModel(
+                    transactionRepository = container.transactionRepository
+                ) as T
+            }
+            modelClass.isAssignableFrom(com.applamdep.merchant.ui.dashboard.MerchantDashboardViewModel::class.java) -> {
+                com.applamdep.merchant.ui.dashboard.MerchantDashboardViewModel(
+                    shopRepository = container.shopRepository,
+                    statsRepository = container.statsRepository,
+                    bookingRepository = container.bookingRepository
+                ) as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }

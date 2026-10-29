@@ -307,6 +307,27 @@ class BookingRepositoryImpl : BaseRepository(), BookingRepository {
             it.endAt <= thresholdMillis
         }
     }
+
+    override suspend fun checkAndAutoCompleteBookings(shopId: String): Result<Int> = safeCall {
+        val now = System.currentTimeMillis()
+        val gracePeriod = 30 * 60 * 1000L // 30 phút theo Requirement #7
+        var count = 0
+        _bookings.value = _bookings.value.map { bk ->
+            if (bk.shopId == shopId &&
+                bk.status == MerchantConstants.BOOKING_STATUS_IN_SERVICE &&
+                bk.endAt > 0 &&
+                (now - bk.endAt) >= gracePeriod
+            ) {
+                count++
+                bk.copy(
+                    status = MerchantConstants.BOOKING_STATUS_COMPLETED,
+                    completedAt = now,
+                    autoCompleted = true
+                )
+            } else bk
+        }
+        count
+    }
 }
 
 /**
@@ -388,6 +409,64 @@ class TransactionRepositoryImpl : BaseRepository(), TransactionRepository {
             transactions = list
         )
     }
+
+    override suspend fun releaseDeposit(bookingId: String): Result<Unit> = safeCall {
+        val now = System.currentTimeMillis()
+        var updated = false
+        val currentList = _transactions.value.map { tx ->
+            if (tx.bookingId == bookingId && tx.status == MerchantConstants.TX_STATUS_HELD) {
+                updated = true
+                tx.copy(
+                    type = MerchantConstants.TX_TYPE_RELEASE,
+                    status = MerchantConstants.TX_STATUS_RELEASED_TO_SHOP,
+                    releasedAt = now
+                )
+            } else tx
+        }
+        if (updated) {
+            _transactions.value = currentList
+        } else {
+            val newTx = Transaction(
+                id = "tx_${UUID.randomUUID().toString().take(6)}",
+                type = MerchantConstants.TX_TYPE_RELEASE,
+                bookingId = bookingId,
+                shopId = "shop_01",
+                amount = 100000L,
+                status = MerchantConstants.TX_STATUS_RELEASED_TO_SHOP,
+                releasedAt = now
+            )
+            _transactions.value = listOf(newTx) + _transactions.value
+        }
+    }
+
+    override suspend fun refundDeposit(bookingId: String): Result<Unit> = safeCall {
+        val now = System.currentTimeMillis()
+        var updated = false
+        val currentList = _transactions.value.map { tx ->
+            if (tx.bookingId == bookingId && tx.status == MerchantConstants.TX_STATUS_HELD) {
+                updated = true
+                tx.copy(
+                    type = MerchantConstants.TX_TYPE_REFUND,
+                    status = MerchantConstants.TX_STATUS_REFUNDED,
+                    refundedAt = now
+                )
+            } else tx
+        }
+        if (updated) {
+            _transactions.value = currentList
+        } else {
+            val newTx = Transaction(
+                id = "tx_${UUID.randomUUID().toString().take(6)}",
+                type = MerchantConstants.TX_TYPE_REFUND,
+                bookingId = bookingId,
+                shopId = "shop_01",
+                amount = 100000L,
+                status = MerchantConstants.TX_STATUS_REFUNDED,
+                refundedAt = now
+            )
+            _transactions.value = listOf(newTx) + _transactions.value
+        }
+    }
 }
 
 /**
@@ -420,8 +499,8 @@ class PlanRepositoryImpl : BaseRepository(), PlanRepository {
  * 4. TÍNH CHẤT OOP: TRỪU TƯỢNG - Cài đặt StatsRepository
  */
 class StatsRepositoryImpl(
-    private val bookingRepository: BookingRepository,
-    private val reviewRepository: ReviewRepository
+    private val bookingRepository: BookingRepository = BookingRepositoryImpl(),
+    private val reviewRepository: ReviewRepository = ReviewRepositoryImpl()
 ) : BaseRepository(), StatsRepository {
 
     override fun getShopStats(shopId: String): Flow<MerchantStats> =

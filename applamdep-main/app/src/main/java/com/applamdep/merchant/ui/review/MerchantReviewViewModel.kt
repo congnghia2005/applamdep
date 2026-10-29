@@ -1,55 +1,104 @@
 package com.applamdep.merchant.ui.review
 
 import androidx.lifecycle.viewModelScope
-import com.applamdep.customer.core.base.BaseViewModel
-import com.applamdep.customer.core.base.UiState
-import com.applamdep.customer.domain.model.Review
-import com.applamdep.merchant.domain.repository.MerchantRepository
+import com.applamdep.merchant.core.base.BaseViewModel
+import com.applamdep.merchant.core.base.UiState
+import com.applamdep.merchant.data.repository.ReviewRepositoryImpl
+import com.applamdep.merchant.domain.model.Review
+import com.applamdep.merchant.domain.repository.ReviewRepository
+import com.applamdep.merchant.domain.rule.ReviewReplyValidator
+import com.applamdep.merchant.domain.rule.ReviewReportValidator
 import kotlinx.coroutines.launch
 
 /**
- * 2. TÍNH CHẤT OOP: KẾ THỪA
- * 4. TÍNH CHẤT OOP: TRỪU TƯỢNG
+ * 2. TÍNH CHẤT OOP: KẾ THỪA (Inheritance) - Kế thừa BaseViewModel
+ * 4. TÍNH CHẤT OOP: TRỪU TƯỢNG (Abstraction) - Phụ thuộc ReviewRepository
  * ViewModel quản lý phản hồi và tố cáo đánh giá khách hàng (Merchant Requirement #8)
  */
 class MerchantReviewViewModel(
-    private val merchantRepository: MerchantRepository
+    private val reviewRepository: ReviewRepository = ReviewRepositoryImpl(),
+    private val legacyMerchantRepository: com.applamdep.merchant.domain.repository.MerchantRepository? = null
 ) : BaseViewModel<List<Review>>() {
 
-    fun loadReviews(shopId: String = "shop_lamour") {
+    // Hỗ trợ secondary constructor cho DI cũ nếu cần
+    constructor(merchantRepository: com.applamdep.merchant.domain.repository.MerchantRepository) : this(
+        reviewRepository = ReviewRepositoryImpl(),
+        legacyMerchantRepository = merchantRepository
+    )
+
+    private val replyValidator = ReviewReplyValidator()
+    private val reportValidator = ReviewReportValidator()
+
+    fun loadReviews(shopId: String = "shop_01") {
         launchWithLoading {
-            merchantRepository.getMerchantReviews(shopId).collect { list ->
+            reviewRepository.getShopReviews(shopId).collect { list ->
                 updateState(UiState.Success(list))
             }
         }
     }
 
-    fun replyReview(reviewId: String, replyText: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
-        if (replyText.isBlank()) {
-            onError("Nội dung phản hồi không được để trống.")
+    fun replyReview(
+        reviewId: String,
+        replyText: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val validation = replyValidator.validate(replyText)
+        if (validation is ReviewReplyValidator.ReplyValidationResult.Invalid) {
+            onError(validation.message)
             return
         }
+
         viewModelScope.launch {
-            val result = merchantRepository.replyReview(reviewId, replyText.trim())
+            val result = reviewRepository.replyReview(reviewId, replyText.trim())
             if (result.isSuccess) {
                 onSuccess()
             } else {
-                onError("Lỗi khi gửi phản hồi: ${result.exceptionOrNull()?.message}")
+                onError("Lỗi khi gửi phản hồi: ${result.exceptionOrNull()?.localizedMessage}")
             }
         }
     }
 
-    fun reportReview(reviewId: String, reason: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
-        if (reason.isBlank()) {
-            onError("Vui lòng nêu rõ lý do tố cáo vi phạm.")
+    fun reportReview(
+        reviewId: String,
+        reason: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val validation = reportValidator.validate(reason)
+        if (validation is ReviewReportValidator.ReportValidationResult.Invalid) {
+            onError(validation.message)
             return
         }
+
         viewModelScope.launch {
-            val result = merchantRepository.reportReview(reviewId, reason.trim())
+            val result = reviewRepository.reportReview(reviewId, reason.trim())
             if (result.isSuccess) {
                 onSuccess()
             } else {
-                onError("Lỗi khi gửi yêu cầu tố cáo: ${result.exceptionOrNull()?.message}")
+                onError("Lỗi khi gửi yêu cầu khiếu nại: ${result.exceptionOrNull()?.localizedMessage}")
+            }
+        }
+    }
+
+    fun requestRemoveReview(
+        reviewId: String,
+        reason: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val validation = reportValidator.validate(reason)
+        if (validation is ReviewReportValidator.ReportValidationResult.Invalid) {
+            onError(validation.message)
+            return
+        }
+
+        viewModelScope.launch {
+            val result = reviewRepository.requestRemoveReview(reviewId, reason.trim())
+            if (result.isSuccess) {
+                onSuccess()
+            } else {
+                onError("Lỗi khi gửi yêu cầu gỡ đánh giá: ${result.exceptionOrNull()?.localizedMessage}")
             }
         }
     }

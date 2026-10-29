@@ -13,6 +13,7 @@ import com.applamdep.merchant.domain.policy.AutoCompletionPolicy
 import com.applamdep.merchant.domain.repository.MerchantRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.util.UUID
 
@@ -238,10 +239,7 @@ class FakeMerchantRepository(
      */
     override suspend fun checkAndAutoCompleteBookings(shopId: String): Result<Int> = safeCall {
         var completedCount = 0
-        // Lấy danh sách booking từ bookingRepository
-        // Trong môi trường thực tế, job này có thể chạy định kỳ qua WorkManager hoặc Firebase Cloud Function
-        val currentBookings = mutableListOf<Booking>()
-        bookingRepository.getShopBookings(shopId).collect { currentBookings.addAll(it) }
+        val currentBookings = bookingRepository.getShopBookings(shopId).first()
 
         val eligibleBookings = autoCompletionPolicy.findEligibleBookings(currentBookings)
         for (booking in eligibleBookings) {

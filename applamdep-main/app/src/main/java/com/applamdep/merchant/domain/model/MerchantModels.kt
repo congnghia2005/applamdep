@@ -37,6 +37,7 @@ data class ShopProfile(
     val isRejected: Boolean get() = status == MerchantConstants.SHOP_STATUS_REJECTED
     val isPlanValid: Boolean get() = planExpiry > System.currentTimeMillis()
     val isVip: Boolean get() = plan == MerchantConstants.PLAN_VIP
+    val shopName: String get() = name
 }
 
 /**
@@ -79,11 +80,14 @@ data class ServiceItem(
     val price: Long = 0L,
     val durationMinutes: Int = 45,
     val description: String = "",
+    val category: String = "Làm đẹp",
     val imageUrl: String? = null,
     val active: Boolean = true,
     val flagged: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
-)
+) {
+    val isActive: Boolean get() = active
+}
 
 /**
  * Model Ca làm việc & Lịch hoạt động tuần (Work Schedule)
@@ -129,6 +133,9 @@ data class SlotItem(
 ) {
     val remainingCapacity: Int get() = (capacity - booked).coerceAtLeast(0)
     val hasCapacity: Boolean get() = !isBlocked && booked < capacity
+    val isAvailable: Boolean get() = !isBlocked && booked < capacity
+    val maxCapacity: Int get() = capacity
+    val bookedCount: Int get() = booked
 }
 
 /**

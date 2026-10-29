@@ -52,6 +52,7 @@ interface BookingRepository {
     fun getShopBookings(shopId: String): Flow<List<Booking>>
     suspend fun updateBookingStatus(bookingId: String, newStatus: String, reason: String? = null): Result<Unit>
     suspend fun getExpiredInServiceBookings(shopId: String, thresholdMillis: Long): Result<List<Booking>>
+    suspend fun checkAndAutoCompleteBookings(shopId: String): Result<Int>
 }
 
 // 6. Quản lý Đánh giá & Phản hồi
@@ -66,6 +67,8 @@ interface ReviewRepository {
 interface TransactionRepository {
     fun getShopTransactions(shopId: String): Flow<List<Transaction>>
     fun getFinancialSummary(shopId: String): Flow<FinancialSummary>
+    suspend fun releaseDeposit(bookingId: String): Result<Unit>
+    suspend fun refundDeposit(bookingId: String): Result<Unit>
 }
 
 // 8. Quản lý Gói đối tác & Cấu hình phí

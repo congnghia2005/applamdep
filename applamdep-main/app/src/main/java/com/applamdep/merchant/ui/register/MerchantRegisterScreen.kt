@@ -34,10 +34,12 @@ import com.applamdep.merchant.core.util.Formatters
 import com.applamdep.merchant.domain.rule.PaymentResult
 import com.applamdep.merchant.ui.component.MerchantTopBar
 import com.applamdep.merchant.ui.theme.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.applamdep.merchant.core.di.MerchantViewModelFactory
 
 @Composable
 fun MerchantRegisterScreen(
-    viewModel: MerchantRegisterViewModel,
+    viewModel: MerchantRegisterViewModel = viewModel(factory = MerchantViewModelFactory.DefaultFactory),
     ownerUid: String = "merchant_user_01",
     onRegistrationSubmitted: () -> Unit,
     onBack: () -> Unit,
