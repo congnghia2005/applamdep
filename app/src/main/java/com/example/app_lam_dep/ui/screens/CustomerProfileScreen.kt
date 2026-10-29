@@ -110,34 +110,11 @@ fun CustomerProfileScreen(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            // Badge VIP
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(Color.White.copy(alpha = 0.12f))
-                                    .border(0.75.dp, ChampagneGold.copy(alpha = 0.6f), RoundedCornerShape(20.dp))
-                                    .padding(horizontal = 10.dp, vertical = 4.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    GlowIcon(icon = GlowIcons.Crown, tint = ChampagneGold, size = 12.dp)
-                                    Text(
-                                        text = "THÀNH VIÊN GLOW VIP GOLD",
-                                        color = ChampagneGold,
-                                        fontSize = 9.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        letterSpacing = 0.5.sp
-                                    )
-                                }
-                            }
-
                             Text(
-                                text = "Quý cô Khánh Linh",
+                                text = "Khánh Linh",
                                 color = Color.White,
                                 fontFamily = FontFamily.Serif,
-                                fontSize = 20.sp,
+                                fontSize = 22.sp,
                                 fontWeight = FontWeight.Bold
                             )
 
@@ -476,7 +453,7 @@ fun CustomerProfileScreen(
                     ProfileSettingRow(
                         icon = GlowIcons.User,
                         title = "Thông tin cá nhân & Sổ địa chỉ",
-                        subtitle = "Quý cô Khánh Linh · 0903 123 456",
+                        subtitle = "Khánh Linh · 0903 123 456",
                         onClick = {}
                     )
 

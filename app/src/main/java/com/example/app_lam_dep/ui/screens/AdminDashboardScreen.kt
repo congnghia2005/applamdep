@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.app_lam_dep.ui.icons.GlowIcon
@@ -185,7 +186,7 @@ fun AdminDashboardScreen(
     // Sample Customer Data
     val customers = remember {
         mutableStateListOf(
-            AdminCustomerItem("1", "Quý cô Khánh Linh", "CUST-001", "0901 888 777", "khanhlinh@glow.vn", "05/01/2025", 14, 0, "4.850.000 đ", "100.000 đ", "Đang hoạt động"),
+            AdminCustomerItem("1", "Khánh Linh", "CUST-001", "0901 888 777", "khanhlinh@glow.vn", "05/01/2025", 14, 0, "4.850.000 đ", "100.000 đ", "Đang hoạt động"),
             AdminCustomerItem("2", "Nguyễn Thị Mai", "CUST-002", "0902 333 444", "mainguyen@gmail.com", "12/02/2025", 8, 1, "2.150.000 đ", "50.000 đ", "Đang hoạt động"),
             AdminCustomerItem("3", "Trần Thảo Anh", "CUST-003", "0909 555 666", "thaoanh@outlook.com", "20/03/2025", 5, 0, "1.480.000 đ", "84.000 đ", "Đang hoạt động"),
             AdminCustomerItem("4", "Lê Minh Trang", "CUST-004", "0918 777 999", "minhtrang@gmail.com", "14/04/2025", 3, 0, "850.000 đ", "0 đ", "Đang hoạt động")
@@ -204,7 +205,7 @@ fun AdminDashboardScreen(
     val bookings = remember {
         mutableStateListOf(
             AdminBookingItem("BK-9021", "15:30 · 12/08", "L'Amour Luxury", "Nguyễn Thị Mai", "Sơn Gel Hữu Cơ Pháp", "180.000 đ", "50.000 đ", "Chờ salon xác nhận", "Đã đặt cọc qua sàn"),
-            AdminBookingItem("BK-9022", "16:00 · 12/08", "L'Amour Luxury", "Quý cô Khánh Linh", "Nail Art Mắt Mèo Cực Quang", "280.000 đ", "84.000 đ", "Đã xác nhận", "Đã đặt cọc qua sàn"),
+            AdminBookingItem("BK-9022", "16:00 · 12/08", "L'Amour Luxury", "Khánh Linh", "Nail Art Mắt Mèo Cực Quang", "280.000 đ", "84.000 đ", "Đã xác nhận", "Đã đặt cọc qua sàn"),
             AdminBookingItem("BK-8842", "10:00 · 11/08", "An Yên Thảo Dược", "Hoàng Kim Oanh", "Massage Thảo Dược Cung Đình", "350.000 đ", "100.000 đ", "Đã hủy", "Chờ hoàn cọc"),
             AdminBookingItem("BK-8830", "14:00 · 10/08", "L'Amour Luxury", "Trần Thảo Anh", "Đắp Móng Hoàng Gia Swarovski", "450.000 đ", "135.000 đ", "Hoàn thành", "Đã thanh toán đủ")
         )
@@ -904,7 +905,13 @@ fun AdminDashboardScreen(
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                        Row(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .padding(end = 8.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                        ) {
                                             Box(
                                                 modifier = Modifier
                                                     .size(40.dp)
@@ -915,8 +922,21 @@ fun AdminDashboardScreen(
                                                 GlowIcon(icon = GlowIcons.User, tint = Color(0xFF6B1228), size = 20.dp)
                                             }
                                             Column {
-                                                Text(text = cust.name, fontWeight = FontWeight.Bold, fontSize = 14.5.sp, color = Color(0xFF24090F))
-                                                Text(text = "Mã: ${cust.code} · Ngày tham gia: ${cust.joinDate}", fontSize = 11.sp, color = Color(0xFF7A686D))
+                                                Text(
+                                                    text = cust.name,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 14.5.sp,
+                                                    color = Color(0xFF24090F),
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                                Text(
+                                                    text = "Mã: ${cust.code} · Ngày tham gia: ${cust.joinDate}",
+                                                    fontSize = 11.sp,
+                                                    color = Color(0xFF7A686D),
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
                                             }
                                         }
 
@@ -924,13 +944,15 @@ fun AdminDashboardScreen(
                                             modifier = Modifier
                                                 .clip(RoundedCornerShape(8.dp))
                                                 .background(if (cust.status == "Đang hoạt động") Color(0xFFE6F4EA) else Color(0xFFFCEEEB))
-                                                .padding(horizontal = 8.dp, vertical = 3.dp)
+                                                .padding(horizontal = 8.dp, vertical = 4.dp)
                                         ) {
                                             Text(
                                                 text = cust.status,
                                                 fontSize = 10.5.sp,
                                                 fontWeight = FontWeight.Bold,
-                                                color = if (cust.status == "Đang hoạt động") Color(0xFF137333) else Color(0xFFE11D48)
+                                                color = if (cust.status == "Đang hoạt động") Color(0xFF137333) else Color(0xFFE11D48),
+                                                maxLines = 1,
+                                                softWrap = false
                                             )
                                         }
                                     }

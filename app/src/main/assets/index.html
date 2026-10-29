@@ -84,12 +84,12 @@
           </div>
 
           <div class="cat-grid-lux">
-            <!-- 1. Làm Nail Art -->
+            <!-- 1. Làm Nail -->
             <div class="cat-item-lux" onclick="openServiceDetail('nail')">
               <div class="cat-podium-circle">
                 <i class="fa-solid fa-hand-sparkles"></i>
               </div>
-              <span class="cat-name-lux">Làm Nail Art</span>
+              <span class="cat-name-lux">Làm Nail</span>
             </div>
 
             <!-- 2. Spa Trị Liệu -->
@@ -108,12 +108,12 @@
               <span class="cat-name-lux">Chăm sóc da</span>
             </div>
 
-            <!-- 4. Đặt lịch VIP -->
-            <div class="cat-item-lux" onclick="openBookingModal('Đặt Lịch VIP Hoàng Gia')">
+            <!-- 4. Nối Mi & Mày -->
+            <div class="cat-item-lux" onclick="openServiceDetail('lash')">
               <div class="cat-podium-circle">
-                <i class="fa-solid fa-crown"></i>
+                <i class="fa-solid fa-eye"></i>
               </div>
-              <span class="cat-name-lux">Đặt lịch VIP</span>
+              <span class="cat-name-lux">Nối Mi & Mày</span>
             </div>
 
             <!-- 5. Hair Salon -->
@@ -1050,7 +1050,7 @@
                 <div class="cust-avatar-row">
                   <div class="cust-icon-circle"><i class="fa-solid fa-user"></i></div>
                   <div>
-                    <h4 class="adm-card-title">Quý cô Khánh Linh</h4>
+                    <h4 class="adm-card-title">Khánh Linh</h4>
                     <p class="adm-card-code">Mã: CUST-001 · Ngày tham gia: 05/01/2025</p>
                   </div>
                 </div>
@@ -1228,7 +1228,7 @@
         <div class="form-group">
           <label class="form-label"><i class="fa-solid fa-user"></i> Thông tin quý khách đặt hẹn:</label>
           <div class="customer-form-fields">
-            <input type="text" id="custNameInput" class="haute-input" placeholder="Họ và tên quý khách *" value="Quý cô Khánh Linh" />
+            <input type="text" id="custNameInput" class="haute-input" placeholder="Họ và tên quý khách *" value="Khánh Linh" />
             <input type="tel" id="custPhoneInput" class="haute-input" placeholder="Số điện thoại nhận vé & QR *" value="0903 123 456" />
             <input type="text" id="custNoteInput" class="haute-input" placeholder="Ghi chú cho tiệm (da nhạy cảm, yêu cầu riêng...)" />
           </div>
@@ -1316,19 +1316,11 @@
           </div>
         </div>
 
-        <!-- Tùy shop cần cọc hay không & 5 Mệnh giá cọc -->
+        <!-- Tiền cọc do shop quy định -->
         <div class="form-group" id="depositConfigBox">
           <div class="deposit-header-row">
-            <label class="form-label"><i class="fa-solid fa-wallet"></i> Khoản Đặt Cọc Giữ Suất (5 mệnh giá):</label>
-            <span class="badge-mini" id="depositShopBadge">Shop yêu cầu cọc</span>
-          </div>
-
-          <div class="deposit-tiers-carousel" id="depositTiersRow">
-            <button class="tier-pill-btn active" onclick="selectDepositTier(50000, this)">50.000đ</button>
-            <button class="tier-pill-btn" onclick="selectDepositTier(100000, this)">100.000đ</button>
-            <button class="tier-pill-btn" onclick="selectDepositTier(200000, this)">200.000đ</button>
-            <button class="tier-pill-btn" onclick="selectDepositTier(300000, this)">300.000đ</button>
-            <button class="tier-pill-btn" onclick="selectDepositTier(500000, this)">500.000đ</button>
+            <label class="form-label"><i class="fa-solid fa-wallet"></i> Khoản Đặt Cọc Giữ Chỗ (Shop quy định):</label>
+            <span class="badge-mini" id="depositShopBadge">50.000đ</span>
           </div>
 
           <div class="no-deposit-alert-box" id="noDepositAlert" style="display:none;">
@@ -1548,7 +1540,7 @@
           <div class="ai-msg-row ai">
             <div class="ai-msg-avatar"><i class="fa-solid fa-sparkles"></i></div>
             <div class="ai-msg-content">
-              Xin chào Quý cô! Em là <strong>Trợ lý AI GlowPrestige</strong> ✨. Em có thể tìm kiếm salon theo nhu cầu, lọc tiệm <strong>KHÔNG CẦN CỌC (Giữ chỗ 0đ)</strong> hoặc chọn mức cọc theo <strong>5 MỆNH GIÁ</strong> phù hợp nhất.
+              Xin chào bạn! Em là <strong>Trợ lý AI GlowPrestige</strong> ✨. Em có thể tìm kiếm salon theo nhu cầu, lọc tiệm <strong>KHÔNG CẦN CỌC (Giữ chỗ 0đ)</strong> hoặc tiệm <strong>CÓ CỌC</strong> theo quy định.
             </div>
           </div>
         </div>
@@ -1630,7 +1622,7 @@
       <div class="sheet-header">
         <div>
           <span class="sheet-subtitle">Hồ sơ khách hàng marketplace</span>
-          <h3 class="sheet-title" id="admCustModalTitle">Quý cô Khánh Linh</h3>
+          <h3 class="sheet-title" id="admCustModalTitle">Khánh Linh</h3>
         </div>
         <button class="sheet-close-btn" onclick="closeCustomerDetailModal()">&times;</button>
       </div>
@@ -1639,7 +1631,7 @@
         <!-- Nhóm 1: Thông tin tài khoản -->
         <div class="adm-info-group">
           <h4 class="adm-info-group-title"><i class="fa-solid fa-user"></i> 1. Thông tin tài khoản</h4>
-          <div class="adm-info-row"><span class="lbl">Họ và tên:</span><strong id="admCustName">Quý cô Khánh Linh</strong></div>
+          <div class="adm-info-row"><span class="lbl">Họ và tên:</span><strong id="admCustName">Khánh Linh</strong></div>
           <div class="adm-info-row"><span class="lbl">Mã khách hàng:</span><span id="admCustCode">CUST-001</span></div>
           <div class="adm-info-row"><span class="lbl">Số điện thoại:</span><span>0901 888 777</span></div>
           <div class="adm-info-row"><span class="lbl">Ngày tham gia:</span><span>05/01/2025</span></div>

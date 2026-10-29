@@ -381,7 +381,7 @@ fun ShopMembershipPlansScreen(
                             "Huy hiệu Vàng \"SPONSORED TOP\" trên đầu trang chủ và danh mục",
                             "Ưu tiên Top 1 thuật toán gợi ý tìm kiếm theo bán kính quận",
                             "Chatbox AI tự động ưu tiên đề xuất shop khi khách tìm dịch vụ",
-                            "Đẩy thông báo Deal độc quyền đến 50.000+ quý cô thành viên",
+                            "Đẩy thông báo Deal độc quyền đến 50.000+ khách hàng thành viên",
                             "Được FREE 01 tháng đầu tiên trải nghiệm không mất phí"
                         )
 

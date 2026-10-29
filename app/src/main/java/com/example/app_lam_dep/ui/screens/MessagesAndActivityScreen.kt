@@ -48,60 +48,49 @@ fun MessagesAndActivityScreen(
     var searchQuery by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf("Tất cả") }
 
-    val filterOptions = listOf("Tất cả", "Khách hàng", "Salon", "Hệ thống")
+    val filterOptions = listOf("Tất cả", "Chưa đọc")
 
-    // Image 2 exact 6 items
+    // Customer conversations - only with Beauty Salons/Spas
     val conversations = listOf(
         ConversationItem(
             id = 1,
-            name = "Nguyễn Thị Mai",
-            snippet = "Em muốn đặt lịch gội đầu và massage cổ vai gáy vào cuối tuần này ạ.",
-            time = "10:24",
-            tag = "Khách hàng",
+            name = "L'Amour Luxury Spa & Nail",
+            snippet = "Dạ bên em đã xác nhận lịch hẹn cho bạn vào 15h30 hôm nay ạ. Cảm ơn bạn!",
+            time = "09:47",
+            tag = "Salon",
             unreadCount = 2,
-            hasUnreadDot = true
+            hasUnreadDot = true,
+            isStore = true,
+            isOnline = true
         ),
         ConversationItem(
             id = 2,
-            name = "L'Amour Luxury Spa & Nail",
-            snippet = "Dạ bên em đã xác nhận lịch hẹn cho chị vào 15h ngày mai ạ. Cảm ơn chị!",
-            time = "09:47",
+            name = "An Yên Thảo Dược Retreat",
+            snippet = "Dạ em gửi bạn bảng giá dịch vụ gội đầu dưỡng sinh thảo dược ạ ✨",
+            time = "Hôm qua",
             tag = "Salon",
             isStore = true,
             isOnline = true
         ),
         ConversationItem(
             id = 3,
-            name = "Trần Thảo Anh",
-            snippet = "Dạ shop ơi, em muốn đổi lịch hẹn từ 14h sang 16h được không ạ?",
+            name = "La Beauté Beauty & Clinic",
+            snippet = "Cảm ơn bạn đã quan tâm liệu trình chăm sóc da chuyên sâu tại La Beauté!",
             time = "Hôm qua",
-            tag = "Khách hàng",
+            tag = "Salon",
             unreadCount = 1,
-            hasUnreadDot = true
+            hasUnreadDot = true,
+            isStore = true,
+            isOnline = false
         ),
         ConversationItem(
             id = 4,
-            name = "An Yên Thảo Dược Retreat",
-            snippet = "Bạn có thể gửi giúp mình bảng giá dịch vụ spa hiện tại được không ạ?",
-            time = "Hôm qua",
+            name = "The Glamour Hair Salon",
+            snippet = "Dạ salon có thể phục vụ làm tóc vào khung giờ 16:30 chiều nay ạ.",
+            time = "Thứ 6",
             tag = "Salon",
             isStore = true,
-            isOnline = true
-        ),
-        ConversationItem(
-            id = 5,
-            name = "Lê Minh Trang",
-            snippet = "Cảm ơn shop nhiều ạ! Dịch vụ rất tốt, em sẽ quay lại.",
-            time = "Thứ 6",
-            tag = "Khách hàng"
-        ),
-        ConversationItem(
-            id = 6,
-            name = "Thông báo hệ thống",
-            snippet = "Lịch hẹn của bạn đã được xác nhận thành công. Vui lòng kiểm tra chi tiết trong mục Đặt lịch.",
-            time = "Thứ 5",
-            tag = "Hệ thống",
-            isSystem = true
+            isOnline = false
         )
     )
 
@@ -110,9 +99,7 @@ fun MessagesAndActivityScreen(
                 item.name.contains(searchQuery, ignoreCase = true) ||
                 item.snippet.contains(searchQuery, ignoreCase = true)
         val matchesFilter = when (selectedFilter) {
-            "Khách hàng" -> item.tag == "Khách hàng"
-            "Salon" -> item.tag == "Salon"
-            "Hệ thống" -> item.tag == "Hệ thống"
+            "Chưa đọc" -> item.hasUnreadDot || item.unreadCount > 0
             else -> true
         }
         matchesSearch && matchesFilter
@@ -497,7 +484,7 @@ fun ChatDetailScreen(
     var messageText by remember { mutableStateOf("") }
     val messages = remember {
         mutableStateListOf(
-            "Dạ quý cô ơi, lịch hẹn chiều nay bên em đã chuẩn bị phòng VIP và nghệ nhân nail sẵn sàng rồi ạ! ✨",
+            "Dạ chào bạn, lịch hẹn chiều nay bên em đã chuẩn bị phòng dịch vụ sẵn sàng đón tiếp bạn rồi ạ! ✨",
             "Cảm ơn shop nhiều nhé, mình sẽ ghé đúng giờ ạ."
         )
     }

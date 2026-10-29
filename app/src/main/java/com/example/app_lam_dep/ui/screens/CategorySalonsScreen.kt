@@ -58,7 +58,7 @@ data class GrabSalon(
     val signatureBadgeText: String,
     val services: List<GrabFeaturedService>,
     val requiresDeposit: Boolean = true,
-    val depositLabel: String = "Cọc từ 50k (5 mệnh giá)"
+    val depositLabel: String = "Cọc 50.000đ giữ chỗ"
 )
 
 @Composable
@@ -602,7 +602,7 @@ private fun GrabStyleSalonDetailCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = if (salon.requiresDeposit) "ƯU ĐÃI CỌC" else "MIỄN CỌC 0Đ",
+                            text = if (salon.requiresDeposit) "CÓ CỌC" else "MIỄN CỌC 0Đ",
                             fontSize = 7.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (salon.requiresDeposit) GoldSoft else SuccessGreen

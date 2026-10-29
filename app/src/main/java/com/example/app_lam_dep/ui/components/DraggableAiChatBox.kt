@@ -173,7 +173,7 @@ fun AiShopAdvisorSheet(
             listOf(
                 ChatMessage(
                     isAi = true,
-                    text = "Xin chào Quý cô! Em là Trợ lý AI GlowPrestige ✨. Em có thể giúp Quý cô tìm salon theo sở thích, khoảng cách, hoặc lọc theo tiệm KHÔNG CẦN CỌC hay CÓ CỌC theo mệnh giá phù hợp.",
+                    text = "Xin chào bạn! Em là Trợ lý AI GlowPrestige ✨. Em có thể giúp bạn tìm salon theo sở thích, khoảng cách, hoặc lọc theo tiệm KHÔNG CẦN CỌC hay CÓ CỌC theo mệnh giá phù hợp.",
                     recommendations = sampleRecommendations.take(2)
                 )
             )
@@ -263,8 +263,8 @@ fun AiShopAdvisorSheet(
                                     ChatMessage(
                                         isAi = true,
                                         text = if (filterNoDeposit) 
-                                            "Dạ đây là các tiệm được đề xuất KHÔNG CẦN CỌC TRƯỚC (Giữ chỗ 0đ), quý cô chỉ cần đến và tận hưởng:" 
-                                            else "Dạ em đã lọc các salon ưu tú nhất theo yêu cầu của Quý cô:",
+                                            "Dạ đây là các tiệm được đề xuất KHÔNG CẦN CỌC TRƯỚC (Giữ chỗ 0đ), bạn chỉ cần đến và tận hưởng:" 
+                                            else "Dạ em đã lọc các salon ưu tú nhất theo yêu cầu của bạn:",
                                         recommendations = responseRecs
                                     )
                                 )

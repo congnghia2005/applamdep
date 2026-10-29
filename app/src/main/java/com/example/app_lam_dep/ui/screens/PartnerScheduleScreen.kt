@@ -88,16 +88,16 @@ fun PartnerScheduleScreen(
     val slotsByDay = remember {
         mutableStateMapOf(
             0 to mutableStateListOf(
-                SlotItem("09:00 - 10:15", "booked", "Quý cô Hà An (Đã cọc 50k)", 2, 1),
+                SlotItem("09:00 - 10:15", "booked", "Hà An (Đã cọc 50k)", 2, 1),
                 SlotItem("10:30 - 11:45", "available", "", 3, 0),
                 SlotItem("13:00 - 14:15", "available", "", 2, 0),
-                SlotItem("15:30 - 16:45", "booked", "Quý cô Khánh Linh (Đã cọc 50k)", 2, 1),
+                SlotItem("15:30 - 16:45", "booked", "Khánh Linh (Đã cọc 50k)", 2, 1),
                 SlotItem("17:00 - 18:15", "available", "", 2, 0),
                 SlotItem("18:30 - 19:45", "locked", "", 2, 0)
             ),
             1 to mutableStateListOf(
                 SlotItem("09:00 - 10:15", "available", "", 2, 0),
-                SlotItem("10:30 - 11:45", "booked", "Quý cô Mai Phương", 2, 1)
+                SlotItem("10:30 - 11:45", "booked", "Mai Phương", 2, 1)
             )
             // Các ngày 2, 3, 4, 5, 6 tạm thời chưa có dữ liệu (trống)
         )

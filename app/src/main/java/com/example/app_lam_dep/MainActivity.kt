@@ -55,8 +55,8 @@ class MainActivity : ComponentActivity() {
                             servicePrice = "180.000 đ",
                             date = "Hôm nay",
                             timeSlot = "15:30",
-                            specialist = "Master Linh (VIP)",
-                            customerName = "Quý cô Khánh Linh",
+                            specialist = "",
+                            customerName = "Khánh Linh",
                             customerPhone = "0903 123 456",
                             note = "Sơn tone hồng thạch tự nhiên, da tay nhạy cảm",
                             requiresDeposit = true,
@@ -131,13 +131,11 @@ class MainActivity : ComponentActivity() {
                                             val salon = selectedSalonName ?: "L'Amour Luxury Spa & Nail"
                                             // Demo flexible deposit: An Yên does not require deposit; L'Amour requires deposit
                                             val needDeposit = !salon.contains("An Yên", ignoreCase = true)
-                                            val tiers = listOf(50000L, 100000L, 200000L, 300000L, 500000L)
-
                                             BookingScreen(
                                                 serviceName = selectedBookingServiceName!!,
                                                 salonName = salon,
                                                 requiresDeposit = needDeposit,
-                                                depositTiers = tiers,
+                                                depositAmount = 50000L,
                                                 onBack = { selectedBookingServiceName = null },
                                                 onConfirmBooking = { newTicket ->
                                                     customerBookings.add(0, newTicket)

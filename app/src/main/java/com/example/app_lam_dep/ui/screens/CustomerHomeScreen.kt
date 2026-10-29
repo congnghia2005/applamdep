@@ -49,12 +49,12 @@ fun CustomerHomeScreen(
     var activeCategoryModal by remember { mutableStateOf<String?>(null) }
     var isFavorite by remember { mutableStateOf(false) }
 
-    // 8 categories matching Image 1
+    // 8 categories matching client feedback
     val categories = listOf(
-        BeautyCategoryItem("Làm Nail Art", GlowIcons.NailPolish),
+        BeautyCategoryItem("Làm Nail", GlowIcons.NailPolish),
         BeautyCategoryItem("Spa Trị Liệu", GlowIcons.Lotus),
         BeautyCategoryItem("Chăm sóc da", GlowIcons.Serum),
-        BeautyCategoryItem("Đặt lịch VIP", GlowIcons.Crown),
+        BeautyCategoryItem("Nối Mi & Mày", GlowIcons.Sparkle),
         BeautyCategoryItem("Hair Salon", GlowIcons.Scissors),
         BeautyCategoryItem("Makeup Tiệc", GlowIcons.Lipstick),
         BeautyCategoryItem("Dưỡng sinh", GlowIcons.Leaf),
@@ -449,7 +449,7 @@ fun CustomerHomeScreen(
                             }
 
                             Text(
-                                text = "Top Salon Đã Kiểm Duyệt &\nƯu Đãi Độc Quyền",
+                                text = "Top Salon Đã Kiểm Duyệt\nĐược Đánh Giá Cao Nhất",
                                 color = Color.White,
                                 fontFamily = FontFamily.Serif,
                                 fontSize = 17.5.sp,
@@ -458,10 +458,10 @@ fun CustomerHomeScreen(
                             )
 
                             Text(
-                                text = "• L'Amour Luxury Spa: Giảm 20% dịch vụ Nail Art & Mi\n• An Yên Dưỡng Sinh: Tặng Voucher 100.000đ gội đầu\n• Đánh giá 4.9★ - Phục vụ tận tâm, chuyên nghiệp",
+                                text = "Tuyển chọn salon cao cấp với không gian sang trọng và phục vụ tận tâm",
                                 color = Color(0xFFF3CEC5),
-                                fontSize = 9.5.sp,
-                                lineHeight = 13.5.sp
+                                fontSize = 11.sp,
+                                lineHeight = 16.sp
                             )
                         }
 
@@ -651,25 +651,6 @@ fun CustomerHomeScreen(
                                     }
                                 }
                             }
-                        }
-
-                        // Promo discount pill banner
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color(0xFFFDF2EE))
-                                .padding(horizontal = 10.dp, vertical = 7.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            GlowIcon(icon = GlowIcons.Tag, tint = Color(0xFF6B1228), size = 14.dp)
-                            Text(
-                                text = "Giảm 20% cho dịch vụ nail art",
-                                fontSize = 11.5.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF6B1228)
-                            )
                         }
                     }
                 }

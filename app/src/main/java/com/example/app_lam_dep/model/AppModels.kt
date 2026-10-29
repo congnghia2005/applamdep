@@ -7,7 +7,7 @@ data class BookingTicket(
     val servicePrice: String,
     val date: String,
     val timeSlot: String,
-    val specialist: String,
+    val specialist: String = "",
     val customerName: String,
     val customerPhone: String,
     val note: String = "",

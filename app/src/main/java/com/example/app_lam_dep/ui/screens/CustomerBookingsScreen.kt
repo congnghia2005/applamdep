@@ -41,8 +41,8 @@ fun CustomerBookingsScreen(
                 servicePrice = "180.000 đ",
                 date = "Hôm nay",
                 timeSlot = "15:30",
-                specialist = "Master Linh (VIP)",
-                customerName = "Quý cô Khánh Linh",
+                specialist = "",
+                customerName = "Khánh Linh",
                 customerPhone = "0903 123 456",
                 note = "Khách yêu cầu sơn tone hồng thạch tự nhiên",
                 requiresDeposit = true,
@@ -65,7 +65,7 @@ fun CustomerBookingsScreen(
         item {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = "Lịch Hẹn Của Quý Cô",
+                    text = "Lịch Hẹn Của Bạn",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF3A101A)
@@ -100,7 +100,7 @@ fun CustomerBookingsScreen(
                             color = DustyMerlot
                         )
                         Text(
-                            text = "Thông tin đặt lịch của quý cô đã được chuyển về salon đối tác. Chuyên viên đã tiếp nhận.",
+                            text = "Thông tin đặt lịch của bạn đã được chuyển về salon đối tác và xác nhận thành công.",
                             fontSize = 11.sp,
                             color = TextMuted,
                             lineHeight = 15.sp
@@ -200,7 +200,7 @@ fun CustomerBookingsScreen(
                             }
                         }
 
-                        // Time & Specialist Info Boxes
+                        // Time & Service Price Info Boxes
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -213,7 +213,7 @@ fun CustomerBookingsScreen(
                                     .padding(12.dp)
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                    Text(text = "THỜI GIAN", fontSize = 9.5.sp, color = TextMuted, fontWeight = FontWeight.Bold)
+                                    Text(text = "THỜI GIAN HẸN", fontSize = 9.5.sp, color = TextMuted, fontWeight = FontWeight.Bold)
                                     Text(text = "${ticket.timeSlot} • ${ticket.date}", fontSize = 12.5.sp, fontWeight = FontWeight.Bold, color = Color(0xFF24090F))
                                 }
                             }
@@ -226,8 +226,8 @@ fun CustomerBookingsScreen(
                                     .padding(12.dp)
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                    Text(text = "CHUYÊN VIÊN", fontSize = 9.5.sp, color = TextMuted, fontWeight = FontWeight.Bold)
-                                    Text(text = ticket.specialist, fontSize = 12.5.sp, fontWeight = FontWeight.Bold, color = Color(0xFF24090F))
+                                    Text(text = "GIÁ DỊCH VỤ", fontSize = 9.5.sp, color = TextMuted, fontWeight = FontWeight.Bold)
+                                    Text(text = ticket.servicePrice, fontSize = 12.5.sp, fontWeight = FontWeight.Bold, color = DustyMerlot)
                                 }
                             }
                         }

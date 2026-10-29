@@ -31,9 +31,9 @@ fun PartnerReviewsScreen(
     modifier: Modifier = Modifier
 ) {
     val reviews = listOf(
-        CustomerReview("Quý cô Hà An", 5, "Không gian tuyệt vời, nhân viên tay nghề đỉnh cao. Sẽ quay lại dài dài!", "Hôm nay"),
+        CustomerReview("Hà An", 5, "Không gian tuyệt vời, nhân viên tay nghề đỉnh cao. Sẽ quay lại dài dài!", "Hôm nay"),
         CustomerReview("Nguyễn Thị Mai", 1, "Làm không đúng giờ hẹn, nhân viên thái độ...", "Hôm qua"),
-        CustomerReview("Quý cô Khánh Linh", 5, "Móng sơn bền và bóng đẹp lắm shop ơi! Lên tay sang và quý phái.", "3 ngày trước")
+        CustomerReview("Khánh Linh", 5, "Móng sơn bền và bóng đẹp lắm shop ơi! Lên tay sang và tinh tế.", "3 ngày trước")
     )
 
     Column(

@@ -159,16 +159,22 @@ fun PartnerProfileScreen(
 
                     if (requiresDeposit) {
                         HorizontalDivider(color = Color(0xFFF0E5DE))
-                        Text(text = "5 Mệnh giá cọc khách hàng có thể chọn:", fontSize = 11.5.sp, fontWeight = FontWeight.Bold, color = Color(0xFF24090F))
+                        Text(text = "Mức tiền cọc shop quy định (khách cọc theo mức này):", fontSize = 11.5.sp, fontWeight = FontWeight.Bold, color = Color(0xFF24090F))
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             items(depositTiers) { tier ->
+                                val isChosen = tier == "50.000đ"
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(8.dp))
-                                        .background(DustyMerlot)
+                                        .background(if (isChosen) DustyMerlot else Color(0xFFF5EFEB))
                                         .padding(horizontal = 10.dp, vertical = 6.dp)
                                 ) {
-                                    Text(text = tier, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                    Text(
+                                        text = if (isChosen) "$tier (Đang áp dụng)" else tier,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (isChosen) Color.White else DustyMerlot
+                                    )
                                 }
                             }
                         }

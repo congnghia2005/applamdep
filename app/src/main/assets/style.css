@@ -4684,6 +4684,9 @@ body {
   font-weight: 800;
   padding: 3px 8px;
   border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-block;
 }
 
 .adm-status-tag.active {

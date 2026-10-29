@@ -510,7 +510,7 @@ function selectPayMethod(el) {
 
 // Confirm Booking with Customer Info Form
 function confirmBookingWithDeposit() {
-  const custName = document.getElementById('custNameInput')?.value || 'Quý cô Khánh Linh';
+  const custName = document.getElementById('custNameInput')?.value || 'Khánh Linh';
   const custPhone = document.getElementById('custPhoneInput')?.value || '0903 123 456';
   const custNote = document.getElementById('custNoteInput')?.value || '';
 
@@ -1088,9 +1088,9 @@ function sendAiQuery() {
           <div class="rec-title">👑 L'Amour Haute Nail & Lash Lounge (VIP Sponsor)</div>
           <div class="rec-meta">★ 4.99 (1.8k+ đánh giá) • 0.8 km • Đồng Khởi, Q.1</div>
           <div class="rec-service">Dịch vụ: Sơn Gel Hữu Cơ Pháp + Dưỡng Móng (180.000đ)</div>
-          <div class="rec-badge deposit">📌 CÓ CỌC (Shop set 5 mức từ 50.000đ)</div>
+          <div class="rec-badge deposit">📌 CÓ CỌC (Shop quy định 50.000đ)</div>
           <div class="rec-actions">
-            <button class="btn-rec-book" onclick="closeAiAdvisorModal(); openBookingModal('Sơn Gel Hữu Cơ Pháp', 180000, 45, true)">Đặt Lịch Cọc 5 Mệnh Giá</button>
+            <button class="btn-rec-book" onclick="closeAiAdvisorModal(); openBookingModal('Sơn Gel Hữu Cơ Pháp', 180000, 45, true)">Đặt Lịch (Cọc 50.000đ)</button>
           </div>
         </div>
       `;
@@ -1099,7 +1099,7 @@ function sendAiQuery() {
     aiRow.innerHTML = `
       <div class="ai-msg-avatar"><i class="fa-solid fa-sparkles"></i></div>
       <div class="ai-msg-content">
-        Dạ em đã chọn lọc salon uy tín hoàn hảo theo yêu cầu của quý cô:
+        Dạ em đã chọn lọc salon uy tín hoàn hảo theo yêu cầu của bạn:
         ${recHtml}
       </div>
     `;
@@ -1351,8 +1351,8 @@ function openCustomerDetailModal(custId) {
   const code = document.getElementById('admCustCode');
 
   if (custId === '1') {
-    if (title) title.innerText = "Quý cô Khánh Linh";
-    if (name) name.innerText = "Quý cô Khánh Linh";
+    if (title) title.innerText = "Khánh Linh";
+    if (name) name.innerText = "Khánh Linh";
     if (code) code.innerText = "CUST-001";
   } else {
     if (title) title.innerText = "Nguyễn Thị Mai";

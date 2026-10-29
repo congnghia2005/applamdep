@@ -66,7 +66,7 @@ fun CustomerMessagesScreen(
                         }
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Dạ quý cô ơi, lịch hẹn 15:30 chiều nay bên em đã chuẩn bị sẵn sàng phòng VIP cho mình rồi ạ! ✨",
+                            text = "Dạ chào bạn, lịch hẹn 15:30 chiều nay bên em đã chuẩn bị sẵn sàng phòng dịch vụ cho mình rồi ạ! ✨",
                             fontSize = 13.sp,
                             color = TextMuted,
                             maxLines = 1

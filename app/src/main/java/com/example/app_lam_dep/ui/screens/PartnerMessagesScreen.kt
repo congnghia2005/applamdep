@@ -62,7 +62,7 @@ fun PartnerMessagesScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = "Quý cô Khánh Linh", fontWeight = FontWeight.Bold, color = DustyMerlot)
+                            Text(text = "Khánh Linh", fontWeight = FontWeight.Bold, color = DustyMerlot)
                             Text(text = "09:15", fontSize = 11.sp, color = TextMuted)
                         }
                         Spacer(modifier = Modifier.height(2.dp))
